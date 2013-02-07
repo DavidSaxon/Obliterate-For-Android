@@ -10,9 +10,9 @@ import android.opengl.GLES20;
 
 public class ShaderUtil {
 
-	/*Loads shader code
-	@type the type of shader
-	@shaderCode the shader code to load
+	/**Loads shader code
+	@param type the type of shader
+	@param shaderCode the shader code to load
 	@return a int mapping to the loaded shader code*/
     public static int loadShader(int type, String shaderCode){
 

@@ -5,9 +5,12 @@
 \******************************************************************************/
 package nz.co.withfire.obliterate;
 
+import java.util.ArrayList;
+
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
+import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
 import android.opengl.GLES20;
@@ -17,7 +20,23 @@ import android.os.SystemClock;
 
 public class Engine implements GLSurfaceView.Renderer {
 
+	//ENUMERATORS
+	//Engine states
+	enum State {
+		START_UP
+	};
+	
 	//VARIABLES
+	//the current state of the engine
+	private State state = State.START_UP;
+	//is true when the state has been changed
+	private boolean stateChanged = true;
+	
+	//the number of layers
+	private final int numLayers = 5;
+	//an list of layers which contains lists of entities
+	private ArrayList<ArrayList<Entity>> entities = new ArrayList<ArrayList<Entity>>();
+	
 	//the projection matrix
 	private final float[] projectionMatrix = new float[16];
 	//the view matrix
@@ -32,8 +51,15 @@ public class Engine implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 unused, EGLConfig config) {
 
+    	//TODO: init openGL method
         //set the background frame colour
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        
+        //initalise the entites list
+        for (int i = 0; i < numLayers; ++i) {
+        	
+        	entities.add(i, new ArrayList<Entity>());
+        }
         
         //create the quad (for testing)
         float quadCoord[] = {-0.5f,  0.5f, 0.0f,
@@ -58,6 +84,15 @@ public class Engine implements GLSurfaceView.Renderer {
     @Override
     public void onDrawFrame(GL10 unused) {
     	
+    	//TODO: fps
+    	
+    	//check if the state has changed
+    	if (stateChanged) {
+    		
+    		initState();
+    	}
+    	
+    	//Draw code
         //redraw background colour //TODO: buffer depth?
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
@@ -68,5 +103,17 @@ public class Engine implements GLSurfaceView.Renderer {
 
         //draw the quad TODO: remove
         quad.draw(mvpMatrix);
+    }
+    
+    /**Initialises the new state*/
+    private void initState() {
+    	
+    	switch (state) {
+    	
+    	case START_UP:
+    		
+    		initStartUP();
+    		break;
+    	}
     }
 }

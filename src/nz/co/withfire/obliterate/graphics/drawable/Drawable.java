@@ -8,7 +8,7 @@ package nz.co.withfire.obliterate.graphics.drawable;
 public interface Drawable {
 
 	//METHODS
-	/*Draws the drawable to the gl surface
-	@mvpMatrix the model view projection matrix*/
+	/**Draws the drawable to the gl surface
+	@param mvpMatrix the model view projection matrix*/
 	public void draw(float[] mvpMatrix);
 }

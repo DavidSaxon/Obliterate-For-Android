@@ -60,7 +60,9 @@ public class Quad2d implements Shape2d {
         "}";
 	
 	//CONSTRUCTOR
-	/**Constructs a new 2d quad*/
+	/**Constructs a new 2d quad
+	@param crd the co-ordinates of the quad
+	@param clr the colour of the quad*/
 	public Quad2d(float crd[], float clr[]) {
 		
 		//initialise variables
