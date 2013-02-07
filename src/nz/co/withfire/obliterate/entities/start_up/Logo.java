@@ -6,9 +6,27 @@
 package nz.co.withfire.obliterate.entities.start_up;
 
 import nz.co.withfire.obliterate.entities.Entity;
+import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
 public class Logo implements Entity {
 	
+	//VARIABLES
+	//the quad displaying the logo
+	private Quad2d logo;
+	
+	//CONSTRUCTOR
+	public Logo() {
+		
+		//create the coords of the quad
+        float quadCoord[] = {-1.5f,  0.8f, 0.0f,
+                -1.5f, -0.6f, 0.0f,
+                1.5f, -0.6f, 0.0f,
+                1.5f,  0.8f, 0.0f};
+        float quadColour[] = {0.9f, 0.9f, 0.9f, 1.0f};
+        logo = new Quad2d(quadCoord, quadColour);
+	}
+	
+	//METHODS
 	@Override
 	public void collisionCheck(Entity other) {
 	
@@ -22,8 +40,8 @@ public class Logo implements Entity {
 	}
 
 	@Override
-	public void draw() {
+	public void draw(float[] mvpMatrix) {
 		
-		//TODO: draw the logo
+		logo.draw(mvpMatrix);
 	}
 }

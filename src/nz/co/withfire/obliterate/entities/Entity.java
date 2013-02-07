@@ -21,6 +21,7 @@ public interface Entity {
 	/**Updates the entity*/
 	public void update();
 	
-	/**Draws the entity to the GL surface*/
-	public void draw();
+	/**Draws the entity to the GL surface
+	@param mvpMatrix the model view projection matrix*/
+	public void draw(float[] mvpMatrix);
 }
