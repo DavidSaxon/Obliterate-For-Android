@@ -1,3 +1,8 @@
+/**********************\
+| A 2 dimensional quad |
+| 					   |
+| @author David Saxon  |
+\**********************/
 package nz.co.withfire.obliterate.graphics.drawable.shape2d;
 
 import java.nio.ByteBuffer;
@@ -10,7 +15,9 @@ import android.opengl.GLES20;
 public class Quad2d implements Shape2d {
 
 	//VARIABLES
-    private final int vertexStride = COORDS_PER_VERTEX * 4; // 4 bytes per vertex
+	//4 bytes per vertex
+    private final int vertexStride = COORDS_PER_VERTEX * 4;
+    //the order to draw the vertices
     private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
     
 	//the vertex buffer
@@ -56,35 +63,35 @@ public class Quad2d implements Shape2d {
 	/**Constructs a new 2d quad*/
 	public Quad2d(float crd[], float clr[]) {
 		
-		//intialised variables
+		//initialise variables
 		coords = crd;
 		colour = clr;
 		
-        //intialise the bye buffer for the vertex buffer (4 = bytes per float)
+        //initialise the bye buffer for the vertex buffer (4 = bytes per float)
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
         bb.order(ByteOrder.nativeOrder());
         
-        //intialise the vertex buffer and insert the coords
+        //initialise the vertex buffer and insert the coords
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
 
-        //intialise the byte buffer for the draw list (2 = bytes per short)
+        //initialise the byte buffer for the draw list (2 = bytes per short)
         ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
         dlb.order(ByteOrder.nativeOrder());
         
-        //intialise the draw list buffer and insert the draw list
+        //initialise the draw list buffer and insert the draw list
         drawListBuffer = dlb.asShortBuffer();
         drawListBuffer.put(drawOrder);
         drawListBuffer.position(0);
 
-        // prepare shaders and OpenGL program
+        //prepare the shaders and the openGL program
         int vertexShader = ShaderUtil.loadShader(GLES20.GL_VERTEX_SHADER,
                                                    vertexShaderCode);
         int fragmentShader = ShaderUtil.loadShader(GLES20.GL_FRAGMENT_SHADER,
                                                      fragmentShaderCode);
 
-        //create an opengl program
+        //create the openGL program
         program = GLES20.glCreateProgram();
         //attach the vertex shader to the program
         GLES20.glAttachShader(program, vertexShader);
@@ -115,7 +122,7 @@ public class Quad2d implements Shape2d {
         //get a handle to the fragment shader's colour
         colourHandle = GLES20.glGetUniformLocation(program, "vColour");
 
-        //Set the color for drawing
+        //Set the colour for drawing
         GLES20.glUniform4fv(colourHandle, 1, colour, 0);
 
         //get a handle to shape's transformation matrix

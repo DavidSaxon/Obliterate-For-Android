@@ -31,9 +31,6 @@ public class StartUpActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
         		WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
-        
-        
-        
         //set the display
         display = new extGLSurfaceView(this);
 		

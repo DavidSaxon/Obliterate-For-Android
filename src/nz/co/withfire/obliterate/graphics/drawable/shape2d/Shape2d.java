@@ -11,6 +11,6 @@ import nz.co.withfire.obliterate.graphics.drawable.Drawable;
 public interface Shape2d extends Drawable {
 	
 	//VARIABLES
-    // number of coordinates per vertex in this array
+    //number of coordinates per vertex
     static final int COORDS_PER_VERTEX = 3;
 }
