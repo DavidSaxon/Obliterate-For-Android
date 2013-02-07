@@ -142,4 +142,25 @@ public class Quad2d implements Shape2d {
         //disable the vertex array
         GLES20.glDisableVertexAttribArray(positionHandle);
 	}
+
+
+	@Override
+	public void setVertex(int v, float x, float y, float z) {
+		
+		coords[v * 3] = x;
+		coords[v * 3 + 1] = y;
+		coords[v * 3 + 2] = z;
+		
+        vertexBuffer.put(coords);
+        vertexBuffer.position(0);
+	}
+
+
+	@Override
+	public void setColour(float r, float g, float b, float a) {
+		
+		float clr[] = {r, g, b, a};
+		
+		colour = clr;
+	}
 }

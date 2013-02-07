@@ -62,5 +62,7 @@ class extGLSurfaceView extends GLSurfaceView {
 		
 		//set the renderer for drawing on this surface
 		setRenderer(new Engine());
+		
+		setRenderMode(RENDERMODE_CONTINUOUSLY);
 	}
 }

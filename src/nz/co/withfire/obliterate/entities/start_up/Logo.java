@@ -36,7 +36,6 @@ public class Logo implements Entity {
 	@Override
 	public void update() {
 		
-		//TODO: add the quad to fade over the top
 	}
 
 	@Override

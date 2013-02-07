@@ -11,6 +11,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 import nz.co.withfire.obliterate.entities.Entity;
+import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
@@ -61,7 +62,7 @@ public class Engine implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
-
+    	
     	//TODO: fix!
         GLES20.glViewport(0, 0, width, height);
 
@@ -81,11 +82,19 @@ public class Engine implements GLSurfaceView.Renderer {
     		initState();
     	}
     	
+    	//COLLISON CHECK
     	//TODO: collision loop (quad tree)
     	
-    	//TODO: update loop
+    	//UPDATE
+    	//iterate over the entities and update them
+        for (int i = 0; i < numLayers; ++i) {
+	        for (Entity e: entities.get(i)) {
+	        	
+	        	e.update();
+	        }
+        }
     	
-    	//Draw code
+    	//DRAW
         //redraw background colour
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
@@ -93,9 +102,9 @@ public class Engine implements GLSurfaceView.Renderer {
         Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
         //calculate the projection and view transformations
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
-
+        
         //iterate over the entities and draw them
-        for (int i = 0; i < numLayers; ++i) {
+        for (int i = numLayers-1; i >= 0; --i) {
 	        for (Entity e: entities.get(i)) {
 	        	
 	        	e.draw(mvpMatrix);
@@ -106,6 +115,8 @@ public class Engine implements GLSurfaceView.Renderer {
     //PRIVATE METHODS
     /**Initialises the new state*/
     private void initState() {
+    	
+    	stateChanged = false;
     	
     	switch (state) {
     	
@@ -124,6 +135,9 @@ public class Engine implements GLSurfaceView.Renderer {
     	
     	//add the logo to the second layer
     	entities.get(1).add(new Logo());
+    	
+    	//add the loading bar to the first layer
+    	entities.get(0).add(new LoadingBar());
     }
     
     /**Clear all entities from the entities list*/
