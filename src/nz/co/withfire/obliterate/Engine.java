@@ -9,12 +9,9 @@ import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
-import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
-
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -38,6 +35,11 @@ public class Engine implements GLSurfaceView.Renderer {
 	private final int numLayers = 5;
 	//an list of layers which contains lists of entities
 	private ArrayList<ArrayList<Entity>> entities = new ArrayList<ArrayList<Entity>>();
+	//keep a reference to the loading bar
+	private LoadingBar loadingBar;
+	
+	//progress out of 1.0 loading
+	private float loadProgress = 0.0f;
 	
 	//the projection matrix
 	private final float[] projectionMatrix = new float[16];
@@ -84,6 +86,15 @@ public class Engine implements GLSurfaceView.Renderer {
     	
     	//COLLISON CHECK
     	//TODO: collision loop (quad tree)
+    	
+    	//apply state specific updates
+    	switch (state) {
+    	
+    	case START_UP:
+    		
+    		load();
+    		break;
+    	}
     	
     	//UPDATE
     	//iterate over the entities and update them
@@ -137,7 +148,9 @@ public class Engine implements GLSurfaceView.Renderer {
     	entities.get(1).add(new Logo());
     	
     	//add the loading bar to the first layer
-    	entities.get(0).add(new LoadingBar());
+    	loadingBar = new LoadingBar();
+    	entities.get(0).add(loadingBar);
+    	loadProgress = 0.0f;
     }
     
     /**Clear all entities from the entities list*/
@@ -147,6 +160,19 @@ public class Engine implements GLSurfaceView.Renderer {
         	
         	entities.set(i, new ArrayList<Entity>());
         }
+    }
+    
+    /**Loads in the needed data for obliterate*/
+    private void load() {
+    	
+    	//TODO: actually load images here
+		if (loadProgress < 1.0f) {
+			
+			loadProgress += 0.01f;
+		}
+		
+		//update the progress if the loading bar
+		loadingBar.updateProgress(loadProgress);
     }
     
     /**Initialises openGL*/

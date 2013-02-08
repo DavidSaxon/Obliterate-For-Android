@@ -43,12 +43,6 @@ public class LoadingBar implements Entity {
 		
 		//fade the bar in
 		bar.setColour(1.0f-progress, 1.0f-progress, 1.0f-progress, 1.0f);
-		
-		//increase the progress
-		if (progress < 1.0f) {
-			
-			progress += 0.005f;
-		}
 	}
 
 	@Override
@@ -56,5 +50,11 @@ public class LoadingBar implements Entity {
 		
 		bar.draw(mvpMatrix);
 	}
-
+	
+	/**Updates the progress of the loading bar
+	@param progress the new loading bar progress*/
+	public void updateProgress(float progress) {
+		
+		this.progress = progress;
+	}
 }
