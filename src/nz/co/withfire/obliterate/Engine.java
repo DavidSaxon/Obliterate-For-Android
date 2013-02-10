@@ -148,8 +148,8 @@ public class Engine implements GLSurfaceView.Renderer {
     	entities.get(1).add(new Logo());
     	
     	//add the loading bar to the first layer
-    	loadingBar = new LoadingBar();
-    	entities.get(0).add(loadingBar);
+    	//loadingBar = new LoadingBar();
+    	//entities.get(0).add(loadingBar);
     	loadProgress = 0.0f;
     }
     
@@ -165,14 +165,14 @@ public class Engine implements GLSurfaceView.Renderer {
     /**Loads in the needed data for obliterate*/
     private void load() {
     	
-    	//TODO: actually load images here
-		if (loadProgress < 1.0f) {
-			
-			loadProgress += 0.01f;
-		}
-		
-		//update the progress if the loading bar
-		loadingBar.updateProgress(loadProgress);
+//    	//TODO: actually load images here
+//		if (loadProgress < 1.0f) {
+//			
+//			loadProgress += 0.01f;
+//		}
+//		
+//		//update the progress if the loading bar
+//		loadingBar.updateProgress(loadProgress);
     }
     
     /**Initialises openGL*/

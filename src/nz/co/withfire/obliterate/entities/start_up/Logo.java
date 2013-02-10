@@ -17,12 +17,14 @@ public class Logo implements Entity {
 	//CONSTRUCTOR
 	public Logo() {
 		
-		//create the coords of the quad
-        float quadCoord[] = {-1.5f,  0.8f, 0.0f,
-                -1.5f, -0.6f, 0.0f,
-                1.5f, -0.6f, 0.0f,
-                1.5f,  0.8f, 0.0f};
-        float quadColour[] = {0.9f, 0.9f, 0.9f, 1.0f};
+        float quadCoord[] = {	-1.5f,  0.8f, 0.0f,
+                				-1.5f, -0.6f, 0.0f,
+                				 1.5f, -0.6f, 0.0f,
+                				 1.5f,  0.8f, 0.0f};
+        float quadColour[] = {	0.8f, 0.8f, 0.8f, 1.0f,
+        						0.8f, 0.8f, 0.8f, 1.0f,
+        						0.8f, 0.8f, 0.8f, 1.0f,
+        						0.8f, 0.8f, 0.8f, 1.0f};
         logo = new Quad2d(quadCoord, quadColour);
 	}
 	

@@ -22,6 +22,8 @@ public class Quad2d implements Shape2d {
     
 	//the vertex buffer
     private final FloatBuffer vertexBuffer;
+    //the colour buffer
+    private final FloatBuffer colourBuffer;
     //the draw list buffer
     private final ShortBuffer drawListBuffer;
     //the opengl program
@@ -40,11 +42,20 @@ public class Quad2d implements Shape2d {
     
     //shaders
     private final String vertexShaderCode =
-    		
+		
+		//the model view projection matrix
         "uniform mat4 uMVPMatrix;" +
+        //vertex information that will be passed in
         "attribute vec4 vPosition;" +
+        //colour information that will be passed in
+        "attribute vec4 a_Color;\n" +
+        //this will be passed to the fragment shader
+        "varying vec4 v_Color;\n" +
         		
         "void main() {" +
+        
+        	//pass the colour through to the fragment shader
+        	"v_Color = a_Color\n;" +
         
         "	gl_Position = vPosition * uMVPMatrix;" +
         "}";
@@ -52,23 +63,23 @@ public class Quad2d implements Shape2d {
     private final String fragmentShaderCode =
     		
         "precision mediump float;" +
-        "uniform vec4 vColour;" +
+        "varying vec4 v_Color;" +
         		
         "void main() {" +
         
-        "	gl_FragColor = vColour;" +
+        "	gl_FragColor = v_Color;" +
         "}";
-	
+
 	//CONSTRUCTOR
 	/**Constructs a new 2d quad
 	@param crd the co-ordinates of the quad
 	@param clr the colour of the quad*/
 	public Quad2d(float crd[], float clr[]) {
-		
+
 		//initialise variables
 		coords = crd;
 		colour = clr;
-		
+
         //initialise the bye buffer for the vertex buffer (4 = bytes per float)
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
         bb.order(ByteOrder.nativeOrder());
@@ -77,6 +88,15 @@ public class Quad2d implements Shape2d {
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
+        
+        //initialise the bye buffer for the colour buffer (4 = bytes per float)
+        ByteBuffer cb = ByteBuffer.allocateDirect(colour.length * 4);
+        cb.order(ByteOrder.nativeOrder());
+        
+        //initialise the vertex buffer and insert the coords
+        colourBuffer = cb.asFloatBuffer();
+        colourBuffer.put(colour);
+        colourBuffer.position(0);
 
         //initialise the byte buffer for the draw list (2 = bytes per short)
         ByteBuffer dlb = ByteBuffer.allocateDirect(drawOrder.length * 2);
@@ -102,11 +122,11 @@ public class Quad2d implements Shape2d {
         //create openGL program executables
         GLES20.glLinkProgram(program);
 	}
-	
-	
+
+
 	@Override
 	public void draw(float[] mvpMatrix) {
-		
+
         //add the program to openGL environment
         GLES20.glUseProgram(program);
 
@@ -122,10 +142,15 @@ public class Quad2d implements Shape2d {
                                      vertexStride, vertexBuffer);
 
         //get a handle to the fragment shader's colour
-        colourHandle = GLES20.glGetUniformLocation(program, "vColour");
+        colourHandle = GLES20.glGetAttribLocation(program, "a_Color");
+        
+        //enable a handle to vertices
+        GLES20.glEnableVertexAttribArray(colourHandle);
 
-        //Set the colour for drawing
-        GLES20.glUniform4fv(colourHandle, 1, colour, 0);
+        //prepare the coord data
+        GLES20.glVertexAttribPointer(colourHandle, 4,
+                                     GLES20.GL_FLOAT, false,
+                                     4*4, colourBuffer);
 
         //get a handle to shape's transformation matrix
         mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
@@ -133,24 +158,23 @@ public class Quad2d implements Shape2d {
         //apply the projection and view transformation
         GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, mvpMatrix, 0);
 
-        //TODO: GLES20.GL_QUADS
-        //TODO: or other programs way of drawing
         //draw the quad
         GLES20.glDrawElements(GLES20.GL_TRIANGLES, drawOrder.length,
                               GLES20.GL_UNSIGNED_SHORT, drawListBuffer);
 
         //disable the vertex array
         GLES20.glDisableVertexAttribArray(positionHandle);
+        //
 	}
 
 
 	@Override
 	public void setVertex(int v, float x, float y, float z) {
-		
+
 		coords[v * 3] = x;
 		coords[v * 3 + 1] = y;
 		coords[v * 3 + 2] = z;
-		
+
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
 	}
@@ -158,9 +182,10 @@ public class Quad2d implements Shape2d {
 
 	@Override
 	public void setColour(float r, float g, float b, float a) {
-		
+
 		float clr[] = {r, g, b, a};
-		
+
 		colour = clr;
 	}
 }
+

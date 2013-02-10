@@ -25,7 +25,7 @@ public class LoadingBar implements Entity {
                 			  1.5f, -0.75f, 0.0f,
                               1.5f, -0.8f,  0.0f};
         float quadColour[] = {0.0f, 0.0f, 0.0f, 1.0f};
-        bar = new Quad2d(quadCoord, quadColour);
+        //bar = new Quad2d(quadCoord, quadColour);
 	}
 	
 	@Override
