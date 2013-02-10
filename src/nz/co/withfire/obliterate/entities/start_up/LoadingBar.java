@@ -5,6 +5,7 @@
 \*********************/
 package nz.co.withfire.obliterate.entities.start_up;
 
+import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
@@ -24,8 +25,11 @@ public class LoadingBar implements Entity {
                 			 -1.5f, -0.75f, 0.0f,
                 			  1.5f, -0.75f, 0.0f,
                               1.5f, -0.8f,  0.0f};
-        float quadColour[] = {0.0f, 0.0f, 0.0f, 1.0f};
-        //bar = new Quad2d(quadCoord, quadColour);
+        float quadColour[] = {	1.0f, 1.0f, 1.0f, 1.0f,
+        						1.0f, 1.0f, 1.0f, 1.0f,
+        						1.0f, 1.0f, 1.0f, 1.0f,
+        						1.0f, 1.0f, 1.0f, 1.0f};
+        bar = new Quad2d(quadCoord, quadColour);
 	}
 	
 	@Override
@@ -38,11 +42,13 @@ public class LoadingBar implements Entity {
 	public void update() {
 		
 		//stretch the bar across the screen
-		bar.setVertex(0, 1.5f-(3.0f*progress), -0.8f, 0.0f);
-		bar.setVertex(1, 1.5f-(3.0f*progress), -0.75f, 0.0f);
+		bar.setPosition(0, 1.5f-(2.98f * progress), -0.8f, 0.0f);
+		bar.setPosition(1, 1.5f-(2.98f*  progress), -0.75f, 0.0f);
 		
-		//fade the bar in
-		bar.setColour(1.0f-progress, 1.0f-progress, 1.0f-progress, 1.0f);
+		//fade the bar into black
+		float col = 1.0f - (1.0f * progress);
+		bar.setColour(0, col, col, col, col);
+		bar.setColour(1, col, col, col, col);
 	}
 
 	@Override

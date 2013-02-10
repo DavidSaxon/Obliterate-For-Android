@@ -169,8 +169,9 @@ public class Quad2d implements Shape2d {
 
 
 	@Override
-	public void setVertex(int v, float x, float y, float z) {
+	public void setPosition(int v, float x, float y, float z) {
 
+		//todo set constant
 		coords[v * 3] = x;
 		coords[v * 3 + 1] = y;
 		coords[v * 3 + 2] = z;
@@ -181,11 +182,22 @@ public class Quad2d implements Shape2d {
 
 
 	@Override
-	public void setColour(float r, float g, float b, float a) {
+	public void setColour(int v, float r, float g, float b, float a) {
+		
+		//TODO: set constant
+		colour[v * 4] = r;
+		colour[v * 4 + 1] = g;
+		colour[v * 4 + 2] = b;
+		colour[v * 4 + 2] = a;
 
-		float clr[] = {r, g, b, a};
-
-		colour = clr;
+        colourBuffer.put(colour);
+        colourBuffer.position(0);
+	}
+	
+	@Override
+    public void setColour(float r, float g, float b, float a) {
+		
+		//TODO: implement this
 	}
 }
 
