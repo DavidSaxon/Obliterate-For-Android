@@ -5,6 +5,8 @@
 \******************************************************/
 package nz.co.withfire.obliterate.entities.start_up;
 
+import java.util.ArrayList;
+
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
@@ -36,8 +38,9 @@ public class Logo implements Entity {
 	}
 
 	@Override
-	public void update() {
+	public ArrayList<Entity> update() {
 		
+		return null;
 	}
 
 	@Override

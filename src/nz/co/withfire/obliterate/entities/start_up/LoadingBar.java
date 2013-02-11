@@ -5,6 +5,8 @@
 \*********************/
 package nz.co.withfire.obliterate.entities.start_up;
 
+import java.util.ArrayList;
+
 import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
@@ -39,7 +41,7 @@ public class LoadingBar implements Entity {
 	}
 
 	@Override
-	public void update() {
+	public ArrayList<Entity> update() {
 		
 		//stretch the bar across the screen
 		bar.setPosition(0, 1.5f-(2.98f * progress), -0.8f, 0.0f);
@@ -49,6 +51,8 @@ public class LoadingBar implements Entity {
 		float col = 1.0f - (1.0f * progress);
 		bar.setColour(0, col, col, col, col);
 		bar.setColour(1, col, col, col, col);
+		
+		return null;
 	}
 
 	@Override

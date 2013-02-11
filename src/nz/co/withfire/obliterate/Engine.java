@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
+import nz.co.withfire.obliterate.entities.main.ObliterateImage;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
 import android.opengl.GLES20;
@@ -22,7 +23,8 @@ public class Engine implements GLSurfaceView.Renderer {
 	//ENUMERATORS
 	//Engine states
 	enum State {
-		START_UP
+		START_UP,
+		MAIN
 	};
 	
 	//VARIABLES
@@ -135,6 +137,10 @@ public class Engine implements GLSurfaceView.Renderer {
     		
     		initStartUp();
     		break;
+    	case MAIN:
+    		
+    		initMain();
+    		break;
     	}
     }
     
@@ -153,6 +159,17 @@ public class Engine implements GLSurfaceView.Renderer {
     	loadProgress = 0.0f;
     }
     
+    /**Initialises the main state*/
+    private void initMain() {
+    	
+    	//clear the entities
+    	clearEntities();
+    	
+    	//TODO: get from file system (need new state)
+    	//add an obliterate image to the 3rd layer
+    	entities.get(2).add(new ObliterateImage());
+    }
+    
     /**Clear all entities from the entities list*/
     private void clearEntities() {
     	
@@ -165,14 +182,19 @@ public class Engine implements GLSurfaceView.Renderer {
     /**Loads in the needed data for obliterate*/
     private void load() {
     	
-//    	//TODO: actually load images here
+    	//update the progress if the loading bar
+		loadingBar.updateProgress(loadProgress);
+    	
+    	//TODO: actually load images here
 		if (loadProgress < 1.0f) {
 			
 			loadProgress += 0.01f;
 		}
-		
-		//update the progress if the loading bar
-		loadingBar.updateProgress(loadProgress);
+		else {
+			
+			state = State.MAIN;
+			stateChanged = true;
+		}
     }
     
     /**Initialises openGL*/

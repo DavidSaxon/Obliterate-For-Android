@@ -6,6 +6,8 @@
 \*****************************************************************************/
 package nz.co.withfire.obliterate.entities;
 
+import java.util.ArrayList;
+
 public interface Entity {
 
 	//VARIABLES
@@ -18,8 +20,9 @@ public interface Entity {
 	@param other the other entity to check collision with*/
 	public void collisionCheck(Entity other);
 	
-	/**Updates the entity*/
-	public void update();
+	/**Updates the entity
+	@return an array list of entities created by this entity*/
+	public ArrayList<Entity> update();
 	
 	/**Draws the entity to the GL surface
 	@param mvpMatrix the model view projection matrix*/
