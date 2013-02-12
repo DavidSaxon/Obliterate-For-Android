@@ -7,6 +7,7 @@ package nz.co.withfire.obliterate.entities.start_up;
 
 import java.util.ArrayList;
 
+import android.opengl.Matrix;
 import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
@@ -18,6 +19,12 @@ public class LoadingBar implements Entity {
 	private float progress = 0.0f;
 	//the loading bar shape
 	Quad2d bar;
+	
+    //Matrix
+    //the model view projection matrix
+    private float[] mvpMatrix = new float[16];
+    //the translation matrix
+    private float[] tMatrix = new float[16];
 	
 	//CONSTRUCTOR
 	public LoadingBar() {
@@ -57,8 +64,14 @@ public class LoadingBar implements Entity {
 
 	@Override
 	public void draw(float[] mvpMatrix) {
+	    
+	    //shift into visible range
+	    Matrix.setIdentityM(tMatrix, 0);
+	    Matrix.translateM(tMatrix, 0, 0, 0, 1);
+	    
+	    Matrix.multiplyMM(this.mvpMatrix, 0, tMatrix, 0, mvpMatrix, 0);
 		
-		bar.draw(mvpMatrix);
+		bar.draw(this.mvpMatrix);
 	}
 	
 	/**Updates the progress of the loading bar

@@ -7,6 +7,8 @@ package nz.co.withfire.obliterate.entities.start_up;
 
 import java.util.ArrayList;
 
+import android.opengl.Matrix;
+
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
@@ -15,6 +17,12 @@ public class Logo implements Entity {
 	//VARIABLES
 	//the quad displaying the logo
 	private Quad2d logo;
+	
+   //Matrix
+    //the model view projection matrix
+    private float[] mvpMatrix = new float[16];
+    //the translation matrix
+    private float[] tMatrix = new float[16];
 	
 	//CONSTRUCTOR
 	public Logo() {
@@ -46,6 +54,12 @@ public class Logo implements Entity {
 	@Override
 	public void draw(float[] mvpMatrix) {
 		
-		logo.draw(mvpMatrix);
+        //shift into visible range
+        Matrix.setIdentityM(tMatrix, 0);
+        Matrix.translateM(tMatrix, 0, 0, 0, 1);
+        
+        Matrix.multiplyMM(this.mvpMatrix, 0, tMatrix, 0, mvpMatrix, 0);
+	    
+		logo.draw(this.mvpMatrix);
 	}
 }

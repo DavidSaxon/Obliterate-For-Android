@@ -35,6 +35,9 @@ public class Quad2d implements Shape2d {
     //the model, view, projection matrix handle
     private int mvpMatrixHandle;
     
+    //matrix
+    float[] modelMatrix = new float[16];
+    
     //the coords of the quad
     private float coords[];
     //the colour of the quad
@@ -42,7 +45,7 @@ public class Quad2d implements Shape2d {
     
     //shaders
     private final String vertexShaderCode =
-		
+
 		//the model view projection matrix
         "uniform mat4 uMVPMatrix;" +
         //vertex information that will be passed in
@@ -57,7 +60,7 @@ public class Quad2d implements Shape2d {
         	//pass the colour through to the fragment shader
         	"v_Color = a_Color\n;" +
         
-        "	gl_Position = vPosition * uMVPMatrix;" +
+        "	gl_Position = uMVPMatrix * vPosition;" +
         "}";
 
     private final String fragmentShaderCode =
@@ -147,7 +150,7 @@ public class Quad2d implements Shape2d {
         //enable a handle to vertices
         GLES20.glEnableVertexAttribArray(colourHandle);
 
-        //prepare the coord data
+        //prepare the colour data
         GLES20.glVertexAttribPointer(colourHandle, 4,
                                      GLES20.GL_FLOAT, false,
                                      4*4, colourBuffer);
@@ -183,7 +186,7 @@ public class Quad2d implements Shape2d {
 
 	@Override
 	public void setColour(int v, float r, float g, float b, float a) {
-		
+
 		//TODO: set constant
 		colour[v * 4] = r;
 		colour[v * 4 + 1] = g;
@@ -193,11 +196,10 @@ public class Quad2d implements Shape2d {
         colourBuffer.put(colour);
         colourBuffer.position(0);
 	}
-	
+
 	@Override
     public void setColour(float r, float g, float b, float a) {
-		
+
 		//TODO: implement this
 	}
 }
-

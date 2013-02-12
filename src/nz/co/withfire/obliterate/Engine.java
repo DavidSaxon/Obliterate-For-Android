@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
+import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.ObliterateImage;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
@@ -43,12 +44,13 @@ public class Engine implements GLSurfaceView.Renderer {
 	//progress out of 1.0 loading
 	private float loadProgress = 0.0f;
 	
+	//Matrix
+    //the model view projection matrix
+    private final float[] mvpMatrix = new float[16];
 	//the projection matrix
 	private final float[] projectionMatrix = new float[16];
 	//the view matrix
 	private final float[] viewMatrix = new float[16];
-	//the model view projection matrix
-	private final float[] mvpMatrix = new float[16];
 	
 	//PUBLIC METHODS
     @Override
@@ -67,7 +69,7 @@ public class Engine implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
     	
-    	//TODO: fix!
+        //TODO: fix!
         GLES20.glViewport(0, 0, width, height);
 
         float ratio = (float) width / height;
@@ -112,7 +114,8 @@ public class Engine implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
 
         //set the camera position
-        Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
         //calculate the projection and view transformations
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         
