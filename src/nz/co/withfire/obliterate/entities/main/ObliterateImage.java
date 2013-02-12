@@ -1,6 +1,7 @@
 package nz.co.withfire.obliterate.entities.main;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import android.opengl.Matrix;
 import android.util.Log;
@@ -20,6 +21,8 @@ public class ObliterateImage extends Entity {
 	//TESTING
 	//count till obliterate
 	private int countDown = 100;
+	//random number generator
+	private Random rand = new Random();
 	
 	//Matrix
     //the model view projection matrix
@@ -67,14 +70,14 @@ public class ObliterateImage extends Entity {
 	    //count down to obliterate
 		if (countDown == 0) {
 		    
+		    //obliterate the image
 		    remove = true;
+		    return obliterate();
 		}
-		else {
 		    
-		    --countDown;
-		}
-		
-		return null;
+	    --countDown;
+	
+	    return null;
 	}
 
 	@Override
@@ -87,5 +90,30 @@ public class ObliterateImage extends Entity {
         Matrix.multiplyMM(this.mvpMatrix, 0, tMatrix, 0, mvpMatrix, 0);
 		
 		image.draw(this.mvpMatrix);
+	}
+	
+	/**Obliterates the image
+	@return the list of entities this image has obliterated into*/
+	private ArrayList<Entity> obliterate() {
+	    
+	    //list of new entities
+	    ArrayList<Entity> remains = new ArrayList<Entity>();
+	    
+       //calculate the top left corner of the image
+        float x = -(width/2.0f);
+        float y = -(height/2.0f);
+	    
+	    for (float i = 0.0f; i < height; i += 0.1f) {
+	        for (float j = 0.0f; j < width; j += 0.1f) {
+	            
+	            //TODO: real physics
+	            float xSpeed = (rand.nextInt(200)-100)*0.0001f;
+	            float ySpeed = (rand.nextInt(200)-100)*0.0001f;
+	            
+	            remains.add(new Debris(x+j, y+i, 0.1f, xSpeed, ySpeed));
+	        }
+	    }
+	    
+	    return remains;
 	}
 }

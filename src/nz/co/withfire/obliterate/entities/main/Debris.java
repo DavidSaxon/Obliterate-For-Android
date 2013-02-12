@@ -83,7 +83,8 @@ public class Debris extends Entity {
 		
         //shift into visible range and move
         Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, xPos, yPos, 1);
+        //TODO:FIX!
+        Matrix.translateM(tMatrix, 0, xPos/1.8f, yPos, 1);
         
         Matrix.multiplyMM(this.mvpMatrix, 0, tMatrix, 0, mvpMatrix, 0);
 		

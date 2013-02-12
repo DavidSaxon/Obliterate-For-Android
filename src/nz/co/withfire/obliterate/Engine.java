@@ -105,8 +105,12 @@ public class Engine implements GLSurfaceView.Renderer {
     	//iterate over the entities and update them
         for (int i = 0; i < numLayers; ++i) {
             
+            //TODO: OPTIMISE REMOVE LISTS?
             //list of entities to be removed
             ArrayList<Entity> removeList = new ArrayList<Entity>();
+            
+            //list of entities to be added
+            ArrayList<Entity> addList = new ArrayList<Entity>();
             
 	        for (Entity e: entities.get(i)) {
 	        	
@@ -118,7 +122,12 @@ public class Engine implements GLSurfaceView.Renderer {
 	            //else update the entity
 	            else {
 	                
-	                e.update();
+	                ArrayList<Entity> entityAdd = e.update();
+	                
+	                if (entityAdd != null) {
+	                    
+	                    addList.addAll(entityAdd);
+	                }
 	            }
 	        }
 	        
@@ -127,6 +136,9 @@ public class Engine implements GLSurfaceView.Renderer {
 	            
 	            entities.get(i).remove(r);
 	        }
+	        
+	        //add new entities
+	        entities.get(i).addAll(addList);
         }
     	
         
