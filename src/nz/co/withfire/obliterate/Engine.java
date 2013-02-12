@@ -18,6 +18,7 @@ import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
+import android.util.Log;
 
 public class Engine implements GLSurfaceView.Renderer {
 
@@ -103,12 +104,32 @@ public class Engine implements GLSurfaceView.Renderer {
     	//UPDATE
     	//iterate over the entities and update them
         for (int i = 0; i < numLayers; ++i) {
+            
+            //list of entities to be removed
+            ArrayList<Entity> removeList = new ArrayList<Entity>();
+            
 	        for (Entity e: entities.get(i)) {
 	        	
-	        	e.update();
+	            //check if the entity should be removed
+	            if (e.shouldRemove()) {
+	                
+	                removeList.add(e);
+	            }
+	            //else update the entity
+	            else {
+	                
+	                e.update();
+	            }
+	        }
+	        
+	        //remove the entities
+	        for (Entity r : removeList) {
+	            
+	            entities.get(i).remove(r);
 	        }
         }
     	
+        
     	//DRAW
         //redraw background colour
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);

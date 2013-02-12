@@ -6,7 +6,7 @@ import android.opengl.Matrix;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
-public class Debris implements Entity {
+public class Debris extends Entity {
 
 	//VARIABLES
 	//the x and y position of the debris

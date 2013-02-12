@@ -12,7 +12,7 @@ import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
-public class LoadingBar implements Entity {
+public class LoadingBar extends Entity {
 
 	//VARIABLES
 	//the progress of the loading bar

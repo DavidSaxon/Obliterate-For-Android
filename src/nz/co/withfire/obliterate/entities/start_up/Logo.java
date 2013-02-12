@@ -12,7 +12,7 @@ import android.opengl.Matrix;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
-public class Logo implements Entity {
+public class Logo extends Entity {
 	
 	//VARIABLES
 	//the quad displaying the logo

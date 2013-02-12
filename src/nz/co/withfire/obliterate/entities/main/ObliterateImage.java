@@ -3,15 +3,23 @@ package nz.co.withfire.obliterate.entities.main;
 import java.util.ArrayList;
 
 import android.opengl.Matrix;
+import android.util.Log;
 
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
-public class ObliterateImage implements Entity {
+public class ObliterateImage extends Entity {
 	
 	//VARIABLES
+    //the width and height of the image
+    private float width;
+    private float height;
 	//the image to obliterate
 	private Quad2d image;
+	
+	//TESTING
+	//count till obliterate
+	private int countDown = 100;
 	
 	//Matrix
     //the model view projection matrix
@@ -22,12 +30,20 @@ public class ObliterateImage implements Entity {
 	//CONSTRUCTOR
 	public ObliterateImage() {
 		
+	    //TODO: get the width and height from the image
+	    width = 1.0f;
+	    height = 1.0f;
+	    
+	    //calculate half the width and the height
+	    float hw = width/2.0f;
+	    float hh = height/2.0f;
+	    
 		//TODO: texture image
 		float[] imageCoord = {
-			-0.5f,  0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f
+			-hw,  hh, 0.0f,
+			-hw, -hh, 0.0f,
+			 hw, -hh, 0.0f,
+			 hh,  hh, 0.0f
 		};
 		float[] imageColour = {
 			0.6f, 0.05f, 0.15f, 1.0f,
@@ -48,7 +64,15 @@ public class ObliterateImage implements Entity {
 	@Override
 	public ArrayList<Entity> update() {
 		
-		//TODO:
+	    //count down to obliterate
+		if (countDown == 0) {
+		    
+		    remove = true;
+		}
+		else {
+		    
+		    --countDown;
+		}
 		
 		return null;
 	}
