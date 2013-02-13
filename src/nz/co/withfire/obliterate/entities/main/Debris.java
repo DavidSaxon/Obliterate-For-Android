@@ -3,6 +3,7 @@ package nz.co.withfire.obliterate.entities.main;
 import java.util.ArrayList;
 
 import android.opengl.Matrix;
+import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
@@ -33,6 +34,7 @@ public class Debris extends Entity {
 	@param stride the stride of the debris
 	@param xSpeed the x speed of the debris
 	@param ySpeed the y speed of the debris*/
+    //TODO: NOT CALLED STRIDE
 	public Debris(float xPos, float yPos, float stride,
         float xSpeed, float ySpeed) {
 		

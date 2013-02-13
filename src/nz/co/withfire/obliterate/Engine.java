@@ -14,6 +14,8 @@ import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.ObliterateImage;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
+import nz.co.withfire.obliterate.utilities.CoordUtil;
+import nz.co.withfire.obliterate.utilities.Vector2d;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -35,6 +37,14 @@ public class Engine implements GLSurfaceView.Renderer {
 	private State state = State.START_UP;
 	//is true when the state has been changed
 	private boolean stateChanged = true;
+	
+	//the dimensions of the screen
+	private Vector2d screenDim;
+	
+	//input
+	//is true if there has been a touch event
+	private boolean touchEvent = false;
+	private Vector2d touchPos;
 	
 	//the number of layers
 	private final int numLayers = 5;
@@ -73,11 +83,14 @@ public class Engine implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceChanged(GL10 unused, int width, int height) {
     	
-        //TODO: fix!
+        //store the screen dimensions
+        screenDim = new Vector2d(width, height);
+        
+        //set the view port
         GLES20.glViewport(0, 0, width, height);
 
+        //calculate the projection matrix
         float ratio = (float) width / height;
-
         Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
     }
     
@@ -102,6 +115,12 @@ public class Engine implements GLSurfaceView.Renderer {
     		
     		load();
     		break;
+    	}
+    	
+    	//check for touch event
+    	if (touchEvent) {
+    	    
+    	    processTouchEvent();
     	}
     	
     	//UPDATE
@@ -165,11 +184,46 @@ public class Engine implements GLSurfaceView.Renderer {
     @param e the motion event*/
     public void inputTouch(MotionEvent e) {
         
-        float touchX = e.getX();
-        float touchY = e.getY();
+        if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            
+            //get the position and convert to openGL point
+            touchPos = CoordUtil.screenPosToOpenGLPos(
+                    new Vector2d(e.getX(), e.getY()), screenDim,
+                    viewMatrix, projectionMatrix);
+            
+            switch (state) {
+            
+                case START_UP: {
+                    
+                    //do nothing
+                    break;
+                }
+                case MAIN: {
+                    
+                    //set the image to obliterate
+                    //obliterateImage.setToObliterate();
+                    
+                    //TODO:create a force
+                    
+                    //TESTING create debris where the user touches
+                    //entities.get(3).add(
+                        //new Debris(0.0f, 0.0f,
+                        //0.1f, 0.01f, 0.01f));
+                    
+                    touchEvent = true;
+                   
+                    break;
+                }
+            }
+        }
+    }
+    
+    //PRIVATE METHODS
+    /**Processes any touch events*/
+    private void processTouchEvent() {
         
-        switch (state) {
-        
+        switch(state) {
+            
             case START_UP: {
                 
                 //do nothing
@@ -177,17 +231,41 @@ public class Engine implements GLSurfaceView.Renderer {
             }
             case MAIN: {
                 
-                //set the image to obliterate
+                //TODO: add a force point
+                
+                //tell the image to obliterate
                 obliterateImage.setToObliterate();
                 
-                //TODO:create a force
+                //TESTING add debris add point
+                entities.get(0).add(
+                    new Debris(touchPos.getX(), touchPos.getY(),
+                    0.1f, 0.0f, 0.0f));
                 
                 break;
             }
         }
+        
+        touchEvent = false;
     }
     
-    //PRIVATE METHODS
+    /**Loads in the needed data for obliterate*/
+    private void load() {
+        
+        //update the progress if the loading bar
+        loadingBar.updateProgress(loadProgress);
+        
+        //TODO: actually load images here
+        if (loadProgress < 1.0f) {
+            
+            loadProgress += 0.01f;
+        }
+        else {
+            
+            state = State.MAIN;
+            stateChanged = true;
+        }
+    }    
+    
     /**Initialises the new state*/
     private void initState() {
     	
@@ -243,24 +321,6 @@ public class Engine implements GLSurfaceView.Renderer {
         	
         	entities.set(i, new ArrayList<Entity>());
         }
-    }
-    
-    /**Loads in the needed data for obliterate*/
-    private void load() {
-    	
-    	//update the progress if the loading bar
-		loadingBar.updateProgress(loadProgress);
-    	
-    	//TODO: actually load images here
-		if (loadProgress < 1.0f) {
-			
-			loadProgress += 0.01f;
-		}
-		else {
-			
-			state = State.MAIN;
-			stateChanged = true;
-		}
     }
     
     /**Initialises openGL*/
