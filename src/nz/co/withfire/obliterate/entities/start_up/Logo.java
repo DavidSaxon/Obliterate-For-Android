@@ -52,14 +52,16 @@ public class Logo extends Entity {
 	}
 
 	@Override
-	public void draw(float[] mvpMatrix) {
+	public void draw(float[] viewMatrix, float[] projectionMatrix) {
 		
-        //shift into visible range
+       //shift into visible range
         Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, 0, 0, 1);
+        Matrix.translateM(tMatrix, 0, 0, 0, -0.01f);
         
-        Matrix.multiplyMM(this.mvpMatrix, 0, tMatrix, 0, mvpMatrix, 0);
+        //multiply the matrix
+        Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
+        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
 	    
-		logo.draw(this.mvpMatrix);
+		logo.draw(mvpMatrix);
 	}
 }

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -48,9 +49,14 @@ public class StartUpActivity extends Activity {
 	}
 }
 
+//TODO: turn this into a class
 //small class that extends GLSurfaceView
 class extGLSurfaceView extends GLSurfaceView {
 	
+    //VARIABLES
+    //the engine
+    private Engine engine;
+    
 	//CONSTRUCTOR
 	public extGLSurfaceView(Context context) {
 		
@@ -60,9 +66,22 @@ class extGLSurfaceView extends GLSurfaceView {
 		//create an OpenGL ES 2.0 context
 		setEGLContextClientVersion(2);
 		
+		//create the engine
+		engine = new Engine();
+		
 		//set the renderer for drawing on this surface
-		setRenderer(new Engine());
+		setRenderer(engine);
 		
 		setRenderMode(RENDERMODE_CONTINUOUSLY);
+	}
+	
+	//METHODS
+	@Override
+	public boolean onTouchEvent(MotionEvent e) {
+	    
+	    //pass the event on to the engine
+	    engine.inputTouch(e);
+	    
+	    return true;
 	}
 }

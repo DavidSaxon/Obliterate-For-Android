@@ -36,8 +36,9 @@ public abstract class Entity {
 	}
 	
 	/**Draws the entity to the GL surface
-	@param mvpMatrix the model view projection matrix*/
-	public void draw(float[] mvpMatrix) {
+	@param viewMatrix the view matrix
+	@param projectionMatrix the projection matrix*/
+	public void draw(float[] viewMatrix, float[] projectionMatrix) {
 	    
 	    //do nothing
 	}

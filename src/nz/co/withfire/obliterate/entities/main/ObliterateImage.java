@@ -18,10 +18,10 @@ public class ObliterateImage extends Entity {
 	//the image to obliterate
 	private Quad2d image;
 	
+	//is true if the image should be obliterated
+	private boolean obliterate = false;
+	
 	//TESTING
-	//count till obliterate
-	private int countDown = 100;
-	//random number generator
 	private Random rand = new Random();
 	
 	//Matrix
@@ -58,6 +58,7 @@ public class ObliterateImage extends Entity {
 		image = new Quad2d(imageCoord, imageColour);
 	}
 
+    //PUBLIC METHODS
 	@Override
 	public void collisionCheck(Entity other) {
 		
@@ -67,31 +68,37 @@ public class ObliterateImage extends Entity {
 	@Override
 	public ArrayList<Entity> update() {
 		
-	    //count down to obliterate
-		if (countDown == 0) {
+	    //obliterate the image
+		if (obliterate) {
 		    
-		    //obliterate the image
 		    remove = true;
 		    return obliterate();
 		}
-		    
-	    --countDown;
 	
 	    return null;
 	}
 
 	@Override
-	public void draw(float[] mvpMatrix) {
+	public void draw(float[] viewMatrix, float[] projectionMatrix) {
 	    
        //shift into visible range
         Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, 0, 0, 1);
+        Matrix.translateM(tMatrix, 0, 0, 0, -0.01f);
         
-        Matrix.multiplyMM(this.mvpMatrix, 0, tMatrix, 0, mvpMatrix, 0);
+        //multiply the matrix
+        Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
+        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
 		
-		image.draw(this.mvpMatrix);
+		image.draw(mvpMatrix);
 	}
 	
+	/**Sets the image to be obliterate*/
+	public void setToObliterate() {
+	    
+	    obliterate = true;
+	}
+	
+	//PRIVATE METHODS
 	/**Obliterates the image
 	@return the list of entities this image has obliterated into*/
 	private ArrayList<Entity> obliterate() {
@@ -103,6 +110,7 @@ public class ObliterateImage extends Entity {
         float x = -(width/2.0f);
         float y = -(height/2.0f);
 	    
+        //TODO: find a proper width for the debris
 	    for (float i = 0.0f; i < height; i += 0.1f) {
 	        for (float j = 0.0f; j < width; j += 0.1f) {
 	            
@@ -110,7 +118,8 @@ public class ObliterateImage extends Entity {
 	            float xSpeed = (rand.nextInt(200)-100)*0.0001f;
 	            float ySpeed = (rand.nextInt(200)-100)*0.0001f;
 	            
-	            remains.add(new Debris(x+j, y+i, 0.1f, xSpeed, ySpeed));
+	            //TODO: add half the calculated width
+	            remains.add(new Debris(x+j+0.05f, y+i+0.05f, 0.1f, xSpeed, ySpeed));
 	        }
 	    }
 	    

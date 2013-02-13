@@ -79,15 +79,16 @@ public class Debris extends Entity {
 	}
 
 	@Override
-	public void draw(float[] mvpMatrix) {
+	public void draw(float[] viewMatrix, float[] projectionMatrix) {
 		
         //shift into visible range and move
         Matrix.setIdentityM(tMatrix, 0);
-        //TODO:FIX!
-        Matrix.translateM(tMatrix, 0, xPos/1.8f, yPos, 1);
+        Matrix.translateM(tMatrix, 0, xPos, yPos, -0.01f);
         
-        Matrix.multiplyMM(this.mvpMatrix, 0, tMatrix, 0, mvpMatrix, 0);
+        //Multiply matrix
+        Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
+        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
 		
-	    image.draw(this.mvpMatrix);
+	    image.draw(mvpMatrix);
 	}
 }

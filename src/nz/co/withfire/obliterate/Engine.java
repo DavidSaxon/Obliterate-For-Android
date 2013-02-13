@@ -19,6 +19,7 @@ import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 
 public class Engine implements GLSurfaceView.Renderer {
 
@@ -39,15 +40,17 @@ public class Engine implements GLSurfaceView.Renderer {
 	private final int numLayers = 5;
 	//an list of layers which contains lists of entities
 	private ArrayList<ArrayList<Entity>> entities = new ArrayList<ArrayList<Entity>>();
+	
+	//Entities
 	//keep a reference to the loading bar
 	private LoadingBar loadingBar;
+	//keep a reference to the obliterate image
+	private ObliterateImage obliterateImage;
 	
 	//progress out of 1.0 loading
 	private float loadProgress = 0.0f;
 	
 	//Matrix
-    //the model view projection matrix
-    private final float[] mvpMatrix = new float[16];
 	//the projection matrix
 	private final float[] projectionMatrix = new float[16];
 	//the view matrix
@@ -80,7 +83,7 @@ public class Engine implements GLSurfaceView.Renderer {
     
     @Override
     public void onDrawFrame(GL10 unused) {
-    	
+        
     	//TODO: fps
     	
     	//check if the state has changed
@@ -140,7 +143,6 @@ public class Engine implements GLSurfaceView.Renderer {
 	        //add new entities
 	        entities.get(i).addAll(addList);
         }
-    	
         
     	//DRAW
         //redraw background colour
@@ -149,15 +151,39 @@ public class Engine implements GLSurfaceView.Renderer {
         //set the camera position
         Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-        //calculate the projection and view transformations
-        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         
         //iterate over the entities and draw them
         for (int i = numLayers-1; i >= 0; --i) {
 	        for (Entity e: entities.get(i)) {
 	        	
-	        	e.draw(mvpMatrix);
+	        	e.draw(viewMatrix, projectionMatrix);
 	        }
+        }
+    }
+    
+    /**Inputs a touch event
+    @param e the motion event*/
+    public void inputTouch(MotionEvent e) {
+        
+        float touchX = e.getX();
+        float touchY = e.getY();
+        
+        switch (state) {
+        
+            case START_UP: {
+                
+                //do nothing
+                break;
+            }
+            case MAIN: {
+                
+                //set the image to obliterate
+                obliterateImage.setToObliterate();
+                
+                //TODO:create a force
+                
+                break;
+            }
         }
     }
     
@@ -169,14 +195,16 @@ public class Engine implements GLSurfaceView.Renderer {
     	
     	switch (state) {
     	
-    	case START_UP:
-    		
-    		initStartUp();
-    		break;
-    	case MAIN:
-    		
-    		initMain();
-    		break;
+        	case START_UP: {
+        		
+        		initStartUp();
+        		break;
+        	}
+        	case MAIN: {
+        		
+        		initMain();
+        		break;
+        	}
     	}
     }
     
@@ -202,8 +230,10 @@ public class Engine implements GLSurfaceView.Renderer {
     	clearEntities();
     	
     	//TODO: get from file system (need new state)
+    	
     	//add an obliterate image to the 3rd layer
-    	entities.get(2).add(new ObliterateImage());
+    	obliterateImage = new ObliterateImage();
+    	entities.get(2).add(obliterateImage);
     }
     
     /**Clear all entities from the entities list*/
