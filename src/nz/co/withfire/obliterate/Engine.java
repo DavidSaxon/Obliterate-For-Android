@@ -106,16 +106,14 @@ public class Engine implements GLSurfaceView.Renderer {
             initState();
         }
         
-        //COLLISON CHECK
-        //TODO: collision loop (quad tree)
-        
         //apply state specific updates
         switch (state) {
         
-        case START_UP:
+            case START_UP: {
             
-            load();
-            break;
+                load();
+                break;
+            }
         }
         
         //check for touch event
@@ -123,6 +121,9 @@ public class Engine implements GLSurfaceView.Renderer {
             
             processTouchEvent();
         }
+        
+        //COLLISON CHECK
+        //TODO: collision loop (quad tree)
         
         //UPDATE
         //iterate over the entities and update them
@@ -201,18 +202,7 @@ public class Engine implements GLSurfaceView.Renderer {
                 }
                 case MAIN: {
                     
-                    //set the image to obliterate
-                    //obliterateImage.setToObliterate();
-                    
-                    //TODO:create a force
-                    
-                    //TESTING create debris where the user touches
-                    //entities.get(3).add(
-                        //new Debris(0.0f, 0.0f,
-                        //0.1f, 0.01f, 0.01f));
-                    
                     touchEvent = true;
-                   
                     break;
                 }
             }
@@ -304,7 +294,7 @@ public class Engine implements GLSurfaceView.Renderer {
         //clear the entities
         clearEntities();
         
-        //TODO: get from file system (need new state)
+        //TODO: get image from file system (need new state)
         
         //add an obliterate image to the 3rd layer
         obliterateImage = new ObliterateImage();
