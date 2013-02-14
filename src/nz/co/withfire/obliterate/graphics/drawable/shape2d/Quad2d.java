@@ -1,6 +1,6 @@
 /**********************\
 | A 2 dimensional quad |
-| 					   |
+|                      |
 | @author David Saxon  |
 \**********************/
 package nz.co.withfire.obliterate.graphics.drawable.shape2d;
@@ -14,13 +14,13 @@ import android.opengl.GLES20;
 
 public class Quad2d implements Shape2d {
 
-	//VARIABLES
-	//4 bytes per vertex
+    //VARIABLES
+    //4 bytes per vertex
     private final int vertexStride = COORDS_PER_VERTEX * 4;
     //the order to draw the vertices
     private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
     
-	//the vertex buffer
+    //the vertex buffer
     private final FloatBuffer vertexBuffer;
     //the colour buffer
     private final FloatBuffer colourBuffer;
@@ -46,7 +46,7 @@ public class Quad2d implements Shape2d {
     //shaders
     private final String vertexShaderCode =
 
-		//the model view projection matrix
+        //the model view projection matrix
         "uniform mat4 uMVPMatrix;" +
         //vertex information that will be passed in
         "attribute vec4 vPosition;" +
@@ -54,34 +54,34 @@ public class Quad2d implements Shape2d {
         "attribute vec4 a_Color;\n" +
         //this will be passed to the fragment shader
         "varying vec4 v_Color;\n" +
-        		
+                
         "void main() {" +
         
-        	//pass the colour through to the fragment shader
-        	"v_Color = a_Color\n;" +
+            //pass the colour through to the fragment shader
+            "v_Color = a_Color\n;" +
         
-        "	gl_Position = uMVPMatrix * vPosition;" +
+        "   gl_Position = uMVPMatrix * vPosition;" +
         "}";
 
     private final String fragmentShaderCode =
-    		
+            
         "precision mediump float;" +
         "varying vec4 v_Color;" +
-        		
+                
         "void main() {" +
         
-        "	gl_FragColor = v_Color;" +
+        "   gl_FragColor = v_Color;" +
         "}";
 
-	//CONSTRUCTOR
-	/**Constructs a new 2d quad
-	@param crd the co-ordinates of the quad
-	@param clr the colour of the quad*/
-	public Quad2d(float crd[], float clr[]) {
+    //CONSTRUCTOR
+    /**Constructs a new 2d quad
+    @param crd the co-ordinates of the quad
+    @param clr the colour of the quad*/
+    public Quad2d(float crd[], float clr[]) {
 
-		//initialise variables
-		coords = crd;
-		colour = clr;
+        //initialise variables
+        coords = crd;
+        colour = clr;
 
         //initialise the bye buffer for the vertex buffer (4 = bytes per float)
         ByteBuffer bb = ByteBuffer.allocateDirect(coords.length * 4);
@@ -124,11 +124,11 @@ public class Quad2d implements Shape2d {
         GLES20.glAttachShader(program, fragmentShader);
         //create openGL program executables
         GLES20.glLinkProgram(program);
-	}
+    }
 
 
-	@Override
-	public void draw(float[] mvpMatrix) {
+    @Override
+    public void draw(float[] mvpMatrix) {
 
         //add the program to openGL environment
         GLES20.glUseProgram(program);
@@ -168,38 +168,38 @@ public class Quad2d implements Shape2d {
         //disable the vertex array
         GLES20.glDisableVertexAttribArray(positionHandle);
         //
-	}
+    }
 
 
-	@Override
-	public void setPosition(int v, float x, float y, float z) {
+    @Override
+    public void setPosition(int v, float x, float y, float z) {
 
-		//todo set constant
-		coords[v * 3] = x;
-		coords[v * 3 + 1] = y;
-		coords[v * 3 + 2] = z;
+        //todo set constant
+        coords[v * 3] = x;
+        coords[v * 3 + 1] = y;
+        coords[v * 3 + 2] = z;
 
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
-	}
+    }
 
 
-	@Override
-	public void setColour(int v, float r, float g, float b, float a) {
+    @Override
+    public void setColour(int v, float r, float g, float b, float a) {
 
-		//TODO: set constant
-		colour[v * 4] = r;
-		colour[v * 4 + 1] = g;
-		colour[v * 4 + 2] = b;
-		colour[v * 4 + 2] = a;
+        //TODO: set constant
+        colour[v * 4] = r;
+        colour[v * 4 + 1] = g;
+        colour[v * 4 + 2] = b;
+        colour[v * 4 + 2] = a;
 
         colourBuffer.put(colour);
         colourBuffer.position(0);
-	}
+    }
 
-	@Override
+    @Override
     public void setColour(float r, float g, float b, float a) {
 
-		//TODO: implement this
-	}
+        //TODO: implement this
+    }
 }

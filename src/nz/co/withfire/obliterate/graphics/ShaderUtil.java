@@ -1,6 +1,6 @@
 /*********************\
 | Methods for shaders |
-|					  |
+|                     |
 | @author David Saxon |
 \*********************/
 
@@ -10,10 +10,10 @@ import android.opengl.GLES20;
 
 public class ShaderUtil {
 
-	/**Loads shader code
-	@param type the type of shader
-	@param shaderCode the shader code to load
-	@return a int mapping to the loaded shader code*/
+    /**Loads shader code
+    @param type the type of shader
+    @param shaderCode the shader code to load
+    @return a int mapping to the loaded shader code*/
     public static int loadShader(int type, String shaderCode){
 
         // create a vertex shader type (GLES20.GL_VERTEX_SHADER)
