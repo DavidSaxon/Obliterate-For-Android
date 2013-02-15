@@ -4,22 +4,25 @@ import java.util.ArrayList;
 
 import android.opengl.Matrix;
 import android.util.Log;
+import nz.co.withfire.obliterate.bounding_box.BoundingBox;
+import nz.co.withfire.obliterate.bounding_box.BoundingRect;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.utilities.*;
 
 public class Debris extends Entity {
 
     //VARIABLES
-    //the x and y position of the debris
-    private float xPos;
-    private float yPos;
-    //the width and height of the debris
-    private float stride;
-    //the x and y move speeds of the debris
-    private float xSpeed;
-    private float ySpeed;
+    //the position of the debris
+    private Vector2d pos;
+    //the side length of the vector
+    private float sideLength;
+    //the speed of the debriss
+    private Vector2d speed;
     //the image of the debris
     private Quad2d image;
+    //the bounding rectangle of the debris
+    private BoundingRect boundingBox;
     
     //Matrix
     //the model view projection matrix
@@ -29,23 +32,19 @@ public class Debris extends Entity {
     
     //CONSTRUCTOR
     /**Creates a new debris object
-    @param xPos the x position of the debris
-    @param yPos the y position of the debris
-    @param stride the stride of the debris
-    @param xSpeed the x speed of the debris
-    @param ySpeed the y speed of the debris*/
+    @param pos the position of the debris
+	@param sideLength the the length of a side of the debris
+	@param speed the x and y speed of the the debris*/
     //TODO: NOT CALLED STRIDE
-    public Debris(float xPos, float yPos, float stride,
-        float xSpeed, float ySpeed) {
+    public Debris(Vector2d pos, float sideLength, Vector2d speed) {
         
         //initialise the variables
-        this.xPos = xPos;
-        this.yPos = yPos;
-        this.stride = stride;
-        this.xSpeed = xSpeed;
-        this.ySpeed = ySpeed;
+        this.pos = new Vector2d(pos);
+		this.sideLength = sideLength;
+		this.speed = new Vector2d(speed);
         
-        float d = stride/2.0f;
+		//Create the debris image
+        float d = sideLength/2.0f;
         //TODO: texture with part of the texture
         float[] coord = {
             -d,  d, 0.0f,
@@ -61,6 +60,9 @@ public class Debris extends Entity {
         };
         
         image = new Quad2d(coord, colour);
+        
+        //create the bounding box
+        boundingBox = new BoundingRect(pos, new Vector2d(sideLength, sideLength));
     }
     
     //METHODS
@@ -73,9 +75,10 @@ public class Debris extends Entity {
     @Override
     public ArrayList<Entity> update() {
 
-        //move the debris
-        xPos += xSpeed;
-        yPos += ySpeed;
+        //TODO: vector addition!
+		//move the debris
+        pos.setX(pos.getX() + speed.getX());
+        pos.setY(pos.getY() + speed.getY());
         
         return null;
     }
@@ -85,12 +88,18 @@ public class Debris extends Entity {
         
         //shift into visible range and move
         Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, xPos, yPos, -0.01f);
+        Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);
         
         //Multiply matrix
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);
+    }
+    
+    @Override
+    public BoundingBox getBoundingBox() {
+        
+        return null;
     }
 }

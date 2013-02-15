@@ -11,6 +11,7 @@ import android.opengl.Matrix;
 import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.utilities.*;
 
 public class LoadingBar extends Entity {
 
@@ -51,13 +52,13 @@ public class LoadingBar extends Entity {
     public ArrayList<Entity> update() {
         
         //stretch the bar across the screen
-        bar.setPosition(0, 1.5f-(2.98f * progress), -0.8f, 0.0f);
-        bar.setPosition(1, 1.5f-(2.98f*  progress), -0.75f, 0.0f);
+        bar.setPosition(0, new Vector3d(1.5f - (2.98f * progress), -0.8f,  0.0f));
+        bar.setPosition(1, new Vector3d(1.5f - (2.98f * progress), -0.75f, 0.0f));
         
         //fade the bar into black
         float col = 1.0f - (1.0f * progress);
-        bar.setColour(0, col, col, col, col);
-        bar.setColour(1, col, col, col, col);
+        bar.setColour(0, new Vector4d(col, col, col, col));
+        bar.setColour(1, new Vector4d(col, col, col, col));
         
         return null;
     }

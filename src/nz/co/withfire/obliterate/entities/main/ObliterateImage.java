@@ -8,13 +8,15 @@ import android.util.Log;
 
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.utilities.*;
 
 public class ObliterateImage extends Entity {
     
     //VARIABLES
-    //the width and height of the image
-    private float width;
-    private float height;
+    //the position of the image
+    private Vector2d pos;
+    //the dimensions of the image
+    private Vector2d dimensions;
     //the image to obliterate
     private Quad2d image;
     
@@ -34,12 +36,11 @@ public class ObliterateImage extends Entity {
     public ObliterateImage() {
         
         //TODO: get the width and height from the image
-        width = 1.0f;
-        height = 1.0f;
+        dimensions = new Vector2d(1.0f, 1.0f);
         
         //calculate half the width and the height
-        float hw = width/2.0f;
-        float hh = height/2.0f;
+        float hw = dimensions.getX()/2.0f;
+        float hh = dimensions.getY()/2.0f;
         
         //TODO: texture image
         float[] imageCoord = {
@@ -107,19 +108,21 @@ public class ObliterateImage extends Entity {
         ArrayList<Entity> remains = new ArrayList<Entity>();
         
        //calculate the top left corner of the image
-        float x = -(width/2.0f);
-        float y = -(height/2.0f);
+        float x = -(dimensions.getX()/2.0f);
+        float y = -(dimensions.getY()/2.0f);
         
         //TODO: find a proper width for the debris
-        for (float i = 0.0f; i < height; i += 0.1f) {
-            for (float j = 0.0f; j < width; j += 0.1f) {
+        for (float i = 0.0f; i < dimensions.getX(); i += 0.1f) {
+            for (float j = 0.0f; j < dimensions.getY(); j += 0.1f) {
                 
                 //TODO: real physics
-                float xSpeed = (rand.nextInt(200)-100)*0.0001f;
-                float ySpeed = (rand.nextInt(200)-100)*0.0001f;
+//				Vector2d speed = new Vector2d(
+//					(rand.nextInt(200)-100)*0.0001f,
+//					(rand.nextInt(200)-100)*0.0001f);
+                Vector2d speed = new Vector2d(0.0f, 0.0f);
                 
                 //TODO: add half the calculated width
-                remains.add(new Debris(x+j+0.05f, y+i+0.05f, 0.1f, xSpeed, ySpeed));
+				remains.add(new Debris(new Vector2d(x+j+0.05f, y+i+0.05f), 0.1f, speed));
             }
         }
         

@@ -11,12 +11,21 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import nz.co.withfire.obliterate.graphics.ShaderUtil;
 import android.opengl.GLES20;
+import nz.co.withfire.obliterate.utilities.*;
 
 public class Quad2d implements Shape2d {
 
     //VARIABLES
-    //4 bytes per vertex
-    private final int vertexStride = COORDS_PER_VERTEX * 4;
+    //the size of a float in bytes
+    private final int sizeOfFloat = 4;
+    //the number of position coords per vertex
+    private final int coordsPerVertex = 3;
+    //the number of colour values per vertex
+    private final int colValPerVertex = 4;
+    //the stride of a vertex
+    private final int vertexStride = coordsPerVertex * sizeOfFloat;
+    //the stride of a colour
+    private final int colourStride = colValPerVertex * sizeOfFloat;
     //the order to draw the vertices
     private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
     
@@ -28,15 +37,7 @@ public class Quad2d implements Shape2d {
     private final ShortBuffer drawListBuffer;
     //the opengl program
     private final int program;
-    //the position handle
-    private int positionHandle;
-    //the colour handle
-    private int colourHandle;
-    //the model, view, projection matrix handle
-    private int mvpMatrixHandle;
-    
-    //matrix
-    float[] modelMatrix = new float[16];
+
     
     //the coords of the quad
     private float coords[];
@@ -59,17 +60,20 @@ public class Quad2d implements Shape2d {
         
             //pass the colour through to the fragment shader
             "v_Color = a_Color\n;" +
-        
+            //set the position
         "   gl_Position = uMVPMatrix * vPosition;" +
         "}";
 
     private final String fragmentShaderCode =
-            
+        
+        //use medium precision
         "precision mediump float;" +
+        //the colour
         "varying vec4 v_Color;" +
                 
         "void main() {" +
         
+            //set the colour
         "   gl_FragColor = v_Color;" +
         "}";
 
@@ -134,29 +138,29 @@ public class Quad2d implements Shape2d {
         GLES20.glUseProgram(program);
 
         //get handle to vertex shader's position
-        positionHandle = GLES20.glGetAttribLocation(program, "vPosition");
+        int positionHandle = GLES20.glGetAttribLocation(program, "vPosition");
 
         //enable a handle to vertices
         GLES20.glEnableVertexAttribArray(positionHandle);
 
         //prepare the coord data
-        GLES20.glVertexAttribPointer(positionHandle, COORDS_PER_VERTEX,
+        GLES20.glVertexAttribPointer(positionHandle, coordsPerVertex,
                                      GLES20.GL_FLOAT, false,
                                      vertexStride, vertexBuffer);
 
         //get a handle to the fragment shader's colour
-        colourHandle = GLES20.glGetAttribLocation(program, "a_Color");
+        int colourHandle = GLES20.glGetAttribLocation(program, "a_Color");
         
         //enable a handle to vertices
         GLES20.glEnableVertexAttribArray(colourHandle);
 
         //prepare the colour data
-        GLES20.glVertexAttribPointer(colourHandle, 4,
+        GLES20.glVertexAttribPointer(colourHandle, colValPerVertex,
                                      GLES20.GL_FLOAT, false,
-                                     4*4, colourBuffer);
+                                     colourStride, colourBuffer);
 
         //get a handle to shape's transformation matrix
-        mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
+        int mvpMatrixHandle = GLES20.glGetUniformLocation(program, "uMVPMatrix");
 
         //apply the projection and view transformation
         GLES20.glUniformMatrix4fv(mvpMatrixHandle, 1, false, mvpMatrix, 0);
@@ -167,17 +171,16 @@ public class Quad2d implements Shape2d {
 
         //disable the vertex array
         GLES20.glDisableVertexAttribArray(positionHandle);
-        //
     }
 
 
     @Override
-    public void setPosition(int v, float x, float y, float z) {
+    public void setPosition(int v, Vector3d pos) {
 
         //todo set constant
-        coords[v * 3] = x;
-        coords[v * 3 + 1] = y;
-        coords[v * 3 + 2] = z;
+        coords[v * coordsPerVertex] = pos.getX();
+        coords[v * coordsPerVertex + 1] = pos.getY();
+        coords[v * coordsPerVertex + 2] = pos.getZ();
 
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
@@ -185,20 +188,20 @@ public class Quad2d implements Shape2d {
 
 
     @Override
-    public void setColour(int v, float r, float g, float b, float a) {
+    public void setColour(int v, Vector4d c) {
 
         //TODO: set constant
-        colour[v * 4] = r;
-        colour[v * 4 + 1] = g;
-        colour[v * 4 + 2] = b;
-        colour[v * 4 + 2] = a;
+        colour[v * colValPerVertex] = c.getX();
+        colour[v * colValPerVertex + 1] = c.getY();
+        colour[v * colValPerVertex + 2] = c.getZ();
+        colour[v * colValPerVertex + 2] = c.getW();
 
         colourBuffer.put(colour);
         colourBuffer.position(0);
     }
 
     @Override
-    public void setColour(float r, float g, float b, float a) {
+    public void setColour(Vector4d c) {
 
         //TODO: implement this
     }

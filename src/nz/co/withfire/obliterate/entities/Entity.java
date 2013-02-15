@@ -8,6 +8,8 @@ package nz.co.withfire.obliterate.entities;
 
 import java.util.ArrayList;
 
+import nz.co.withfire.obliterate.bounding_box.BoundingBox;
+
 public abstract class Entity {
 
     //VARIABLES
@@ -41,6 +43,13 @@ public abstract class Entity {
     public void draw(float[] viewMatrix, float[] projectionMatrix) {
         
         //do nothing
+    }
+    
+    /**@return the bounding box of the entity
+    (returns null if not a collision type entity*/
+    public BoundingBox getBoundingBox() {
+        
+        return null;
     }
     
     /**@return if this entity is a collision type*/
