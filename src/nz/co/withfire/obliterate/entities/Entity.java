@@ -8,13 +8,9 @@ package nz.co.withfire.obliterate.entities;
 
 import java.util.ArrayList;
 
-import nz.co.withfire.obliterate.bounding_box.BoundingBox;
-
 public abstract class Entity {
 
     //VARIABLES
-    //if the entity is a physics entity; default false
-    protected boolean collisionType = false;
     //if the entity should be removed; default false
     protected boolean remove = false;
     
@@ -43,19 +39,6 @@ public abstract class Entity {
     public void draw(float[] viewMatrix, float[] projectionMatrix) {
         
         //do nothing
-    }
-    
-    /**@return the bounding box of the entity
-    (returns null if not a collision type entity*/
-    public BoundingBox getBoundingBox() {
-        
-        return null;
-    }
-    
-    /**@return if this entity is a collision type*/
-    public boolean isCollisionType() {
-        
-        return collisionType;
     }
 
     /**@return if this entity should be removed*/

@@ -122,8 +122,15 @@ public class Engine implements GLSurfaceView.Renderer {
             processTouchEvent();
         }
         
-        //COLLISON CHECK
-        //TODO: collision loop (quad tree)
+        //COLLISON CHECK (TODO: use a quadtree for efficency with only collision types)
+        //TODO: collision type should extend / implement collision type
+        //TODO: move force from same layer as debris
+        for (int i = 0; i < numLayers; ++i) {
+            for (Entity e : entities.get(i)) {
+            
+                //if 
+            }
+        }
         
         //UPDATE
         //iterate over the entities and update them

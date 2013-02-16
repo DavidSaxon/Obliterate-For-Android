@@ -4,25 +4,22 @@ import java.util.ArrayList;
 
 import android.opengl.Matrix;
 import android.util.Log;
-import nz.co.withfire.obliterate.bounding_box.BoundingBox;
-import nz.co.withfire.obliterate.bounding_box.BoundingRect;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.utilities.*;
 
-public class Debris extends Entity {
+public class Debris extends CollisionType {
 
     //VARIABLES
     //the position of the debris
     private Vector2d pos;
     //the side length of the vector
     private float sideLength;
-    //the speed of the debriss
+    //the speed of the debris
     private Vector2d speed;
     //the image of the debris
     private Quad2d image;
-    //the bounding rectangle of the debris
-    private BoundingRect boundingBox;
     
     //Matrix
     //the model view projection matrix
@@ -60,9 +57,6 @@ public class Debris extends Entity {
         };
         
         image = new Quad2d(coord, colour);
-        
-        //create the bounding box
-        boundingBox = new BoundingRect(pos, new Vector2d(sideLength, sideLength));
     }
     
     //METHODS
@@ -95,11 +89,5 @@ public class Debris extends Entity {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);
-    }
-    
-    @Override
-    public BoundingBox getBoundingBox() {
-        
-        return null;
     }
 }
