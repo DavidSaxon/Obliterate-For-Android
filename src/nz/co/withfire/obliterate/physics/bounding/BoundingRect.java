@@ -3,7 +3,7 @@
 |                                                     |
 | @author David Saxon                                 |
 \*****************************************************/
-package nz.co.withfire.obliterate.utilities.bounding;
+package nz.co.withfire.obliterate.physics.bounding;
 
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
@@ -39,9 +39,17 @@ public class BoundingRect implements BoundingArea {
     }
 
     @Override
+    public void setPos(Vector2d pos) {
+        
+        this.pos = new Vector2d(pos);
+    }
+    
+    @Override
     public void translate(Vector2d dis) {
         
-        //TODO:
+        //TODO: vector addition
+        pos = new Vector2d(pos.getX() + dis.getX(),
+            pos.getY() + dis.getY());
     }
 
     @Override

@@ -10,11 +10,12 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
-import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.main.ObliterateImage;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
+import nz.co.withfire.obliterate.physics.CollisionType;
+import nz.co.withfire.obliterate.physics.Physics;
 import nz.co.withfire.obliterate.utilities.CoordUtil;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 import android.opengl.GLES20;
@@ -51,6 +52,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private final int numLayers = 5;
     //an list of layers which contains lists of entities
     private ArrayList<ArrayList<Entity>> entities = new ArrayList<ArrayList<Entity>>();
+    //the physics controller
+    private Physics physics;
     
     //Entities
     //keep a reference to the loading bar
@@ -79,6 +82,9 @@ public class Engine implements GLSurfaceView.Renderer {
             
             entities.add(i, new ArrayList<Entity>());
         }
+        
+        //create a new physics object
+        physics = new Physics();
     }
 
     @Override
@@ -122,15 +128,8 @@ public class Engine implements GLSurfaceView.Renderer {
             processTouchEvent();
         }
         
-        //COLLISON CHECK (TODO: use a quadtree for efficency with only collision types)
-        //TODO: collision type should extend / implement collision type
-        //TODO: move force from same layer as debris
-        for (int i = 0; i < numLayers; ++i) {
-            for (Entity e : entities.get(i)) {
-            
-                //if 
-            }
-        }
+        //COLLISON CHECK
+        physics.collisionCheck();
         
         //UPDATE
         //iterate over the entities and update them
@@ -169,7 +168,16 @@ public class Engine implements GLSurfaceView.Renderer {
             }
             
             //add new entities
-            entities.get(i).addAll(addList);
+            for (Entity a : addList) {
+                
+                entities.get(i).add(a);
+                
+                //if a collision type add to the physics controller
+                if (a instanceof CollisionType) {
+                    
+                    physics.addEntity((CollisionType) a);
+                }
+            }
         }
         
         //DRAW
@@ -230,7 +238,10 @@ public class Engine implements GLSurfaceView.Renderer {
             case MAIN: {
                 
                 //add a force point
-                entities.get(0).add(new Force(touchPos));
+                Force f = new Force(touchPos);
+                
+                entities.get(0).add(f);
+                physics.addEntity(f);
                 
                 //tell the image to obliterate
                 obliterateImage.setToObliterate();
