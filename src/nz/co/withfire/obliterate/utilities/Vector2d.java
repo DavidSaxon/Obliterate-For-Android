@@ -62,4 +62,12 @@ public class Vector2d {
         
         this.y = y;
     }
+    
+    /**Find the angle between this vector and the other
+    along the x axis
+    @param other the other vector*/
+    public double angleBetween(Vector2d other) {
+                
+        return -1.0*(Math.atan2(y-other.y, x-other.x));
+    }
 }

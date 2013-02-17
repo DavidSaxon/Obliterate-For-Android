@@ -1,6 +1,7 @@
 package nz.co.withfire.obliterate.entities.main;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import android.opengl.Matrix;
 import android.util.Log;
@@ -22,6 +23,12 @@ public class Debris extends CollisionType {
     //the speed of the debris
     private Vector2d speed;
     
+    //the debris is only affected by the force once
+    private boolean forceApplied = false;
+    
+    //random number generator
+    private Random rand = new Random();
+    
     //the image of the debris
     private Quad2d image;
     
@@ -31,15 +38,12 @@ public class Debris extends CollisionType {
     //the transformation matrix
     private float[] tMatrix = new float[16];
     
-    //TODO: REMOVE ME
-    private boolean forced;
     
     //CONSTRUCTOR
     /**Creates a new debris object
     @param pos the position of the debris
 	@param sideLength the the length of a side of the debris
 	@param speed the x and y speed of the the debris*/
-    //TODO: NOT CALLED STRIDE
     public Debris(Vector2d pos, float sideLength, Vector2d speed) {
         
         //initialise the variables
@@ -77,10 +81,26 @@ public class Debris extends CollisionType {
         //work through the collisions
         for (CollisionData data : collisions) {
             
-            if (data.getCollideWith() == EntityType.DEBRIS) {
+            //collision with the force
+            if (data.getCollideWith() == EntityType.FORCE &&
+                !forceApplied) {
                 
-                speed = new Vector2d(data.getSpeed());
+                //calculate the direction and speed
+                double direction = data.getPos().angleBetween(pos);
+                
+                //add some noise to the angle
+                direction += ((Math.PI / 3.0) * rand.nextFloat()) - (Math.PI / 6.0);
+                
+                speed = new Vector2d((float) -(0.03*Math.cos(direction)),
+                    (float) (0.03*Math.sin(direction)));
+                
+                forceApplied = true;
             }
+            //FIXME: REMOVE ignore entity for now
+//            if (data.getCollideWith() == EntityType.DEBRIS) {
+//                
+//                speed = new Vector2d(data.getSpeed());
+//            }
         }
         //clear the collisions
         collisions.clear();
@@ -117,18 +137,15 @@ public class Debris extends CollisionType {
     }
     
     @Override
+    public Vector2d getPos() {
+        
+        return pos;
+    }
+    
+    @Override
     public Vector2d getSpeed() {
         
         return speed;
     }
-    
-    //TODO: REMOVE ME
-    public void applyForce(Vector2d speed) {
-        
-        if (!forced) {
-            
-            this.speed = new Vector2d(speed);
-            forced = true;
-        }
-    }
+
 }

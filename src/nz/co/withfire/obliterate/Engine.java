@@ -165,6 +165,12 @@ public class Engine implements GLSurfaceView.Renderer {
             for (Entity r : removeList) {
                 
                 entities.get(i).remove(r);
+                
+                //remove from physics if collision type
+                if (r instanceof CollisionType) {
+                    
+                    physics.removeEntity((CollisionType) r);
+                }
             }
             
             //add new entities
