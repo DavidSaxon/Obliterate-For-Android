@@ -9,11 +9,13 @@ package nz.co.withfire.obliterate.entities.main;
 import java.util.ArrayList;
 
 import android.opengl.Matrix;
+import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
+import nz.co.withfire.obliterate.utilities.Vector4d;
 
 public class Force extends CollisionType {
     
@@ -22,6 +24,9 @@ public class Force extends CollisionType {
     private Vector2d pos;
     //the scale of the force
     private float scale = 0.0f;
+    //the fade of the force
+    private float fade = 1.0f;
+    
     
     //the image of the force
     Quad2d image;
@@ -47,15 +52,17 @@ public class Force extends CollisionType {
                              1.0f, -1.0f, 0.0f,
                              1.0f,  1.0f, 0.0f
                         };
-        float[] colour = {  0.7f, 0.8f, 0.9f, 0.3f,
-                            0.7f, 0.8f, 0.9f, 0.3f,
-                            0.7f, 0.8f, 0.9f, 0.3f,
-                            0.7f, 0.8f, 0.9f, 0.3f
+        float[] colour = {  0.7f, 0.8f, 0.9f, 1.0f,
+                            0.7f, 0.8f, 0.9f, 1.0f,
+                            0.7f, 0.8f, 0.9f, 1.0f,
+                            0.7f, 0.8f, 0.9f, 1.0f
                          };
         image = new Quad2d(coord, colour);
         
         //set the bounding box
         boundingBox = new BoundingRect(pos, new Vector2d(2.0f, 2.0f));
+        //scale the bounding box
+        boundingBox.scale(scale);
     }
     
     //PUBLIC METHODS
@@ -64,6 +71,16 @@ public class Force extends CollisionType {
         
         //increase the scale of the image
         scale += 0.05f;
+        //decrease the fade
+        fade -= 0.05f;
+        if (fade <= 0.0f) {
+            
+            remove = true;
+        }
+        
+        Log.v("Obliterate", ""+fade+" "+remove);
+        
+        image.setColour(new Vector4d(0.7f, 0.8f, 0.9f, fade));
         
         //scale the bounding box
         boundingBox.scale(scale);

@@ -194,7 +194,7 @@ public class Quad2d implements Shape2d {
         colour[v * colValPerVertex] = c.getX();
         colour[v * colValPerVertex + 1] = c.getY();
         colour[v * colValPerVertex + 2] = c.getZ();
-        colour[v * colValPerVertex + 2] = c.getW();
+        colour[v * colValPerVertex + 3] = c.getW();
 
         colourBuffer.put(colour);
         colourBuffer.position(0);
@@ -203,6 +203,9 @@ public class Quad2d implements Shape2d {
     @Override
     public void setColour(Vector4d c) {
 
-        //TODO: implement this
+        setColour(0, c);
+        setColour(1, c);
+        setColour(2, c);
+        setColour(3, c);
     }
 }

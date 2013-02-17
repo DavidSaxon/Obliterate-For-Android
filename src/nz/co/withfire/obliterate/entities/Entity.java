@@ -8,21 +8,15 @@ package nz.co.withfire.obliterate.entities;
 
 import java.util.ArrayList;
 
+import nz.co.withfire.obliterate.utilities.Vector2d;
+
 public abstract class Entity {
 
     //VARIABLES
     //if the entity should be removed; default false
     protected boolean remove = false;
     
-    
     //METHODS
-    /**Checks if this entity is colliding with the other entity.
-    If the entities are colliding this entity will take the proper responses.
-    @param other the other entity to check collision with*/
-    public void collisionCheck(Entity other) {
-        
-        //do nothing
-    }
     
     /**Updates the entity
     @return an array list of entities created by this entity*/
@@ -41,6 +35,12 @@ public abstract class Entity {
         //do nothing
     }
 
+    /**@return the position of the entity*/
+    public Vector2d getPos() {
+        
+        return new Vector2d(0.0f, 0.0f);
+    }
+    
     /**@return if this entity should be removed*/
     public boolean shouldRemove() {
         

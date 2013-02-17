@@ -43,12 +43,6 @@ public class LoadingBar extends Entity {
     }
     
     @Override
-    public void collisionCheck(Entity other) {
-        
-        //do nothing
-    }
-
-    @Override
     public ArrayList<Entity> update() {
         
         //stretch the bar across the screen

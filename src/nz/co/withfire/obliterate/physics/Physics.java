@@ -44,7 +44,12 @@ public class Physics {
                 
                 if (c1 != c2 && collision(c1, c2)) {
                     
-                    //TODO: pass on collision information
+                    //create collision data
+                    CollisionData data = new CollisionData(
+                        c2.getType(), c2.getPos(), c2.getSpeed());
+                    
+                    //pass the collision data
+                    c1.passCollisionData(data);
                     
                     //TODO: REMOVE
                     if (c1 instanceof Debris && c2 instanceof Force) {

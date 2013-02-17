@@ -61,12 +61,6 @@ public class ObliterateImage extends Entity {
 
     //PUBLIC METHODS
     @Override
-    public void collisionCheck(Entity other) {
-        
-        //TODO:
-    }
-
-    @Override
     public ArrayList<Entity> update() {
         
         //obliterate the image

@@ -40,12 +40,6 @@ public class Logo extends Entity {
     
     //METHODS
     @Override
-    public void collisionCheck(Entity other) {
-    
-        //do nothing not a collision type
-    }
-
-    @Override
     public ArrayList<Entity> update() {
         
         return null;

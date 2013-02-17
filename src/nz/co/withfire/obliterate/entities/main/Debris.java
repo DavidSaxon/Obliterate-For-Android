@@ -6,7 +6,9 @@ import android.opengl.Matrix;
 import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.physics.CollisionData;
 import nz.co.withfire.obliterate.physics.CollisionType;
+import nz.co.withfire.obliterate.physics.CollisionData.EntityType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.*;
 
@@ -19,6 +21,7 @@ public class Debris extends CollisionType {
     private float sideLength;
     //the speed of the debris
     private Vector2d speed;
+    
     //the image of the debris
     private Quad2d image;
     
@@ -69,14 +72,19 @@ public class Debris extends CollisionType {
     
     //METHODS
     @Override
-    public void collisionCheck(Entity other) {
-        
-        //TODO:
-    }
-
-    @Override
     public ArrayList<Entity> update() {
 
+        //work through the collisions
+        for (CollisionData data : collisions) {
+            
+            if (data.getCollideWith() == EntityType.DEBRIS) {
+                
+                speed = new Vector2d(data.getSpeed());
+            }
+        }
+        //clear the collisions
+        collisions.clear();
+        
         //TODO: vector addition!
 		//move the debris
         pos.setX(pos.getX() + speed.getX());
@@ -102,16 +110,16 @@ public class Debris extends CollisionType {
         image.draw(mvpMatrix);
     }
     
-    /**@return the speed of the debris*/
+    @Override
+    public CollisionData.EntityType getType() {
+        
+        return EntityType.DEBRIS;
+    }
+    
+    @Override
     public Vector2d getSpeed() {
         
         return speed;
-    }
-    
-    //TODO: REMOVE ME
-    public void setSpeed(Vector2d speed) {
-        
-        this.speed = new Vector2d(speed);
     }
     
     //TODO: REMOVE ME
