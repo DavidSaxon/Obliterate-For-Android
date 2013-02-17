@@ -65,6 +65,9 @@ public class Force extends CollisionType {
         //increase the scale of the image
         scale += 0.05f;
         
+        //scale the bounding box
+        boundingBox.scale(scale);
+        
         return null;
     }
     
@@ -73,12 +76,11 @@ public class Force extends CollisionType {
         
         //shift into visible range and move
         Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);
+        Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);        
         Matrix.scaleM(tMatrix, 0, scale, scale, 1.0f);
         
         //Multiply matrix
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
-        //Matrix.multiplyMM(mvpMatrix, 0, sMatrix, 0, mvpMatrix, 0);
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);

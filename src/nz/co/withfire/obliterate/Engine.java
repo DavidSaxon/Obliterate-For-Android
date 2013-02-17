@@ -240,7 +240,8 @@ public class Engine implements GLSurfaceView.Renderer {
                 //add a force point
                 Force f = new Force(touchPos);
                 
-                entities.get(0).add(f);
+                //TODO: add to layer 0
+                entities.get(4).add(f);
                 physics.addEntity(f);
                 
                 //tell the image to obliterate

@@ -14,6 +14,8 @@ public class BoundingRect implements BoundingArea {
     private Vector2d pos;
     //the dimensions of the rectangle
     private Vector2d dim;
+    //the original dimensions to scale by
+    private Vector2d orgDim;
     
     //CONSTRUCTOR
     /**Creates a new bounding rectangle
@@ -23,6 +25,7 @@ public class BoundingRect implements BoundingArea {
         
         this.pos = new Vector2d(pos);
         this.dim = new Vector2d(dim);
+        this.orgDim = new Vector2d(dim);
     }
     
     //METHODS
@@ -55,7 +58,8 @@ public class BoundingRect implements BoundingArea {
     @Override
     public void scale(float s) {
         
-        //TODO:
+        dim.setX(orgDim.getX() * s);
+        dim.setY(orgDim.getY() * s);
     }
 
 }
