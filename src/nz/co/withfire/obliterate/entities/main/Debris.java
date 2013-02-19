@@ -96,7 +96,19 @@ public class Debris extends CollisionType {
                 
                 forceApplied = true;
             }
-            //FIXME: REMOVE ignore entity for now
+			//apply gravity
+			if (data.getCollideWith() == EntityType.GRAVITY) {
+				
+				if (speed.getX() > data.getSpeed().getX()) {
+					
+					speed.setX(speed.getX() - data.getSpeed().getX() * 0.01f);
+				}
+				if (speed.getY() > data.getSpeed().getY()) {
+					
+					speed.setY(speed.getY() - Math.abs(data.getSpeed().getY()*0.005f));
+				}
+			}
+			//FIXME: REMOVE ignore entity for now
 //            if (data.getCollideWith() == EntityType.DEBRIS) {
 //                
 //                speed = new Vector2d(data.getSpeed());

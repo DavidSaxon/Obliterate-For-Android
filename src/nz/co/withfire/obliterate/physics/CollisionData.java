@@ -12,6 +12,7 @@ public class CollisionData {
 
     //ENUMERATOR
     public enum EntityType {
+		GRAVITY,
         FORCE,
         DEBRIS
     }

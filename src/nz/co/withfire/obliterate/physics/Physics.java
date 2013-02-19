@@ -38,7 +38,13 @@ public class Physics {
     public void collisionCheck() {
         
         //iterate over the list and check collisions for each one
-        for (CollisionType c1 : entities) {           
+        for (CollisionType c1 : entities) {
+			
+			//always pass gravity
+			c1.passCollisionData(new CollisionData(
+				CollisionData.EntityType.GRAVITY, new Vector2d(0.0f, 0.0f),
+				new Vector2d(0.0f, -0.1f)));
+			
             for (CollisionType c2 : entities) {
                 
                 if (c1 != c2 && collision(c1, c2)) {

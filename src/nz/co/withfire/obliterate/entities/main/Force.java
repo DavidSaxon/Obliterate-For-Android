@@ -18,6 +18,7 @@ import nz.co.withfire.obliterate.physics.bounding.BoundingCircle;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 import nz.co.withfire.obliterate.utilities.Vector4d;
+import nz.co.withfire.obliterate.physics.*;
 
 public class Force extends CollisionType {
     
@@ -84,7 +85,7 @@ public class Force extends CollisionType {
         
         //scale the bounding box
         boundingBox.scale(scale);
-        
+		
         return null;
     }
     
@@ -101,7 +102,13 @@ public class Force extends CollisionType {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);
-    }
+   }
+   
+   @Override
+   public void passCollisionData(CollisionData d) {
+	   
+	   //to nothing
+   }
     
     @Override
     public EntityType getType() {
