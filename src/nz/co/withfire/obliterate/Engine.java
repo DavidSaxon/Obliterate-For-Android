@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
+import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.main.ObliterateImage;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
@@ -34,6 +35,10 @@ public class Engine implements GLSurfaceView.Renderer {
         MAIN
     };
     
+    //FLAGS
+    //true to show the frame rate
+    private final boolean showFps = true;
+    
     //VARIABLES
     //the current state of the engine
     private State state = State.MAIN;
@@ -42,6 +47,14 @@ public class Engine implements GLSurfaceView.Renderer {
     
     //the dimensions of the screen
     private Vector2d screenDim;
+    
+    //fps management
+    //the current time
+    private long currentTime;
+    //the time accumulated from the last frame
+    private int accumTime = 0;
+    //the length of a frame
+    private final int frameLength = 33;
     
     //input
     //is true if there has been a touch event
@@ -59,7 +72,7 @@ public class Engine implements GLSurfaceView.Renderer {
     //keep a reference to the loading bar
     private LoadingBar loadingBar;
     //keep a reference to the obliterate image
-    private ObliterateImage obliterateImage;
+    //private ObliterateImage obliterateImage;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -85,6 +98,9 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //create a new physics object
         physics = new Physics();
+        
+        //get the current time
+        currentTime = System.currentTimeMillis();
     }
 
     @Override
@@ -99,91 +115,121 @@ public class Engine implements GLSurfaceView.Renderer {
         //calculate the projection matrix
         float ratio = (float) width / height;
         Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+        
+        //get the current time
+        currentTime = System.currentTimeMillis();
     }
     
     @Override
     public void onDrawFrame(GL10 unused) {
         
-        //TODO: fps
+        //FPS Management
+        //get the time
+        long newTime = System.currentTimeMillis();
+        //find the the amount of time passed since the last frame
+        int frameTime = (int) (newTime - currentTime);
+        //set the new current time
+        currentTime = newTime;
+        //accumulate the time
+        accumTime += frameTime;
         
-        //check if the state has changed
-        if (stateChanged) {
+        //show the fps
+        if (showFps) {
             
-            initState();
+            showFps();
         }
         
-        //apply state specific updates
-        switch (state) {
-        
-            case START_UP: {
+        //avoid downwards spiral of doom
+        if (accumTime >= frameLength * 3) {
             
-                load();
-                break;
-            }
+            accumTime = frameLength * 3;
         }
         
-        //check for touch event
-        if (touchEvent) {
-            
-            processTouchEvent();
-        }
+        //loop through all frames that have passed (if any) and update
+        while (accumTime >= frameLength) {
         
-        //COLLISON CHECK
-        physics.collisionCheck();
-        
-        //UPDATE
-        //iterate over the entities and update them
-        for (int i = 0; i < numLayers; ++i) {
-            
-            //TODO: OPTIMISE REMOVE LISTS?
-            //list of entities to be removed
-            ArrayList<Entity> removeList = new ArrayList<Entity>();
-            
-            //list of entities to be added
-            ArrayList<Entity> addList = new ArrayList<Entity>();
-            
-            for (Entity e: entities.get(i)) {
+            //check if the state has changed
+            if (stateChanged) {
                 
-                //check if the entity should be removed
-                if (e.shouldRemove()) {
-                    
-                    removeList.add(e);
+                initState();
+            }
+            
+            //apply state specific updates
+            switch (state) {
+            
+                case START_UP: {
+                
+                    load();
+                    break;
                 }
-                //else update the entity
-                else {
+            }
+            
+            //check for touch event
+            if (touchEvent) {
+                
+                processTouchEvent();
+            }
+            
+            //COLLISON CHECK
+            physics.collisionCheck();
+            
+            //UPDATE
+            //iterate over the entities and update them
+            for (int i = 0; i < numLayers; ++i) {
+                
+                //TODO: OPTIMISE REMOVE LISTS?
+                //list of entities to be removed
+                ArrayList<Entity> removeList = new ArrayList<Entity>();
+                
+                //list of entities to be added
+                ArrayList<Entity> addList = new ArrayList<Entity>();
+                
+                for (Entity e: entities.get(i)) {
                     
-                    ArrayList<Entity> entityAdd = e.update();
-                    
-                    if (entityAdd != null) {
+                    //check if the entity should be removed
+                    if (e.shouldRemove()) {
                         
-                        addList.addAll(entityAdd);
+                        removeList.add(e);
+                    }
+                    //else update the entity
+                    else {
+                        
+                        ArrayList<Entity> entityAdd = e.update();
+                        
+                        if (entityAdd != null) {
+                            
+                            addList.addAll(entityAdd);
+                        }
+                    }
+                }
+                
+                //remove the entities
+                for (Entity r : removeList) {
+                    
+                    entities.get(i).remove(r);
+                    
+                    //remove from physics if collision type
+                    if (r instanceof CollisionType) {
+                        
+                        physics.removeEntity((CollisionType) r);
+                    }
+                }
+                
+                //add new entities
+                for (Entity a : addList) {
+                    
+                    entities.get(i).add(a);
+                    
+                    //if a collision type add to the physics controller
+                    if (a instanceof CollisionType) {
+                        
+                        physics.addEntity((CollisionType) a);
                     }
                 }
             }
             
-            //remove the entities
-            for (Entity r : removeList) {
-                
-                entities.get(i).remove(r);
-                
-                //remove from physics if collision type
-                if (r instanceof CollisionType) {
-                    
-                    physics.removeEntity((CollisionType) r);
-                }
-            }
-            
-            //add new entities
-            for (Entity a : addList) {
-                
-                entities.get(i).add(a);
-                
-                //if a collision type add to the physics controller
-                if (a instanceof CollisionType) {
-                    
-                    physics.addEntity((CollisionType) a);
-                }
-            }
+            //deplete the accumulated time
+            accumTime -= frameLength;
         }
         
         //DRAW
@@ -251,7 +297,7 @@ public class Engine implements GLSurfaceView.Renderer {
                 physics.addEntity(f);
                 
                 //tell the image to obliterate
-                obliterateImage.setToObliterate();
+                //obliterateImage.setToObliterate();
                 
                 break;
             }
@@ -321,9 +367,28 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //TODO: get image from file system (need new state)
         
+        //TODO: work out the size of the image and the texture and pass it to debris\
+        
+        //FIXME: remove speed?
+        Vector2d speed = new Vector2d(0.0f, 0.0f);
+        
+        for (float y = -0.5f; y < 0.5f; y += 0.1f) {
+            for (float x = -0.5f; x < 0.5f; x += 0.1f) {
+             
+                //create the debris
+                Debris d = new Debris(new Vector2d(x, y), 0.1f, speed);
+                
+                //add to physics
+                physics.addEntity(d);
+                
+                //add to entities
+                entities.get(2).add(d);
+            }
+        }
+        
         //add an obliterate image to the 3rd layer
-        obliterateImage = new ObliterateImage();
-        entities.get(2).add(obliterateImage);
+        //obliterateImage = new ObliterateImage();
+        //entities.get(2).add(obliterateImage);
     }
     
     /**Clear all entities from the entities list*/
@@ -344,5 +409,16 @@ public class Engine implements GLSurfaceView.Renderer {
         //enable transparency
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFunc (GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+    
+    /**Display the frame rate in the log*/
+    private void showFps() {
+        
+        if (accumTime >= frameLength) {
+            
+            
+            Log.v("Obliterate", "accum: " + (accumTime));
+            Log.v("Obliterate", "fps: " + (1000.0f / accumTime));
+        }
     }
 }
