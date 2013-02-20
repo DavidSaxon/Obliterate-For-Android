@@ -122,9 +122,11 @@ public class Force extends CollisionType {
         return pos;
     }
     
-    /**@return the dimensions of the force*/
+    @Override
     public Vector2d getDim() {
         
-        return new Vector2d(2.0f, 2.0f);
+        float r = ((BoundingCircle) boundingBox).getRadius();
+        
+        return new Vector2d(r * 2.0f, r * 2.0f);
     }
 }

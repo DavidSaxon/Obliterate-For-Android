@@ -91,8 +91,8 @@ public class Debris extends CollisionType {
                 //add some noise to the angle
                 direction += ((Math.PI / 3.0) * rand.nextFloat()) - (Math.PI / 6.0);
                 
-                speed = new Vector2d((float) -(0.03*Math.cos(direction)),
-                    (float) (0.03*Math.sin(direction)));
+                speed = new Vector2d((float) -(0.04*Math.cos(direction)),
+                    (float) (0.04*Math.sin(direction)));
                 
                 forceApplied = true;
             }
@@ -153,6 +153,12 @@ public class Debris extends CollisionType {
     public Vector2d getPos() {
         
         return pos;
+    }
+    
+    @Override
+    public Vector2d getDim() {
+        
+        return new Vector2d(sideLength, sideLength);
     }
     
     @Override

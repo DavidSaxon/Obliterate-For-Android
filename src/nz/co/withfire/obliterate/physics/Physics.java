@@ -6,30 +6,50 @@
 package nz.co.withfire.obliterate.physics;
 
 import java.util.ArrayList;
-import java.util.Random;
 
-import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.physics.bounding.BoundingArea;
 import nz.co.withfire.obliterate.physics.bounding.BoundingCircle;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
-
 import android.util.Log;
 
 public class Physics {
 
     //VARIABLES
+    //the dimensions of the space to calculate physics for
+    private Vector2d dim;
+    
     //the list of all the entities that are collision type
-    //TODO: some form of quadtree
     private ArrayList<CollisionType> entities;
+    //A 2d list holding references to entities, organises entities by space
+    //similar to a quadtree
+    private ArrayList<ArrayList<CollisionType>> divisionSpaceMap;
+    //the width and height of the division space map
+    private Vector2d dsmDim;
+	
     
     //CONSTRUCTOR
-    /**Creates a new physics controller*/
-    public Physics() {
+    /**Creates a new physics controller
+    @param viewPortDim the dimensions of the view port in openGL coords*/
+    public Physics(Vector2d viewPortDim) {
         
         //initialise the entities list
         entities = new ArrayList<CollisionType>();
+		
+        //calculate the physics dimensions
+        dim = new Vector2d(Math.abs(viewPortDim.getX() * 2.0f),
+            Math.abs(viewPortDim.getY() * 2.0f));
+        
+        dsmDim = new Vector2d((float) Math.ceil(dim.getX() * 20.0),
+            (float) Math.ceil(dim.getY() * 20.0));
+        
+        //Initialise the division space map
+        divisionSpaceMap = new ArrayList<ArrayList<CollisionType>>();
+		for (int i  = 0; i < dsmDim.getX() * dsmDim.getY(); ++i) {
+			
+		    divisionSpaceMap.add(new ArrayList<CollisionType>());
+		}
     }
     
     //PUBLIC METHODS
@@ -37,24 +57,78 @@ public class Physics {
     the entity the collision info*/
     public void collisionCheck() {
         
-        //iterate over the list and check collisions for each one
-        for (CollisionType c1 : entities) {
+		//clear the division space map
+		for (int i = 0; i < dsmDim.getX() * dsmDim.getY(); ++i) {
 			
+		    divisionSpaceMap.get(i).clear();
+		}
+		
+		//build the division space map
+		for (CollisionType c : entities) {
+		    
+		  //find the locations of the entities in the division space
+            Vector2d lowerBound = new Vector2d(
+                (int) ((c.getPos().getX() - (c.getDim().getX() / 2.0f)
+                + dim.getX()) * 5.0f),
+                (int) ((c.getPos().getY() - (c.getDim().getY() / 2.0f) +
+                dim.getY()) * 5.0f));
+		    
+            Vector2d upperBound = new Vector2d(
+                (int) ((c.getPos().getX() + (c.getDim().getX() / 2.0f)
+                + dim.getX()) * 5.0f),
+                (int) ((c.getPos().getY() + (c.getDim().getY() / 2.0f) +
+                dim.getY()) * 5.0f));
+			
+			//TODO: optimise
+			for (int y = (int) lowerBound.getY();
+			        y <= (int) upperBound.getY(); ++y) {
+			    for (int x = (int) lowerBound.getY();
+		            x <= (int) upperBound.getY(); ++x) {
+			        
+			        if (x >= 0 && x < dsmDim.getX() &&
+		                y >= 0 && y < dsmDim.getY()) {
+			        
+			            divisionSpaceMap.get(
+		                    (int) (x + (y * dsmDim.getX()))).add(c);
+			        }
+			    }
+			}
+		}
+		
+		//check collision
+		for (ArrayList<CollisionType> a : divisionSpaceMap) {
+			
+		    
+			for (CollisionType c1 : a) {
+				for (CollisionType c2 : a) {
+					
+					if (c1 != c2 && collision(c1, c2)) {
+					    
+						c1.passCollisionData(new CollisionData(
+							c2.getType(), c2.getPos(), c2.getSpeed()));
+					}
+				}
+			}
+		}
+		
+//        //iterate over the list and check collisions for each one
+//        for (CollisionType c1 : entities) {
+//			
 //			//always pass gravity
 //			c1.passCollisionData(new CollisionData(
 //				CollisionData.EntityType.GRAVITY, new Vector2d(0.0f, 0.0f),
 //				new Vector2d(0.0f, -0.1f)));
-			
-            for (CollisionType c2 : entities) {
-                
-                if (c1 != c2 && collision(c1, c2)) {
-
-                    //pass the collision data
-                    c1.passCollisionData(new CollisionData(
-                        c2.getType(), c2.getPos(), c2.getSpeed()));
-                }
-            }
-        }
+//			
+//            for (CollisionType c2 : entities) {
+//                
+//                if (c1 != c2 && collision(c1, c2)) {
+//
+//                    //pass the collision data
+//                    c1.passCollisionData(new CollisionData(
+//                        c2.getType(), c2.getPos(), c2.getSpeed()));
+//                }
+//            }
+//        }
     }
     
     /**Adds a new collision type entity to the physics controller

@@ -37,7 +37,7 @@ public class Engine implements GLSurfaceView.Renderer {
     
     //FLAGS
     //true to show the frame rate
-    private final boolean showFps = true;
+    private final boolean showFps = false;
     
     //VARIABLES
     //the current state of the engine
@@ -96,9 +96,6 @@ public class Engine implements GLSurfaceView.Renderer {
             entities.add(i, new ArrayList<Entity>());
         }
         
-        //create a new physics object
-        physics = new Physics();
-        
         //get the current time
         currentTime = System.currentTimeMillis();
     }
@@ -115,6 +112,14 @@ public class Engine implements GLSurfaceView.Renderer {
         //calculate the projection matrix
         float ratio = (float) width / height;
         Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 3, 7);
+        
+        //set the camera position
+        Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        
+        //create a new physics controller        
+        physics = new Physics(CoordUtil.screenPosToOpenGLPos(
+                screenDim, screenDim, viewMatrix, projectionMatrix));
         
         //get the current time
         currentTime = System.currentTimeMillis();
@@ -140,9 +145,9 @@ public class Engine implements GLSurfaceView.Renderer {
         }
         
         //avoid downwards spiral of doom
-        if (accumTime >= frameLength * 3) {
+        if (accumTime >= frameLength) {
             
-            accumTime = frameLength * 3;
+            accumTime = frameLength;
         }
         
         //loop through all frames that have passed (if any) and update
@@ -416,8 +421,6 @@ public class Engine implements GLSurfaceView.Renderer {
         
         if (accumTime >= frameLength) {
             
-            
-            Log.v("Obliterate", "accum: " + (accumTime));
             Log.v("Obliterate", "fps: " + (1000.0f / accumTime));
         }
     }

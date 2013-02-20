@@ -28,6 +28,12 @@ public abstract class CollisionType extends Entity {
         return null;
     }
     
+    /**@return the dimensions of this entity*/
+    public Vector2d getDim() {
+        
+        return new Vector2d(0.0f, 0.0f);
+    }
+    
     /**@return the speed of the entity*/
     public Vector2d getSpeed() {
         
