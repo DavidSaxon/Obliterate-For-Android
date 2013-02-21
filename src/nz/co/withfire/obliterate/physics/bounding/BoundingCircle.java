@@ -1,6 +1,5 @@
 package nz.co.withfire.obliterate.physics.bounding;
 
-import android.util.Log;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
 public class BoundingCircle implements BoundingArea {

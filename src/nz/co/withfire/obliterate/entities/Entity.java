@@ -6,8 +6,6 @@
 \*****************************************************************************/
 package nz.co.withfire.obliterate.entities;
 
-import java.util.ArrayList;
-
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
 public abstract class Entity {
@@ -17,14 +15,11 @@ public abstract class Entity {
     protected boolean remove = false;
     
     //METHODS
-    
     /**Updates the entity
     @return an array list of entities created by this entity*/
-    public ArrayList<Entity> update() {
+    public void update() {
         
         //do nothing
-        
-        return null;
     }
     
     /**Draws the entity to the GL surface

@@ -1,15 +1,9 @@
 package nz.co.withfire.obliterate.entities.main;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 import android.opengl.Matrix;
 import android.util.Log;
-import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
-import nz.co.withfire.obliterate.physics.CollisionData;
 import nz.co.withfire.obliterate.physics.CollisionType;
-import nz.co.withfire.obliterate.physics.CollisionData.EntityType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.*;
 
@@ -23,9 +17,6 @@ public class Debris extends CollisionType {
     
     //the debris is only affected by the force once
     private boolean forceApplied = false;
-    
-    //random number generator
-    private Random rand = new Random();
     
     //the image of the debris
     private Quad2d image;
@@ -74,57 +65,14 @@ public class Debris extends CollisionType {
     
     //METHODS
     @Override
-    public ArrayList<Entity> update() {
-
-//        //work through the collisions
-//        for (CollisionData data : collisions) {
-//            
-//            //collision with the force
-//            if (data.getCollideWith() == EntityType.FORCE &&
-//                !forceApplied) {
-//                
-//                //calculate the direction and speed
-//                double direction = data.getPos().angleBetween(pos);
-//                
-//                //add some noise to the angle
-//                direction += ((Math.PI / 3.0) * rand.nextFloat()) - (Math.PI / 6.0);
-//                
-//                speed = new Vector2d((float) -(0.045*Math.cos(direction)),
-//                    (float) (0.04*Math.sin(direction)));
-//                
-//                forceApplied = true;
-//            }
-//            //FIXME: ignore gravity for now
-////			//apply gravity
-////			if (data.getCollideWith() == EntityType.GRAVITY) {
-////				
-////				if (speed.getX() > data.getSpeed().getX()) {
-////					
-////					speed.setX(speed.getX() - data.getSpeed().getX() * 0.01f);
-////				}
-////				if (speed.getY() > data.getSpeed().getY()) {
-////					
-////					speed.setY(speed.getY() - Math.abs(data.getSpeed().getY()*0.005f));
-////				}
-////			}
-//			//FIXME: ignore entity for now
-////            if (data.getCollideWith() == EntityType.DEBRIS) {
-////                
-////                speed = new Vector2d(data.getSpeed());
-////            }
-//        }
-//        //clear the collisions
-//        collisions.clear();
+    public void update() {
         
         //TODO: vector addition!
 		//move the debris
-        pos.setX(pos.getX() + speed.getX());
-        pos.setY(pos.getY() + speed.getY());
+        pos.add(speed);
         
         //translate the bounding box
         boundingBox.setPos(pos);
-        
-        return null;
     }
 
     @Override
@@ -139,12 +87,6 @@ public class Debris extends CollisionType {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);
-    }
-    
-    @Override
-    public CollisionData.EntityType getType() {
-        
-        return EntityType.DEBRIS;
     }
     
     @Override
@@ -172,7 +114,7 @@ public class Debris extends CollisionType {
     }
     
     /**Sets if the force is applied
-    @param forceApplied wether the force has been applied*/
+    @param forceApplied whether the force has been applied*/
     public void setForceApplied(boolean forceApplied) {
         
         this.forceApplied = forceApplied;

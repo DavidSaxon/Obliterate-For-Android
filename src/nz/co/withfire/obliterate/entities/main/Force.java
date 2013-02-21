@@ -6,19 +6,13 @@
 
 package nz.co.withfire.obliterate.entities.main;
 
-import java.util.ArrayList;
-
 import android.opengl.Matrix;
 import android.util.Log;
-import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
-import nz.co.withfire.obliterate.physics.CollisionData.EntityType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingCircle;
-import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 import nz.co.withfire.obliterate.utilities.Vector4d;
-import nz.co.withfire.obliterate.physics.*;
 
 public class Force extends CollisionType {
     
@@ -31,7 +25,6 @@ public class Force extends CollisionType {
     private float scale = 0.0f;
     //the fade of the force
     private float fade = 1.0f;
-    
     
     //the image of the force
     Quad2d image;
@@ -76,7 +69,7 @@ public class Force extends CollisionType {
     
     //PUBLIC METHODS
     @Override
-    public ArrayList<Entity> update() {
+    public void update() {
         
         //increase the scale of the image
         scale += 0.05f;
@@ -91,8 +84,6 @@ public class Force extends CollisionType {
         
         //scale the bounding box
         boundingBox.scale(scale);
-		
-        return null;
     }
     
     @Override
@@ -108,12 +99,6 @@ public class Force extends CollisionType {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);
-    }
-    
-    @Override
-    public EntityType getType() {
-        
-        return EntityType.FORCE;
     }
     
     @Override

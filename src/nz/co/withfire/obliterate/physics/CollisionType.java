@@ -5,10 +5,7 @@
 \**********************************************/
 package nz.co.withfire.obliterate.physics;
 
-import java.util.ArrayList;
-
 import nz.co.withfire.obliterate.entities.Entity;
-import nz.co.withfire.obliterate.physics.CollisionData.EntityType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingArea;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
@@ -23,12 +20,6 @@ public abstract class CollisionType extends Entity {
     protected BoundingArea boundingBox;
     
     //METHODS
-    /**@return the type of entity this is*/
-    public EntityType getType() {
-        
-        return null;
-    }
-    
     /**@return the dimensions of this entity*/
     public Vector2d getDim() {
         

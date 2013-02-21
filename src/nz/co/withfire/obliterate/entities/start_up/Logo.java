@@ -5,10 +5,8 @@
 \******************************************************/
 package nz.co.withfire.obliterate.entities.start_up;
 
-import java.util.ArrayList;
 
 import android.opengl.Matrix;
-
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 
@@ -39,12 +37,6 @@ public class Logo extends Entity {
     }
     
     //METHODS
-    @Override
-    public ArrayList<Entity> update() {
-        
-        return null;
-    }
-
     @Override
     public void draw(float[] viewMatrix, float[] projectionMatrix) {
         

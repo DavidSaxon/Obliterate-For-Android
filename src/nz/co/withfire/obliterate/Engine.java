@@ -12,7 +12,6 @@ import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
-import nz.co.withfire.obliterate.entities.main.ObliterateImage;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
 import nz.co.withfire.obliterate.physics.CollisionType;
@@ -97,7 +96,7 @@ public class Engine implements GLSurfaceView.Renderer {
         }
         
         //get the current time
-        currentTime = System.currentTimeMillis();
+        currentTime = SystemClock.uptimeMillis();
     }
 
     @Override
@@ -122,7 +121,7 @@ public class Engine implements GLSurfaceView.Renderer {
                 screenDim, screenDim, viewMatrix, projectionMatrix));
         
         //get the current time
-        currentTime = System.currentTimeMillis();
+        currentTime = SystemClock.uptimeMillis();
     }
     
     @Override
@@ -130,7 +129,7 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //FPS Management
         //get the time
-        long newTime = System.currentTimeMillis();
+        long newTime = SystemClock.uptimeMillis();
         //find the the amount of time passed since the last frame
         int frameTime = (int) (newTime - currentTime);
         //set the new current time
@@ -186,9 +185,6 @@ public class Engine implements GLSurfaceView.Renderer {
                 //list of entities to be removed
                 ArrayList<Entity> removeList = new ArrayList<Entity>();
                 
-                //list of entities to be added
-                ArrayList<Entity> addList = new ArrayList<Entity>();
-                
                 for (Entity e: entities.get(i)) {
                     
                     //check if the entity should be removed
@@ -199,12 +195,7 @@ public class Engine implements GLSurfaceView.Renderer {
                     //else update the entity
                     else {
                         
-                        ArrayList<Entity> entityAdd = e.update();
-                        
-                        if (entityAdd != null) {
-                            
-                            addList.addAll(entityAdd);
-                        }
+                       e.update();
                     }
                 }
                 
@@ -217,18 +208,6 @@ public class Engine implements GLSurfaceView.Renderer {
                     if (r instanceof CollisionType) {
                         
                         physics.removeEntity((CollisionType) r);
-                    }
-                }
-                
-                //add new entities
-                for (Entity a : addList) {
-                    
-                    entities.get(i).add(a);
-                    
-                    //if a collision type add to the physics controller
-                    if (a instanceof CollisionType) {
-                        
-                        physics.addEntity((CollisionType) a);
                     }
                 }
             }
