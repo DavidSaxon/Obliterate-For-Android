@@ -8,7 +8,7 @@ package nz.co.withfire.obliterate.graphics;
 
 import android.opengl.GLES20;
 
-public class ShaderUtil {
+public class ShaderLoader {
 
     /**Loads shader code
     @param type the type of shader

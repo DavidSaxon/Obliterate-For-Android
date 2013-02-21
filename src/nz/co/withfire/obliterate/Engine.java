@@ -40,7 +40,7 @@ public class Engine implements GLSurfaceView.Renderer {
     
     //VARIABLES
     //the current state of the engine
-    private State state = State.MAIN;
+    private State state = State.START_UP;
     //is true when the state has been changed
     private boolean stateChanged = true;
     

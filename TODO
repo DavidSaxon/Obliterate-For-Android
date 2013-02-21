@@ -1,0 +1,9 @@
+ -texturing
+ 
+ -vector assignment, don't make a whole new object just take values!
+ 
+ -don't cap fps just use smooth interpolation
+ 
+ -clean up
+
+-menu

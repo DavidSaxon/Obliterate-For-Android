@@ -9,7 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import nz.co.withfire.obliterate.graphics.ShaderUtil;
+import nz.co.withfire.obliterate.graphics.ShaderLoader;
 import android.opengl.GLES20;
 import nz.co.withfire.obliterate.utilities.*;
 
@@ -115,9 +115,9 @@ public class Quad2d implements Shape2d {
         drawListBuffer.position(0);
 
         //prepare the shaders and the openGL program
-        int vertexShader = ShaderUtil.loadShader(GLES20.GL_VERTEX_SHADER,
+        int vertexShader = ShaderLoader.loadShader(GLES20.GL_VERTEX_SHADER,
                                                    vertexShaderCode);
-        int fragmentShader = ShaderUtil.loadShader(GLES20.GL_FRAGMENT_SHADER,
+        int fragmentShader = ShaderLoader.loadShader(GLES20.GL_FRAGMENT_SHADER,
                                                      fragmentShaderCode);
 
         //create the openGL program
