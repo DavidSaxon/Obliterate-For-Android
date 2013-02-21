@@ -6,7 +6,9 @@
 package nz.co.withfire.obliterate.physics;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.physics.bounding.BoundingArea;
 import nz.co.withfire.obliterate.physics.bounding.BoundingCircle;
@@ -27,6 +29,9 @@ public class Physics {
     private ArrayList<ArrayList<CollisionType>> divisionSpaceMap;
     //the width and height of the division space map
     private Vector2d dsmDim;
+    
+    //a random number generator
+    private Random rand = new Random();
 	
     
     //CONSTRUCTOR
@@ -100,35 +105,55 @@ public class Physics {
 			
 		    
 			for (CollisionType c1 : a) {
+			    
+			    //the new speed of the entity
+			    Vector2d newSpeed = c1.getSpeed();
+			    
 				for (CollisionType c2 : a) {
-					
+					    
 					if (c1 != c2 && collision(c1, c2)) {
 					    
-						c1.passCollisionData(new CollisionData(
-							c2.getType(), c2.getPos(), c2.getSpeed()));
+					    if (c1 instanceof Debris && c2 instanceof Force &&
+				            !((Debris) c1).getForceApplied()) {
+					        
+				            //calculate the direction
+			                double direction =
+		                        c2.getPos().angleBetween(c1.getPos());
+			                
+			                //add some noise to the angle
+			                direction += ((Math.PI / 3.0) *
+		                        rand.nextFloat()) - (Math.PI / 6.0);
+			                
+			                newSpeed.add(
+		                        (float) -(c2.getSpeed().getX() *
+                                Math.cos(direction)),
+		                        (float) (c2.getSpeed().getX() *
+                                Math.sin(direction)));
+			                
+			                //set that the fore has been applied
+			                ((Debris) c1).setForceApplied(true);
+					    }
 					}
+//					if (c1 instanceof Debris && c2 instanceof Debris) {
+//					    
+////					    if (c1.getSpeed().getX() <= c2.getSpeed().getX()) {
+////					        
+////				            newSpeed.setX(newSpeed.getX() +
+////		                        (c2.getSpeed().getX() / 2.0f));
+////					    }
+////					    else {
+////					        
+//					        newSpeed.setX(newSpeed.getX() / 2.0f);
+////					    }
+//					    
+//					    //newSpeed = new Vector2d(-c2.getSpeed().getX(), -c2.getSpeed().getX()); 
+//					}
 				}
+				
+				//set the new speed of the entity
+				c1.setSpeed(newSpeed);
 			}
 		}
-		
-//        //iterate over the list and check collisions for each one
-//        for (CollisionType c1 : entities) {
-//			
-//			//always pass gravity
-//			c1.passCollisionData(new CollisionData(
-//				CollisionData.EntityType.GRAVITY, new Vector2d(0.0f, 0.0f),
-//				new Vector2d(0.0f, -0.1f)));
-//			
-//            for (CollisionType c2 : entities) {
-//                
-//                if (c1 != c2 && collision(c1, c2)) {
-//
-//                    //pass the collision data
-//                    c1.passCollisionData(new CollisionData(
-//                        c2.getType(), c2.getPos(), c2.getSpeed()));
-//                }
-//            }
-//        }
     }
     
     /**Adds a new collision type entity to the physics controller

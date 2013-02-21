@@ -15,11 +15,12 @@ import nz.co.withfire.obliterate.utilities.Vector2d;
 public abstract class CollisionType extends Entity {
 
     //VARIABLES
+    //is true if this entity is immovable
+    protected boolean immovable = false;
+    //the speed of the entity
+    protected Vector2d speed = new Vector2d();
     //the bounding area
     protected BoundingArea boundingBox;
-    //a list of the collision data
-    protected ArrayList<CollisionData> collisions =
-        new ArrayList<CollisionData>();
     
     //METHODS
     /**@return the type of entity this is*/
@@ -46,9 +47,13 @@ public abstract class CollisionType extends Entity {
         return boundingBox;
     }
     
-    /**Pass collision data to the entity*/
-    public void passCollisionData(CollisionData data) {
+    /**Set the speed of the entity
+    @param speed the new speed*/
+    public void setSpeed(Vector2d speed) {
         
-        collisions.add(data);
+        if (!immovable) {
+            
+            this.speed = new Vector2d(speed);
+        }
     }
 }

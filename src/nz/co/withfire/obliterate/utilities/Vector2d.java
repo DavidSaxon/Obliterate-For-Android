@@ -63,6 +63,23 @@ public class Vector2d {
         this.y = y;
     }
     
+    /**Adds the 2 points to the vector
+    @param x the x point to add
+    @param y the y point to add*/
+    public void add(float x, float y) {
+        
+        this.x += x;
+        this.y += y;
+    }
+    
+    /**Adds the other vector to this vector
+    @pararm other the other vector to add*/
+    public void add(Vector2d other) {
+        
+        this.x += other.x;
+        this.y += other.y;
+    }
+    
     /**Find the angle between this vector and the other
     along the x axis
     @param other the other vector*/

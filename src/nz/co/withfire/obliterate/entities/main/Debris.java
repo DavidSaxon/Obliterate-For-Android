@@ -20,8 +20,6 @@ public class Debris extends CollisionType {
     private Vector2d pos;
     //the side length of the vector
     private float sideLength;
-    //the speed of the debris
-    private Vector2d speed;
     
     //the debris is only affected by the force once
     private boolean forceApplied = false;
@@ -78,45 +76,45 @@ public class Debris extends CollisionType {
     @Override
     public ArrayList<Entity> update() {
 
-        //work through the collisions
-        for (CollisionData data : collisions) {
-            
-            //collision with the force
-            if (data.getCollideWith() == EntityType.FORCE &&
-                !forceApplied) {
-                
-                //calculate the direction and speed
-                double direction = data.getPos().angleBetween(pos);
-                
-                //add some noise to the angle
-                direction += ((Math.PI / 3.0) * rand.nextFloat()) - (Math.PI / 6.0);
-                
-                speed = new Vector2d((float) -(0.04*Math.cos(direction)),
-                    (float) (0.04*Math.sin(direction)));
-                
-                forceApplied = true;
-            }
-            //FIXME: ignore gravity for now
-//			//apply gravity
-//			if (data.getCollideWith() == EntityType.GRAVITY) {
-//				
-//				if (speed.getX() > data.getSpeed().getX()) {
-//					
-//					speed.setX(speed.getX() - data.getSpeed().getX() * 0.01f);
-//				}
-//				if (speed.getY() > data.getSpeed().getY()) {
-//					
-//					speed.setY(speed.getY() - Math.abs(data.getSpeed().getY()*0.005f));
-//				}
-//			}
-			//FIXME: ignore entity for now
-//            if (data.getCollideWith() == EntityType.DEBRIS) {
+//        //work through the collisions
+//        for (CollisionData data : collisions) {
+//            
+//            //collision with the force
+//            if (data.getCollideWith() == EntityType.FORCE &&
+//                !forceApplied) {
 //                
-//                speed = new Vector2d(data.getSpeed());
+//                //calculate the direction and speed
+//                double direction = data.getPos().angleBetween(pos);
+//                
+//                //add some noise to the angle
+//                direction += ((Math.PI / 3.0) * rand.nextFloat()) - (Math.PI / 6.0);
+//                
+//                speed = new Vector2d((float) -(0.045*Math.cos(direction)),
+//                    (float) (0.04*Math.sin(direction)));
+//                
+//                forceApplied = true;
 //            }
-        }
-        //clear the collisions
-        collisions.clear();
+//            //FIXME: ignore gravity for now
+////			//apply gravity
+////			if (data.getCollideWith() == EntityType.GRAVITY) {
+////				
+////				if (speed.getX() > data.getSpeed().getX()) {
+////					
+////					speed.setX(speed.getX() - data.getSpeed().getX() * 0.01f);
+////				}
+////				if (speed.getY() > data.getSpeed().getY()) {
+////					
+////					speed.setY(speed.getY() - Math.abs(data.getSpeed().getY()*0.005f));
+////				}
+////			}
+//			//FIXME: ignore entity for now
+////            if (data.getCollideWith() == EntityType.DEBRIS) {
+////                
+////                speed = new Vector2d(data.getSpeed());
+////            }
+//        }
+//        //clear the collisions
+//        collisions.clear();
         
         //TODO: vector addition!
 		//move the debris
@@ -165,6 +163,19 @@ public class Debris extends CollisionType {
     public Vector2d getSpeed() {
         
         return speed;
+    }
+    
+    /**@return true if the force has been applied to this debris*/
+    public boolean getForceApplied() {
+        
+        return forceApplied;
+    }
+    
+    /**Sets if the force is applied
+    @param forceApplied wether the force has been applied*/
+    public void setForceApplied(boolean forceApplied) {
+        
+        this.forceApplied = forceApplied;
     }
 
 }

@@ -25,6 +25,8 @@ public class Force extends CollisionType {
     //VARIABLES
     //the position of the force
     private Vector2d pos;
+    //the speed of the force
+    private Vector2d speed;
     //the scale of the force
     private float scale = 0.0f;
     //the fade of the force
@@ -47,6 +49,8 @@ public class Force extends CollisionType {
         
         //copy the position
         this.pos = new Vector2d(pos);
+        //set the speed
+        speed = new Vector2d(0.045f, 0.045f);
         
         //TODO: add a texture to the quad
         
@@ -62,6 +66,8 @@ public class Force extends CollisionType {
                          };
         image = new Quad2d(coord, colour);
         
+        //force is immovable
+        immovable = true;
         //set the bounding box
         boundingBox = new BoundingCircle(pos, 1.0f);
         //scale the bounding box
@@ -102,13 +108,7 @@ public class Force extends CollisionType {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);
-   }
-   
-   @Override
-   public void passCollisionData(CollisionData d) {
-	   
-	   //to nothing
-   }
+    }
     
     @Override
     public EntityType getType() {
@@ -128,5 +128,11 @@ public class Force extends CollisionType {
         float r = ((BoundingCircle) boundingBox).getRadius();
         
         return new Vector2d(r * 2.0f, r * 2.0f);
+    }
+    
+    @Override
+    public Vector2d getSpeed() {
+        
+        return speed;
     }
 }
