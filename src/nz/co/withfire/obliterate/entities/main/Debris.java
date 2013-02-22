@@ -71,7 +71,7 @@ public class Debris extends CollisionType {
 		//move the debris
         pos.add(speed);
         
-        //translate the bounding box
+        //translate the bounding box 
         boundingBox.setPos(pos);
     }
 
