@@ -133,6 +133,9 @@ public class Quad2d implements Shape2d {
 
     @Override
     public void draw(float[] mvpMatrix) {
+        
+        //set the blending function
+        GLES20.glBlendFunc (GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 
         //add the program to openGL environment
         GLES20.glUseProgram(program);

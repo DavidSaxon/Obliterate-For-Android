@@ -12,6 +12,7 @@ import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
+import nz.co.withfire.obliterate.entities.menu.openMenuButton;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
 import nz.co.withfire.obliterate.graphics.TextureLoader;
@@ -75,6 +76,10 @@ public class Engine implements GLSurfaceView.Renderer {
     //textures
     //the logo texture
     private int logoTex;
+    //the open menu button texture
+    private int openMenuTex;
+    //the force texture
+    private int forceTex;
     
     //Entities
     //keep a reference to the loading bar
@@ -113,9 +118,11 @@ public class Engine implements GLSurfaceView.Renderer {
         //get the current time
         currentTime = SystemClock.uptimeMillis();
         
-        //TODO: move this
-        //load the textures
+        //we have to load the logo texture before we start
         logoTex = TextureLoader.loadTexture(activityContext, R.drawable.logo);
+        //TODO: move this to load
+        forceTex = TextureLoader.loadTexture(activityContext, R.drawable.force);
+        openMenuTex = TextureLoader.loadTexture(activityContext, R.drawable.open_menu);
     }
 
     @Override
@@ -123,6 +130,8 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //store the screen dimensions
         screenDim = new Vector2d(width, height);
+        
+        Log.v("Obliterate", width + " x " + height);
         
         //set the view port
         GLES20.glViewport(0, 0, width, height);
@@ -293,14 +302,11 @@ public class Engine implements GLSurfaceView.Renderer {
             case MAIN: {
                 
                 //add a force point
-                Force f = new Force(touchPos);
+                Force f = new Force(touchPos, forceTex);
                 
                 //TODO: add to layer 0
-                entities.get(4).add(f);
+                entities.get(2).add(f);
                 physics.addEntity(f);
-                
-                //tell the image to obliterate
-                //obliterateImage.setToObliterate();
                 
                 break;
             }
@@ -372,6 +378,9 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //TODO: work out the size of the image and the texture and pass it to debris\
         
+        //add the open menu button
+        entities.get(0).add(new openMenuButton(openMenuTex));
+        
         //FIXME: remove speed?
         Vector2d speed = new Vector2d(0.0f, 0.0f);
         
@@ -385,13 +394,9 @@ public class Engine implements GLSurfaceView.Renderer {
                 physics.addEntity(d);
                 
                 //add to entities
-                entities.get(2).add(d);
+                entities.get(4).add(d);
             }
         }
-        
-        //add an obliterate image to the 3rd layer
-        //obliterateImage = new ObliterateImage();
-        //entities.get(2).add(obliterateImage);
     }
     
     /**Clear all entities from the entities list*/
@@ -411,6 +416,7 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //enable transparency
         GLES20.glEnable(GLES20.GL_BLEND);
+        //GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA); 
         GLES20.glBlendFunc (GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
     }
     

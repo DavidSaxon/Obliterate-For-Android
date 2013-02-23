@@ -25,23 +25,17 @@ public class QuadTex2d implements Shape2d {
     private final int sizeOfFloat = 4;
     //the number of position coords per vertex
     private final int coordsPerVertex = 3;
-    //the number of colour values per vertex
-    private final int colValPerVertex = 4;
     //the number of values per texture coord
     private final int valPerTex = 2;
     //the stride of a vertex
     private final int vertexStride = coordsPerVertex * sizeOfFloat;
-    //the stride of a colour
-    private final int colourStride = colValPerVertex * sizeOfFloat;
     //the stride of a texture
-    private final int textStride = valPerTex * sizeOfFloat;
+    private final int texStride = valPerTex * sizeOfFloat;
     //the order to draw the vertices
     private final short drawOrder[] = { 0, 1, 2, 0, 2, 3 }; // order to draw vertices
     
     //the vertex buffer
     private final FloatBuffer vertexBuffer;
-    //the colour buffer
-    private final FloatBuffer colourBuffer;
     //the texture buffer
     private final FloatBuffer texBuffer;
     //the draw list buffer
@@ -54,8 +48,6 @@ public class QuadTex2d implements Shape2d {
     
     //the coords of the quad
     private float coords[];
-    //the colour of the quad
-    private float colour[];
     
     //shaders
     private final String vertexShaderCode =
@@ -64,20 +56,14 @@ public class QuadTex2d implements Shape2d {
         "uniform mat4 uMVPMatrix;" +
         //vertex information that will be passed in
         "attribute vec4 a_Position;" +
-        //colour information that will be passed in
-        "attribute vec4 a_Colour;" +
         //texture information that will be passed in
         "attribute vec2 a_texCoord;" +
-        
-        //colour data that will be passed to the fragment shader
-        "varying vec4 v_Colour;\n" +
+
         //texture data that will be passed to the fragment shader
         "varying vec2 v_texCoord;" +
                 
         "void main() {" +
-        
-            //pass the colour through to the fragment shader
-            "v_Colour = a_Colour;" +
+
             //pass the tex coords through to the fragment shader
             "v_texCoord = a_texCoord;" +
             
@@ -93,8 +79,6 @@ public class QuadTex2d implements Shape2d {
         //the input texture
         "uniform sampler2D u_Texture;" +
         
-        //the colour
-        "varying vec4 v_Colour;" +
         //the texture
         "varying vec2 v_texCoord;" +
                 
@@ -108,11 +92,10 @@ public class QuadTex2d implements Shape2d {
     /**Constructs a new 2d quad
     @param crd the co-ordinates of the quad
     @param clr the colour of the quad*/
-    public QuadTex2d(float crd[], float clr[], int tex) {
+    public QuadTex2d(float crd[], float[] texCoords, int tex) {
 
         //initialise variables
         coords = crd;
-        colour = clr;
         textureHandle = tex;
 
         //initialise the bye buffer for the vertex buffer (4 = bytes per float)
@@ -123,22 +106,6 @@ public class QuadTex2d implements Shape2d {
         vertexBuffer = bb.asFloatBuffer();
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
-        
-        //initialise the byte buffer for the colour buffer (4 = bytes per float)
-        ByteBuffer cb = ByteBuffer.allocateDirect(colour.length * sizeOfFloat);
-        cb.order(ByteOrder.nativeOrder());
-        
-        //initialise the colour buffer and insert the values
-        colourBuffer = cb.asFloatBuffer();
-        colourBuffer.put(colour);
-        colourBuffer.position(0);
-        
-        //the texture coords
-        final float[] texCoords = { 1.0f, 0.0f,
-                                    1.0f, 1.0f,
-                                    0.0f, 1.0f, 
-                                    0.0f, 0.0f,
-                                  };
         
         //Initialise the byte buffer for the coords
         ByteBuffer tb = ByteBuffer.allocateDirect(
@@ -178,6 +145,9 @@ public class QuadTex2d implements Shape2d {
 
     @Override
     public void draw(float[] mvpMatrix) {
+        
+        //set the blending function
+        GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA);
 
         //add the program to openGL environment
         GLES20.glUseProgram(program);
@@ -205,17 +175,6 @@ public class QuadTex2d implements Shape2d {
         GLES20.glVertexAttribPointer(positionHandle, coordsPerVertex,
                                      GLES20.GL_FLOAT, false,
                                      vertexStride, vertexBuffer);
-
-        //get a handle to the fragment shader's colour
-        int colourHandle = GLES20.glGetAttribLocation(program, "a_Colour");
-        
-        //enable a handle to vertices
-        GLES20.glEnableVertexAttribArray(colourHandle);
-
-        //prepare the colour data
-        GLES20.glVertexAttribPointer(colourHandle, colValPerVertex,
-                                     GLES20.GL_FLOAT, false,
-                                     colourStride, colourBuffer);
         
         //get a handle to the texture data
         int texCoordHandle = GLES20.glGetAttribLocation(program, "a_texCoord");
@@ -223,7 +182,7 @@ public class QuadTex2d implements Shape2d {
         //pass in the texture information    
         texBuffer.position(0);
         GLES20.glVertexAttribPointer(texCoordHandle, valPerTex, GLES20.GL_FLOAT,
-            false, 0, texBuffer);
+            false, texStride, texBuffer);
         GLES20.glEnableVertexAttribArray(texCoordHandle);
 
         //get a handle to shape's transformation matrix
@@ -257,22 +216,12 @@ public class QuadTex2d implements Shape2d {
     @Override
     public void setColour(int v, Vector4d c) {
 
-//        //TODO: set constant
-//        colour[v * colValPerVertex] = c.getX();
-//        colour[v * colValPerVertex + 1] = c.getY();
-//        colour[v * colValPerVertex + 2] = c.getZ();
-//        colour[v * colValPerVertex + 3] = c.getW();
-//
-//        colourBuffer.put(colour);
-//        colourBuffer.position(0);
+        //do nothing
     }
 
     @Override
     public void setColour(Vector4d c) {
 
-//        setColour(0, c);
-//        setColour(1, c);
-//        setColour(2, c);
-//        setColour(3, c);
+        //do nothing
     }
 }

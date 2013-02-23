@@ -6,9 +6,11 @@
 
 package nz.co.withfire.obliterate.entities.main;
 
+import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.graphics.drawable.shape2d.QuadTex2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingCircle;
 import nz.co.withfire.obliterate.utilities.Vector2d;
@@ -27,7 +29,10 @@ public class Force extends CollisionType {
     private float fade = 1.0f;
     
     //the image of the force
-    Quad2d image;
+    private QuadTex2d image;
+    
+    //the texture
+    private int tex;
     
     //Matrix
     //the model view projection matrix
@@ -38,26 +43,26 @@ public class Force extends CollisionType {
     //CONSTRUCTOR
     /**Creates a new force point
     @param pos the position of the force*/
-    public Force(Vector2d pos) {
+    public Force(Vector2d pos, int tex) {
         
         //copy the position
         this.pos = new Vector2d(pos);
         //set the speed
         speed = new Vector2d(0.045f, 0.045f);
-        
-        //TODO: add a texture to the quad
+
+        //set the texture
+        this.tex = tex;
         
         float[] coord = {   -1.0f,  1.0f, 0.0f,
                             -1.0f, -1.0f, 0.0f,
                              1.0f, -1.0f, 0.0f,
                              1.0f,  1.0f, 0.0f
                         };
-        float[] colour = {  0.7f, 0.8f, 0.9f, 1.0f,
-                            0.7f, 0.8f, 0.9f, 1.0f,
-                            0.7f, 0.8f, 0.9f, 1.0f,
-                            0.7f, 0.8f, 0.9f, 1.0f
-                         };
-        image = new Quad2d(coord, colour);
+        final float[] texCoords = { 1.0f, 0.0f,
+                                    1.0f, 1.0f,
+                                    0.0f, 1.0f, 
+                                    0.0f, 0.0f};
+        image = new QuadTex2d(coord, texCoords, tex);
         
         //force is immovable
         immovable = true;
@@ -80,7 +85,7 @@ public class Force extends CollisionType {
             remove = true;
         }
         
-        image.setColour(new Vector4d(0.7f, 0.8f, 0.9f, fade));
+        //image.setColour(new Vector4d(0.7f, 0.8f, 0.9f, fade));
         
         //scale the bounding box
         boundingBox.scale(scale);

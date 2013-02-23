@@ -29,10 +29,10 @@ public class LoadingBar extends Entity {
     public LoadingBar() {
         
         //create the coords of the quad
-        float quadCoord[] = {-1.5f, -.8f,   0.0f,
-                             -1.5f, -0.75f, 0.0f,
-                              1.5f, -0.75f, 0.0f,
-                              1.5f, -0.8f,  0.0f};
+        float quadCoord[] = {-1.5f, -.3f,   0.0f,
+                             -1.5f, -0.25f, 0.0f,
+                              1.5f, -0.25f, 0.0f,
+                              1.5f, -0.3f,  0.0f};
         float quadColour[] = {  1.0f, 1.0f, 1.0f, 1.0f,
                                 1.0f, 1.0f, 1.0f, 1.0f,
                                 1.0f, 1.0f, 1.0f, 1.0f,
@@ -44,10 +44,8 @@ public class LoadingBar extends Entity {
     public void update() {
         
         //stretch the bar across the screen
-        bar.setPosition(0, new Vector3d(1.5f - (2.98f * progress), -0.8f,  0.0f));
-        bar.setPosition(1, new Vector3d(1.5f - (2.98f * progress), -0.75f, 0.0f));
-        
-        Log.v("Obliterate", ""+progress);
+        bar.setPosition(0, new Vector3d(1.5f - (2.98f * progress), -0.3f,  0.0f));
+        bar.setPosition(1, new Vector3d(1.5f - (2.98f * progress), -0.25f, 0.0f));
         
         //fade the bar into black
         float col = 1.0f - (1.0f * progress);
