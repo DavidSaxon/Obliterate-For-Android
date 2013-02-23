@@ -14,10 +14,12 @@ import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
+import nz.co.withfire.obliterate.graphics.TextureLoader;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.Physics;
 import nz.co.withfire.obliterate.utilities.CoordUtil;
 import nz.co.withfire.obliterate.utilities.Vector2d;
+import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -33,6 +35,9 @@ public class Engine implements GLSurfaceView.Renderer {
         START_UP,
         MAIN
     };
+    
+    //activity context
+    private final Context activityContext;
     
     //FLAGS
     //true to show the frame rate
@@ -67,6 +72,10 @@ public class Engine implements GLSurfaceView.Renderer {
     //the physics controller
     private Physics physics;
     
+    //textures
+    //the logo texture
+    private int logoTex;
+    
     //Entities
     //keep a reference to the loading bar
     private LoadingBar loadingBar;
@@ -81,6 +90,12 @@ public class Engine implements GLSurfaceView.Renderer {
     private final float[] projectionMatrix = new float[16];
     //the view matrix
     private final float[] viewMatrix = new float[16];
+    
+    //CONSTRUCTOR
+    public Engine(Context context) {
+        
+        activityContext = context;
+    }
     
     //PUBLIC METHODS
     @Override
@@ -97,6 +112,10 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //get the current time
         currentTime = SystemClock.uptimeMillis();
+        
+        //TODO: move this
+        //load the textures
+        logoTex = TextureLoader.loadTexture(activityContext, R.drawable.logo);
     }
 
     @Override
@@ -335,7 +354,7 @@ public class Engine implements GLSurfaceView.Renderer {
         clearEntities();
         
         //add the logo to the second layer
-        entities.get(1).add(new Logo());
+        entities.get(1).add(new Logo(logoTex));
         
         //add the loading bar to the first layer
         loadingBar = new LoadingBar();

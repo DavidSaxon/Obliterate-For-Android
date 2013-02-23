@@ -8,13 +8,16 @@ package nz.co.withfire.obliterate.entities.start_up;
 
 import android.opengl.Matrix;
 import nz.co.withfire.obliterate.entities.Entity;
-import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.graphics.drawable.shape2d.QuadTex2d;
 
 public class Logo extends Entity {
     
     //VARIABLES
     //the quad displaying the logo
-    private Quad2d logo;
+    private QuadTex2d logo;
+    
+    //the texture of the logo
+    private int tex;
     
    //Matrix
     //the model view projection matrix
@@ -23,7 +26,9 @@ public class Logo extends Entity {
     private float[] tMatrix = new float[16];
     
     //CONSTRUCTOR
-    public Logo() {
+    public Logo(int tex) {
+        
+        this.tex = tex;
         
         float quadCoord[] = {   -1.5f,  0.8f, 0.0f,
                                 -1.5f, -0.6f, 0.0f,
@@ -33,7 +38,7 @@ public class Logo extends Entity {
                                 0.8f, 0.8f, 0.8f, 1.0f,
                                 0.8f, 0.8f, 0.8f, 1.0f,
                                 0.8f, 0.8f, 0.8f, 1.0f};
-        logo = new Quad2d(quadCoord, quadColour);
+        logo = new QuadTex2d(quadCoord, quadColour, tex);
     }
     
     //METHODS

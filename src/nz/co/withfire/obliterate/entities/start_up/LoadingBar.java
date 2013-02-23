@@ -47,10 +47,17 @@ public class LoadingBar extends Entity {
         bar.setPosition(0, new Vector3d(1.5f - (2.98f * progress), -0.8f,  0.0f));
         bar.setPosition(1, new Vector3d(1.5f - (2.98f * progress), -0.75f, 0.0f));
         
+        Log.v("Obliterate", ""+progress);
+        
         //fade the bar into black
         float col = 1.0f - (1.0f * progress);
-        bar.setColour(0, new Vector4d(col, col, col, col));
-        bar.setColour(1, new Vector4d(col, col, col, col));
+        //cap the colour
+        if (col < 0.0f) {
+            
+            col = 0.0f;
+        }
+        bar.setColour(0, new Vector4d(col, col, col, 1.0f));
+        bar.setColour(1, new Vector4d(col, col, col, 1.0f));
     }
 
     @Override

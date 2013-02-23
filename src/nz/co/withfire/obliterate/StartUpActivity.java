@@ -67,7 +67,7 @@ class extGLSurfaceView extends GLSurfaceView {
         setEGLContextClientVersion(2);
         
         //create the engine
-        engine = new Engine();
+        engine = new Engine(context);
         
         //set the renderer for drawing on this surface
         setRenderer(engine);

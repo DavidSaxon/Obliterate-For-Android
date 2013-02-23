@@ -25,7 +25,7 @@ public class TextureLoader {
         final int[] textureHandle = new int[1];
         GLES20.glGenTextures(1, textureHandle, 0);
         
-        //if the we the hanlde to the texture
+        //if the we the handle to the texture
         if (textureHandle[0] != 0) {
             
             
@@ -42,9 +42,9 @@ public class TextureLoader {
             
             //set filtering
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_NEAREST);
+                GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR);
             GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
-                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_NEAREST);
+                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR);
             
             //load in the texture
             GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0);
