@@ -170,6 +170,12 @@ public class Physics {
         entities.remove(e);
     }
     
+    /**clears the entities*/
+    public void clear() {
+        
+        entities.clear();
+    }
+    
 
     /**Checks if the two objects are colliding
     @param first the first object

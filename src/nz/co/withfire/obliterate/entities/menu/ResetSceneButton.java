@@ -1,19 +1,19 @@
-/****************************\
-| Button that opens the menu |
-|                            |
-| @author David Saxon        |
-\****************************/
-
+/******************************\
+| Button that resets the scene |
+|                              |
+| @author David Saxon          |
+\******************************/
 package nz.co.withfire.obliterate.entities.menu;
 
 import android.opengl.Matrix;
+import android.util.Log;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.QuadTex2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
-public class OpenMenuButton extends CollisionType {
-    
+public class ResetSceneButton extends CollisionType {
+
     //VARIABLES
     //the position of the button
     private Vector2d pos = new Vector2d();
@@ -41,16 +41,14 @@ public class OpenMenuButton extends CollisionType {
     private float[] tMatrix = new float[16];
     
     //CONSTRUCTOR
-    /**Creates a new open menu button
-    @param tex the texture of the button*/
-    public OpenMenuButton(Vector2d GLdim, int tex) {
+    public ResetSceneButton(Vector2d GLdim, int tex) {
         
         this.GLdim.copy(GLdim);
         this.tex = tex;
         
         //find the position of the button
         //TODO: relative position
-        pos.set(-1.6f, 0.85f);
+        pos.set(1.6f, 0.85f);
         
         //find the dimensions of the button
         dim.set(GLdim.getX() / 23.5f, GLdim.getX() / 23.5f);
@@ -73,6 +71,16 @@ public class OpenMenuButton extends CollisionType {
     @Override
     public void update() {
         
+        //roatate the button
+        if (rotation < 360.0f) {
+            
+            rotation += 15.0f;
+        }
+        else {
+            
+            rotation = 360.0f;
+        }
+        
         //slide forwards
         if (slideForwards) {
             
@@ -86,16 +94,6 @@ public class OpenMenuButton extends CollisionType {
                 pos.setX(pos.getX() + shiftAmount);
                 boundingBox.translate(new Vector2d(shiftAmount, 0.0f));
             }
-            
-            //rotate
-            if (rotation < 180.0f) {
-                
-                rotation += 6.0f;
-            }
-            else {
-                
-                //rotation = (float) Math.PI;
-            }
         }
     }
     
@@ -105,7 +103,7 @@ public class OpenMenuButton extends CollisionType {
        //shift into visible range
         Matrix.setIdentityM(tMatrix, 0);
         Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);
-        Matrix.rotateM(tMatrix, 0, rotation, 0, 0, 1.0f);
+        Matrix.rotateM(tMatrix, 0, -rotation, 0, 0, 1.0f);
         
         //multiply the matrix
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
@@ -114,8 +112,7 @@ public class OpenMenuButton extends CollisionType {
         image.draw(mvpMatrix);
     }
     
-    /**Is called to set the button sliding forwards
-    and also rotates*/
+    /**Is called to set the button sliding forwards*/
     public void slideForwards() {
         
         slideForwards = true;

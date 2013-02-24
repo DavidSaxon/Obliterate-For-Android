@@ -13,6 +13,8 @@ import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
+import nz.co.withfire.obliterate.entities.menu.PauseMenuBackground;
+import nz.co.withfire.obliterate.entities.menu.ResetSceneButton;
 import nz.co.withfire.obliterate.entities.menu.TouchPoint;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
@@ -47,7 +49,7 @@ public class Engine implements GLSurfaceView.Renderer {
     
     //VARIABLES
     //the current state of the engine
-    private State state = State.MAIN;
+    private State state = State.START_UP;
     //is true when the state has been changed
     private boolean stateChanged = true;
     //is true when is paused
@@ -75,6 +77,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private final int numLayers = 5;
     //an list of layers which contains lists of entities
     private ArrayList<ArrayList<Entity>> entities = new ArrayList<ArrayList<Entity>>();
+    //a list of entities that are in the pause menu
+    private ArrayList<Entity> menuEntities = new ArrayList<Entity>();
     //the physics controller
     private Physics physics;
     
@@ -83,6 +87,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private int logoTex;
     //the open menu button texture
     private int openMenuTex;
+    //the rest scene button texture
+    private int resetSceneTex;
     //the shock wave texture
     private int forceTex; //TODO: make into an array and rename to shock wave
     
@@ -92,6 +98,10 @@ public class Engine implements GLSurfaceView.Renderer {
     //We need to keep a reference to the open menu button to check if
     //it has been pressed
     private OpenMenuButton openMenuButton;
+    //the reset scene button
+    private ResetSceneButton resetSceneButton;
+    //the pause menu background
+    private PauseMenuBackground pMBG;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -129,6 +139,7 @@ public class Engine implements GLSurfaceView.Renderer {
         //TODO: move this to load
         forceTex = TextureLoader.loadTexture(activityContext, R.drawable.force);
         openMenuTex = TextureLoader.loadTexture(activityContext, R.drawable.open_menu);
+        resetSceneTex = TextureLoader.loadTexture(activityContext, R.drawable.reset_scene);
     }
 
     @Override
@@ -258,6 +269,15 @@ public class Engine implements GLSurfaceView.Renderer {
             accumTime -= frameLength;
         }
         
+        //TODO: physics for menu entities if paused
+        //OR could do physics detection always?? riskay...
+        
+        //update the menu entities
+        for (Entity e : menuEntities) {
+            
+            e.update();
+        }
+        
         //DRAW
         //redraw background colour
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
@@ -272,6 +292,12 @@ public class Engine implements GLSurfaceView.Renderer {
                 
                 e.draw(viewMatrix, projectionMatrix);
             }
+        }
+        
+        //iterate over the menu entities and draw them
+        for (Entity e: menuEntities) {
+            
+           e.draw(viewMatrix, projectionMatrix);
         }
     }
 
@@ -321,7 +347,12 @@ public class Engine implements GLSurfaceView.Renderer {
                 //check if there is a collision with the open menu button
                 if (physics.collision(openMenuButton, touchPoint)) {
                     
-                    paused = !paused;
+                    initPause();
+                }
+                //check if the reset scene button is pressed
+                else if (physics.collision(resetSceneButton, touchPoint)) {
+                    
+                    stateChanged = true;
                 }
                 else {
                     
@@ -405,7 +436,11 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //add the open menu button
         openMenuButton = new OpenMenuButton(screenDimGL, openMenuTex);
-        entities.get(0).add(openMenuButton);
+        menuEntities.add(openMenuButton);
+        
+        //add the reset scene button
+        resetSceneButton = new ResetSceneButton(screenDimGL, resetSceneTex);
+        menuEntities.add(resetSceneButton);
         
         //FIXME: remove speed?
         Vector2d speed = new Vector2d(0.0f, 0.0f);
@@ -425,6 +460,20 @@ public class Engine implements GLSurfaceView.Renderer {
         }
     }
     
+    /**Initialises the pause menu*/
+    private void initPause() {
+        
+        paused = true;
+        
+        //tell the open menu button to slide
+        openMenuButton.slideForwards();
+        resetSceneButton.slideForwards();
+        
+        //add background
+        pMBG = new PauseMenuBackground(screenDimGL);
+        menuEntities.add(pMBG);
+    }
+    
     /**Clear all entities from the entities list*/
     private void clearEntities() {
         
@@ -432,6 +481,10 @@ public class Engine implements GLSurfaceView.Renderer {
             
             entities.set(i, new ArrayList<Entity>());
         }
+        
+        menuEntities.clear();
+        
+        physics.clear();
     }
     
     /**Initialises openGL*/
