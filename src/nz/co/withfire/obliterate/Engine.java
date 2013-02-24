@@ -12,7 +12,8 @@ import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
-import nz.co.withfire.obliterate.entities.menu.openMenuButton;
+import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
+import nz.co.withfire.obliterate.entities.menu.TouchPoint;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
 import nz.co.withfire.obliterate.graphics.TextureLoader;
@@ -46,12 +47,16 @@ public class Engine implements GLSurfaceView.Renderer {
     
     //VARIABLES
     //the current state of the engine
-    private State state = State.START_UP;
+    private State state = State.MAIN;
     //is true when the state has been changed
     private boolean stateChanged = true;
+    //is true when is paused
+    private boolean paused = false;
     
     //the dimensions of the screen
     private Vector2d screenDim;
+    //the dimensions of the screen in openGL coords
+    private Vector2d screenDimGL;
     
     //fps management
     //the current time
@@ -78,14 +83,15 @@ public class Engine implements GLSurfaceView.Renderer {
     private int logoTex;
     //the open menu button texture
     private int openMenuTex;
-    //the force texture
-    private int forceTex;
+    //the shock wave texture
+    private int forceTex; //TODO: make into an array and rename to shock wave
     
     //Entities
     //keep a reference to the loading bar
     private LoadingBar loadingBar;
-    //keep a reference to the obliterate image
-    //private ObliterateImage obliterateImage;
+    //We need to keep a reference to the open menu button to check if
+    //it has been pressed
+    private OpenMenuButton openMenuButton;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -144,9 +150,14 @@ public class Engine implements GLSurfaceView.Renderer {
         Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
         
-        //create a new physics controller        
-        physics = new Physics(CoordUtil.screenPosToOpenGLPos(
+        //store the openGL dimensions
+        screenDimGL = new Vector2d(CoordUtil.screenPosToOpenGLPos(
                 screenDim, screenDim, viewMatrix, projectionMatrix));
+        
+        Log.v("Obliterate", screenDimGL.getX() + " x " + screenDimGL.getY());
+        
+        //create a new physics controller        
+        physics = new Physics(screenDimGL);
         
         //get the current time
         currentTime = SystemClock.uptimeMillis();
@@ -202,40 +213,43 @@ public class Engine implements GLSurfaceView.Renderer {
                 processTouchEvent();
             }
             
-            //COLLISON CHECK
-            physics.collisionCheck();
-            
-            //UPDATE
-            //iterate over the entities and update them
-            for (int i = 0; i < numLayers; ++i) {
+            if (!paused) {
                 
-                //TODO: OPTIMISE REMOVE LISTS?
-                //list of entities to be removed
-                ArrayList<Entity> removeList = new ArrayList<Entity>();
+                //COLLISON CHECK
+                physics.collisionCheck();
                 
-                for (Entity e: entities.get(i)) {
+                //UPDATE
+                //iterate over the entities and update them
+                for (int i = 0; i < numLayers; ++i) {
                     
-                    //check if the entity should be removed
-                    if (e.shouldRemove()) {
+                    //TODO: OPTIMISE REMOVE LISTS?
+                    //list of entities to be removed
+                    ArrayList<Entity> removeList = new ArrayList<Entity>();
+                    
+                    for (Entity e: entities.get(i)) {
                         
-                        removeList.add(e);
+                        //check if the entity should be removed
+                        if (e.shouldRemove()) {
+                            
+                            removeList.add(e);
+                        }
+                        //else update the entity
+                        else {
+                            
+                           e.update();
+                        }
                     }
-                    //else update the entity
-                    else {
-                        
-                       e.update();
-                    }
-                }
-                
-                //remove the entities
-                for (Entity r : removeList) {
                     
-                    entities.get(i).remove(r);
-                    
-                    //remove from physics if collision type
-                    if (r instanceof CollisionType) {
+                    //remove the entities
+                    for (Entity r : removeList) {
                         
-                        physics.removeEntity((CollisionType) r);
+                        entities.get(i).remove(r);
+                        
+                        //remove from physics if collision type
+                        if (r instanceof CollisionType) {
+                            
+                            physics.removeEntity((CollisionType) r);
+                        }
                     }
                 }
             }
@@ -260,7 +274,7 @@ public class Engine implements GLSurfaceView.Renderer {
             }
         }
     }
-    
+
     /**Inputs a touch event
     @param e the motion event*/
     public void inputTouch(MotionEvent e) {
@@ -301,12 +315,23 @@ public class Engine implements GLSurfaceView.Renderer {
             }
             case MAIN: {
                 
-                //add a force point
-                Force f = new Force(touchPos, forceTex);
+                //create a touch point object
+                TouchPoint touchPoint = new TouchPoint(screenDimGL, touchPos);
                 
-                //TODO: add to layer 0
-                entities.get(2).add(f);
-                physics.addEntity(f);
+                //check if there is a collision with the open menu button
+                if (physics.collision(openMenuButton, touchPoint)) {
+                    
+                    paused = !paused;
+                }
+                else {
+                    
+                    //add a force point
+                    Force f = new Force(touchPos, forceTex);
+                    
+                    //TODO: add to layer 0
+                    entities.get(2).add(f);
+                    physics.addEntity(f);
+                }
                 
                 break;
             }
@@ -360,10 +385,10 @@ public class Engine implements GLSurfaceView.Renderer {
         clearEntities();
         
         //add the logo to the second layer
-        entities.get(1).add(new Logo(logoTex));
+        entities.get(1).add(new Logo(screenDimGL, logoTex));
         
         //add the loading bar to the first layer
-        loadingBar = new LoadingBar();
+        loadingBar = new LoadingBar(screenDimGL);
         entities.get(0).add(loadingBar);
         loadProgress = 0.0f;
     }
@@ -379,7 +404,8 @@ public class Engine implements GLSurfaceView.Renderer {
         //TODO: work out the size of the image and the texture and pass it to debris\
         
         //add the open menu button
-        entities.get(0).add(new openMenuButton(openMenuTex));
+        openMenuButton = new OpenMenuButton(screenDimGL, openMenuTex);
+        entities.get(0).add(openMenuButton);
         
         //FIXME: remove speed?
         Vector2d speed = new Vector2d(0.0f, 0.0f);
@@ -416,7 +442,6 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //enable transparency
         GLES20.glEnable(GLES20.GL_BLEND);
-        //GLES20.glBlendFunc(GLES20.GL_ONE, GLES20.GL_ONE_MINUS_SRC_ALPHA); 
         GLES20.glBlendFunc (GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
     }
     

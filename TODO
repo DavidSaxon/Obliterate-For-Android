@@ -1,5 +1,13 @@
- -texturing
- 
+-set the position of the open menu button using relative coords
+
+-open the menu
+
+-fix the intro objects to be translated by relative values
+
+-fix the main objects to use relative values
+
+-proper texture loading (load in the shockwave)
+
  -vector assignment, don't make a whole new object just take values!
  
  -don't cap fps just use smooth interpolation

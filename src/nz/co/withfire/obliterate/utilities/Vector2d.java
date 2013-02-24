@@ -37,6 +37,14 @@ public class Vector2d {
     }
     
     //PUBLIC METHODS
+    /**Copies the values of the other vector to this vector
+    @param other the other vector to copy from*/
+    public void copy(final Vector2d other) {
+        
+        this.x = other.x;
+        this.y = other.y;
+    }
+    
     /**@return the x value of the vector*/
     public float getX() {
         
@@ -47,6 +55,15 @@ public class Vector2d {
     public float getY() {
         
         return y;
+    }
+    
+    /**Sets the new values of the vector
+    @param x the new x value
+    @param y the new y value*/
+    public void set(float x, float y) {
+        
+        this.x  = x;
+        this.y = y;
     }
     
     /**Set the x value
@@ -78,6 +95,14 @@ public class Vector2d {
         
         this.x += other.x;
         this.y += other.y;
+    }
+    
+    /**Multiplies the vector by the given scalar
+    @param scalar the scalar to multiply by*/
+    public void multiply(float scalar) {
+        
+        x *= scalar;
+        y *= scalar;
     }
     
     /**Find the angle between this vector and the other

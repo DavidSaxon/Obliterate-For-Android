@@ -19,6 +19,9 @@ public class LoadingBar extends Entity {
     //the loading bar shape
     Quad2d bar;
     
+    private float width;
+    private float height;
+    
     //Matrix
     //the model view projection matrix
     private float[] mvpMatrix = new float[16];
@@ -26,13 +29,16 @@ public class LoadingBar extends Entity {
     private float[] tMatrix = new float[16];
     
     //CONSTRUCTOR
-    public LoadingBar() {
+    public LoadingBar(Vector2d GLdim) {
+        
+        width = Math.abs(GLdim.getX() / 1.25f);
+        height = width / 59.0f;
         
         //create the coords of the quad
-        float quadCoord[] = {-1.5f, -.3f,   0.0f,
-                             -1.5f, -0.25f, 0.0f,
-                              1.5f, -0.25f, 0.0f,
-                              1.5f, -0.3f,  0.0f};
+        float quadCoord[] = {-width,  height,   0.0f,
+                             -width, -height, 0.0f,
+                              width, -height, 0.0f,
+                              width,  height,  0.0f};
         float quadColour[] = {  1.0f, 1.0f, 1.0f, 1.0f,
                                 1.0f, 1.0f, 1.0f, 1.0f,
                                 1.0f, 1.0f, 1.0f, 1.0f,
@@ -44,8 +50,10 @@ public class LoadingBar extends Entity {
     public void update() {
         
         //stretch the bar across the screen
-        bar.setPosition(0, new Vector3d(1.5f - (2.98f * progress), -0.3f,  0.0f));
-        bar.setPosition(1, new Vector3d(1.5f - (2.98f * progress), -0.25f, 0.0f));
+        bar.setPosition(0, new Vector3d(
+            width - (width * 2 * progress), height,  0.0f));
+        bar.setPosition(1, new Vector3d(
+            width - (width * 2 * progress), -height, 0.0f));
         
         //fade the bar into black
         float col = 1.0f - (1.0f * progress);
@@ -63,7 +71,7 @@ public class LoadingBar extends Entity {
         
        //shift into visible range
         Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, 0, 0, -0.01f);
+        Matrix.translateM(tMatrix, 0, 0, -0.25f, -0.01f);
         
         //multiply the matrix
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);

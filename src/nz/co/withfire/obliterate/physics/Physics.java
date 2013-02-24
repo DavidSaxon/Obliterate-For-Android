@@ -170,12 +170,11 @@ public class Physics {
         entities.remove(e);
     }
     
-    
-    //PRIVATE METHODS
+
     /**Checks if the two objects are colliding
     @param first the first object
     @param second the second object*/
-    private boolean collision(CollisionType first, CollisionType second) {
+    public boolean collision(CollisionType first, CollisionType second) {
         
         //get the bounding areas
         BoundingArea firstBounding = first.getBoundingArea();
@@ -231,6 +230,7 @@ public class Physics {
                (r1y1 < r2y2) && (r1y2 > r2y1);
     }
 
+    //PRIVATE METHODS
     /**Checks if a rectangle and a circle are intersecting
     @param r the rectangle
     @param c the circle*/
