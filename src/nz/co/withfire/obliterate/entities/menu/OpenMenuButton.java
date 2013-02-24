@@ -94,7 +94,7 @@ public class OpenMenuButton extends CollisionType {
             }
             else {
                 
-                //rotation = (float) Math.PI;
+                rotation = 180.0f;
             }
         }
     }

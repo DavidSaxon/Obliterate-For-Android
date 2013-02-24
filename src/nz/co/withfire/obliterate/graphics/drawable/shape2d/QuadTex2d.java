@@ -211,8 +211,7 @@ public class QuadTex2d implements Shape2d {
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
     }
-
-
+    
     @Override
     public void setColour(int v, Vector4d c) {
 
@@ -223,5 +222,11 @@ public class QuadTex2d implements Shape2d {
     public void setColour(Vector4d c) {
 
         //do nothing
+    }
+    
+    //change the texture of quad
+    public void setTex(int tex) {
+        
+        textureHandle = tex;
     }
 }

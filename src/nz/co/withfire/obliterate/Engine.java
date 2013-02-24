@@ -12,6 +12,7 @@ import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
+import nz.co.withfire.obliterate.entities.menu.Button;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
 import nz.co.withfire.obliterate.entities.menu.PauseMenuBackground;
 import nz.co.withfire.obliterate.entities.menu.ResetSceneButton;
@@ -89,6 +90,19 @@ public class Engine implements GLSurfaceView.Renderer {
     private int openMenuTex;
     //the rest scene button texture
     private int resetSceneTex;
+    //menu button textures
+    private int[] debrisButtonTex = new int[2];
+    private int smokeButtonTex;
+    private int liquidButtonTex;
+    private int glassButtonTex;
+    private int magneticButtonTex;
+    private int electricButtonTex;
+    private int noneButtonTex;
+    private int shockwaveButtonTex;
+    private int explosionButtonTex;
+    private int setPosButtonTex;
+    private int addObButtonTex;
+    private int exitButtonTex;
     //the shock wave texture
     private int forceTex; //TODO: make into an array and rename to shock wave
     
@@ -102,6 +116,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private ResetSceneButton resetSceneButton;
     //the pause menu background
     private PauseMenuBackground pMBG;
+    //the debris button
+    private Button debrisButton;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -140,6 +156,10 @@ public class Engine implements GLSurfaceView.Renderer {
         forceTex = TextureLoader.loadTexture(activityContext, R.drawable.force);
         openMenuTex = TextureLoader.loadTexture(activityContext, R.drawable.open_menu);
         resetSceneTex = TextureLoader.loadTexture(activityContext, R.drawable.reset_scene);
+        debrisButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                R.drawable.debris_button_unpressed);
+        debrisButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                R.drawable.debris_button_pressed);
     }
 
     @Override
@@ -344,24 +364,35 @@ public class Engine implements GLSurfaceView.Renderer {
                 //create a touch point object
                 TouchPoint touchPoint = new TouchPoint(screenDimGL, touchPos);
                 
-                //check if there is a collision with the open menu button
-                if (physics.collision(openMenuButton, touchPoint)) {
+                if (paused) {
                     
-                    initPause();
-                }
-                //check if the reset scene button is pressed
-                else if (physics.collision(resetSceneButton, touchPoint)) {
-                    
-                    stateChanged = true;
+                    //check if there is a collision with debris button
+                    if (physics.collision(debrisButton, touchPoint)) {
+                        
+                        debrisButton.press();
+                    }
                 }
                 else {
                     
-                    //add a force point
-                    Force f = new Force(touchPos, forceTex);
-                    
-                    //TODO: add to layer 0
-                    entities.get(2).add(f);
-                    physics.addEntity(f);
+                    //check if there is a collision with the open menu button
+                    if (physics.collision(openMenuButton, touchPoint)) {
+                        
+                        initPause();
+                    }
+                    //check if the reset scene button is pressed
+                    else if (physics.collision(resetSceneButton, touchPoint)) {
+                        
+                        stateChanged = true;
+                    }
+                    else {
+                        
+                        //add a force point
+                        Force f = new Force(touchPos, forceTex);
+                        
+                        //TODO: add to layer 0
+                        entities.get(2).add(f);
+                        physics.addEntity(f);
+                    }
                 }
                 
                 break;
@@ -472,6 +503,10 @@ public class Engine implements GLSurfaceView.Renderer {
         //add background
         pMBG = new PauseMenuBackground(screenDimGL);
         menuEntities.add(pMBG);
+        
+        debrisButton = new Button(screenDimGL, pMBG.getPos(),
+            new Vector2d(1.0f, 0.5f), debrisButtonTex);
+        menuEntities.add(debrisButton);
     }
     
     /**Clear all entities from the entities list*/

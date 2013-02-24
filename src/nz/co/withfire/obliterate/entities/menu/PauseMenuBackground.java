@@ -96,6 +96,12 @@ public class PauseMenuBackground extends Entity {
         quad.draw(mvpMatrix);
     }
     
+    /**@return the position of the entity*/
+    public Vector2d getPos() {
+        
+        return pos;
+    }
+    
     /**@return whether sliding has been completed or not*/
     public boolean slideComplete() {
         
