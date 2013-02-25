@@ -41,6 +41,15 @@ public class Engine implements GLSurfaceView.Renderer {
         MAIN
     };
     
+    //particle type
+    enum ParticleType {
+        DEBRIS,
+        SMOKE,
+        LIQUID,
+        GLASS,
+        MAGNETIC
+    }
+    
     //activity context
     private final Context activityContext;
     
@@ -55,6 +64,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private boolean stateChanged = true;
     //is true when is paused
     private boolean paused = false;
+    //the current type of particle being used
+    private ParticleType particleType = ParticleType.DEBRIS;
     
     //the dimensions of the screen
     private Vector2d screenDim;
@@ -64,8 +75,6 @@ public class Engine implements GLSurfaceView.Renderer {
     //fps management
     //the current time
     private long currentTime;
-    //the time accumulated from the last frame
-    private int accumTime = 0;
     //the length of a frame
     private final int frameLength = 33;
     
@@ -92,19 +101,19 @@ public class Engine implements GLSurfaceView.Renderer {
     private int resetSceneTex;
     //menu button textures
     private int[] debrisButtonTex = new int[2];
-    private int smokeButtonTex;
-    private int liquidButtonTex;
-    private int glassButtonTex;
-    private int magneticButtonTex;
-    private int electricButtonTex;
-    private int noneButtonTex;
-    private int shockwaveButtonTex;
-    private int explosionButtonTex;
-    private int setPosButtonTex;
-    private int addObButtonTex;
-    private int exitButtonTex;
+    private int[] smokeButtonTex = new int[2];
+    private int[] liquidButtonTex = new int[2];
+    private int[] glassButtonTex = new int[2];
+    private int[] magneticButtonTex = new int[2];
+    private int[] electricButtonTex = new int[2];
+    private int[] noneButtonTex = new int[2];
+    private int[] shockwaveButtonTex = new int[2];
+    private int[] explosionButtonTex = new int[2];
+    private int[] setPosButtonTex = new int[2];
+    private int[] addObButtonTex = new int[2];
+    private int[] exitButtonTex = new int[2];
     //the shock wave texture
-    private int forceTex; //TODO: make into an array and rename to shock wave
+    private int shockwaveTex; //TODO: make into an array and rename to shock wave
     
     //Entities
     //keep a reference to the loading bar
@@ -118,6 +127,16 @@ public class Engine implements GLSurfaceView.Renderer {
     private PauseMenuBackground pMBG;
     //the debris button
     private Button debrisButton;
+    //the smoke button
+    private Button smokeButton;
+    //the liquid button
+    private Button liquidButton;
+    //the glass button
+    private Button glassButton;
+    //the magnetic button
+    private Button magneticButton;
+    //the electric button
+    private Button electricButton;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -152,14 +171,6 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //we have to load the logo texture before we start
         logoTex = TextureLoader.loadTexture(activityContext, R.drawable.logo);
-        //TODO: move this to load
-        forceTex = TextureLoader.loadTexture(activityContext, R.drawable.force);
-        openMenuTex = TextureLoader.loadTexture(activityContext, R.drawable.open_menu);
-        resetSceneTex = TextureLoader.loadTexture(activityContext, R.drawable.reset_scene);
-        debrisButtonTex[0] = TextureLoader.loadTexture(activityContext,
-                R.drawable.debris_button_unpressed);
-        debrisButtonTex[1] = TextureLoader.loadTexture(activityContext,
-                R.drawable.debris_button_pressed);
     }
 
     @Override
@@ -204,8 +215,6 @@ public class Engine implements GLSurfaceView.Renderer {
         int frameTime = (int) (newTime - currentTime);
         //set the new current time
         currentTime = newTime;
-        //accumulate the time
-        accumTime += frameTime;
         
         //show the fps
         if (showFps) {
@@ -213,80 +222,67 @@ public class Engine implements GLSurfaceView.Renderer {
             showFps();
         }
         
-        //avoid downwards spiral of doom
-        if (accumTime >= frameLength) {
+        //check if the state has changed
+        if (stateChanged) {
             
-            accumTime = frameLength;
+            initState();
         }
         
-        //loop through all frames that have passed (if any) and update
-        while (accumTime >= frameLength) {
+        //apply state specific updates
+        switch (state) {
         
-            //check if the state has changed
-            if (stateChanged) {
-                
-                initState();
+            case START_UP: {
+            
+                load();
+                break;
             }
+        }
+        
+        //check for touch event
+        if (touchEvent) {
             
-            //apply state specific updates
-            switch (state) {
+            processTouchEvent();
+        }
+        
+        if (!paused) {
             
-                case START_UP: {
-                
-                    load();
-                    break;
-                }
-            }
+            //COLLISON CHECK
+            physics.collisionCheck();
             
-            //check for touch event
-            if (touchEvent) {
+            //UPDATE
+            //iterate over the entities and update them
+            for (int i = 0; i < numLayers; ++i) {
                 
-                processTouchEvent();
-            }
-            
-            if (!paused) {
+                //TODO: OPTIMISE REMOVE LISTS?
+                //list of entities to be removed
+                ArrayList<Entity> removeList = new ArrayList<Entity>();
                 
-                //COLLISON CHECK
-                physics.collisionCheck();
-                
-                //UPDATE
-                //iterate over the entities and update them
-                for (int i = 0; i < numLayers; ++i) {
+                for (Entity e: entities.get(i)) {
                     
-                    //TODO: OPTIMISE REMOVE LISTS?
-                    //list of entities to be removed
-                    ArrayList<Entity> removeList = new ArrayList<Entity>();
-                    
-                    for (Entity e: entities.get(i)) {
+                    //check if the entity should be removed
+                    if (e.shouldRemove()) {
                         
-                        //check if the entity should be removed
-                        if (e.shouldRemove()) {
-                            
-                            removeList.add(e);
-                        }
-                        //else update the entity
-                        else {
-                            
-                           e.update();
-                        }
+                        removeList.add(e);
                     }
+                    //else update the entity
+                    else {
+                        
+                       e.update();
+                    }
+                }
+                
+                //remove the entities
+                for (Entity r : removeList) {
                     
-                    //remove the entities
-                    for (Entity r : removeList) {
+                    entities.get(i).remove(r);
+                    
+                    //remove from physics if collision type
+                    if (r instanceof CollisionType) {
                         
-                        entities.get(i).remove(r);
-                        
-                        //remove from physics if collision type
-                        if (r instanceof CollisionType) {
-                            
-                            physics.removeEntity((CollisionType) r);
-                        }
+                        physics.removeEntity((CollisionType) r);
                     }
                 }
             }
-            
-            //deplete the accumulated time
-            accumTime -= frameLength;
         }
         
         //TODO: physics for menu entities if paused
@@ -370,6 +366,56 @@ public class Engine implements GLSurfaceView.Renderer {
                     if (physics.collision(debrisButton, touchPoint)) {
                         
                         debrisButton.press();
+                        smokeButton.depress();
+                        liquidButton.depress();
+                        glassButton.depress();
+                        magneticButton.depress();
+                        
+                        particleType = ParticleType.DEBRIS;
+                    }
+                    //check if there is a collision with smoke button
+                    else if (physics.collision(smokeButton, touchPoint)) {
+                        
+                        debrisButton.depress();
+                        smokeButton.press();
+                        liquidButton.depress();
+                        glassButton.depress();
+                        magneticButton.depress();
+                        
+                        particleType = ParticleType.SMOKE;
+                    }
+                    //check if there is a collision with liquid button
+                    else if (physics.collision(liquidButton, touchPoint)) {
+                        
+                        debrisButton.depress();
+                        smokeButton.depress();
+                        liquidButton.press();
+                        glassButton.depress();
+                        magneticButton.depress();
+                        
+                        particleType = ParticleType.LIQUID;
+                    }
+                    //check if there is a collision with glass button
+                    else if (physics.collision(glassButton, touchPoint)) {
+                        
+                        debrisButton.depress();
+                        smokeButton.depress();
+                        liquidButton.depress();
+                        glassButton.press();
+                        magneticButton.depress();
+                        
+                        particleType = ParticleType.GLASS;
+                    }
+                    //check if there is a collision with magnetic button
+                    else if (physics.collision(magneticButton, touchPoint)) {
+                        
+                        debrisButton.depress();
+                        smokeButton.depress();
+                        liquidButton.depress();
+                        glassButton.depress();
+                        magneticButton.press();
+                        
+                        particleType = ParticleType.MAGNETIC;
                     }
                 }
                 else {
@@ -387,7 +433,7 @@ public class Engine implements GLSurfaceView.Renderer {
                     else {
                         
                         //add a force point
-                        Force f = new Force(touchPos, forceTex);
+                        Force f = new Force(touchPos, shockwaveTex);
                         
                         //TODO: add to layer 0
                         entities.get(2).add(f);
@@ -401,24 +447,6 @@ public class Engine implements GLSurfaceView.Renderer {
         
         touchEvent = false;
     }
-    
-    /**Loads in the needed data for obliterate*/
-    private void load() {
-        
-        //update the progress if the loading bar
-        loadingBar.updateProgress(loadProgress);
-        
-        //TODO: actually load images here
-        if (loadProgress < 1.0f) {
-            
-            loadProgress += 0.01f;
-        }
-        else {
-            
-            state = State.MAIN;
-            stateChanged = true;
-        }
-    }    
     
     /**Initialises the new state*/
     private void initState() {
@@ -479,14 +507,17 @@ public class Engine implements GLSurfaceView.Renderer {
         for (float y = -0.5f; y < 0.5f; y += 0.1f) {
             for (float x = -0.5f; x < 0.5f; x += 0.1f) {
              
-                //create the debris
-                Debris d = new Debris(new Vector2d(x, y), 0.1f, speed);
-                
-                //add to physics
-                physics.addEntity(d);
-                
-                //add to entities
-                entities.get(4).add(d);
+                if (particleType == ParticleType.DEBRIS) {
+                    
+                    //create the debris
+                    Debris d = new Debris(new Vector2d(x, y), 0.1f, speed);
+                    
+                    //add to physics
+                    physics.addEntity(d);
+                    
+                    //add to entities
+                    entities.get(4).add(d);
+                }
             }
         }
     }
@@ -505,8 +536,26 @@ public class Engine implements GLSurfaceView.Renderer {
         menuEntities.add(pMBG);
         
         debrisButton = new Button(screenDimGL, pMBG.getPos(),
-            new Vector2d(1.0f, 0.5f), debrisButtonTex);
+            new Vector2d(-(screenDimGL.getX() / 2.0f), -(screenDimGL.getY() / 1.6f)),
+            debrisButtonTex);
         menuEntities.add(debrisButton);
+        smokeButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d(-(screenDimGL.getX() / 6.0f), -(screenDimGL.getY() / 1.6f)),
+                smokeButtonTex);
+        menuEntities.add(smokeButton);
+        liquidButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 6.0f), -(screenDimGL.getY() / 1.6f)),
+                liquidButtonTex);
+        menuEntities.add(liquidButton);
+        glassButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 2.0f), -(screenDimGL.getY() / 1.6f)),
+                glassButtonTex);
+        menuEntities.add(glassButton);    
+        magneticButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 1.2f), -(screenDimGL.getY() / 1.6f)),
+                magneticButtonTex);
+        menuEntities.add(magneticButton);
+        
     }
     
     /**Clear all entities from the entities list*/
@@ -536,9 +585,99 @@ public class Engine implements GLSurfaceView.Renderer {
     /**Display the frame rate in the log*/
     private void showFps() {
         
-        if (accumTime >= frameLength) {
+        //if (accumTime >= frameLength) {
             
-            Log.v("Obliterate", "fps: " + (1000.0f / accumTime));
-        }
+        //    Log.v("Obliterate", "fps: " + (1000.0f / accumTime));
+        //}
     }
+    
+    /**Loads in the needed data for obliterate*/
+    private void load() {
+        
+        //load images
+        if (Math.abs(loadProgress - 0.0f) < 0.001f) {
+            
+            //load main buttons
+            openMenuTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.open_menu);
+            resetSceneTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.reset_scene);
+        }
+        else if (Math.abs(loadProgress - 0.05f) < 0.001f) {
+            
+            //load the menu buttons
+            debrisButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.debris_button_unpressed);
+            debrisButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.debris_button_pressed);
+            smokeButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.smoke_button_unpressed);
+            smokeButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.smoke_button_pressed);
+            liquidButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.liquid_button_unpressed);
+            liquidButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.liquid_button_pressed);
+            glassButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.glass_button_unpressed);
+            glassButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.glass_button_pressed);
+            magneticButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.magnetic_button_unpressed);
+            magneticButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.magnetic_button_pressed);
+            electricButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.electric_button_unpressed);
+            electricButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.electric_button_pressed);
+            noneButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.none_button_unpressed);
+            noneButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.none_button_pressed);
+            shockwaveButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave_button_unpressed);
+            shockwaveButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave_button_pressed);
+            explosionButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion_button_unpressed);
+            explosionButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion_button_pressed);
+            setPosButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.set_position_button_unpressed);
+            setPosButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.set_position_button_pressed);
+            addObButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.add_obstacle_button_unpressed);
+            addObButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.add_obstacle_button_pressed);
+            exitButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.exit_button_unpressed);
+            exitButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.exit_button_pressed);
+        }
+        else if (Math.abs(loadProgress - 0.10f) < 0.001f) {
+            
+            //load the titles
+        }
+        else if (Math.abs(loadProgress - 0.15f) < 0.001f) {
+            
+            //load the shockwave
+            shockwaveTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.force);
+        }
+        
+        //update the progress if the loading bar
+        loadingBar.updateProgress(loadProgress);
+        
+        //set the new progress
+        if (loadProgress < 1.0f) {
+            
+            loadProgress += 0.05f;
+        }
+        else {
+            
+            state = State.MAIN;
+            stateChanged = true;
+        }
+    }    
 }
