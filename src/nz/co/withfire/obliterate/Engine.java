@@ -151,6 +151,18 @@ public class Engine implements GLSurfaceView.Renderer {
     private Button magneticButton;
     //the electric button
     private Button electricButton;
+    //the none button
+    private Button noneButton;
+    //the shockwave button
+    private Button shockwaveButton;
+    //the explosion button
+    private Button explosionButton;
+    //the set pos button
+    private Button posButton;
+    //the add obstacle button
+    private Button obstacleButton;
+    //the exit button
+    private Button exitButton;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -431,6 +443,27 @@ public class Engine implements GLSurfaceView.Renderer {
                         
                         particleType = ParticleType.MAGNETIC;
                     }
+                    //check if there is a collision with none button
+                    else if (physics.collision(noneButton, touchPoint)) {
+                        
+                        noneButton.press();
+                        shockwaveButton.depress();
+                        explosionButton.depress();
+                    }
+                    //check if there is a collision with shockwave button
+                    else if (physics.collision(shockwaveButton, touchPoint)) {
+                        
+                        noneButton.depress();
+                        shockwaveButton.press();
+                        explosionButton.depress();
+                    }
+                    //check if there is a collision with explosion button
+                    else if (physics.collision(explosionButton, touchPoint)) {
+                        
+                        noneButton.depress();
+                        shockwaveButton.depress();
+                        explosionButton.press();
+                    }
                 }
                 else {
                     
@@ -588,6 +621,30 @@ public class Engine implements GLSurfaceView.Renderer {
                 new Vector2d((screenDimGL.getX() / 1.2f), -(screenDimGL.getY() / 1.6f)),
                 magneticButtonTex);
         menuEntities.add(magneticButton);
+        noneButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d(-(screenDimGL.getX() / 2.0f), 0.0f),
+                noneButtonTex);
+        menuEntities.add(noneButton);
+        shockwaveButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d(-(screenDimGL.getX() / 6.0f), 0.0f),
+                shockwaveButtonTex);
+        menuEntities.add(shockwaveButton);
+        explosionButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 6.0f), 0.0f),
+                explosionButtonTex);
+        menuEntities.add(explosionButton);
+        posButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 6.0f), (screenDimGL.getY() / 1.6f)),
+                setPosButtonTex);
+        menuEntities.add(posButton);
+        obstacleButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 2.0f), (screenDimGL.getY() / 1.6f)),
+                addObButtonTex);
+        menuEntities.add(obstacleButton);
+        exitButton = new Button(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 1.2f), (screenDimGL.getY() / 1.6f)),
+                exitButtonTex);
+        menuEntities.add(exitButton);
         
     }
     
