@@ -25,14 +25,14 @@ public class Force extends CollisionType {
     private Vector2d speed;
     //the scale of the force
     private float scale = 0.0f;
-    //the fade of the force
-    private float fade = 1.0f;
     
     //the image of the force
     private QuadTex2d image;
     
-    //the texture
-    private int tex;
+    //the textures
+    private int[] tex;
+    //current texture
+    private int currentTex;
     
     //Matrix
     //the model view projection matrix
@@ -43,7 +43,7 @@ public class Force extends CollisionType {
     //CONSTRUCTOR
     /**Creates a new force point
     @param pos the position of the force*/
-    public Force(Vector2d pos, int tex) {
+    public Force(Vector2d pos, int[] tex) {
         
         //copy the position
         this.pos = new Vector2d(pos);
@@ -52,6 +52,8 @@ public class Force extends CollisionType {
 
         //set the texture
         this.tex = tex;
+        
+        currentTex = -1;
         
         float[] coord = {   -1.0f,  1.0f, 0.0f,
                             -1.0f, -1.0f, 0.0f,
@@ -62,7 +64,7 @@ public class Force extends CollisionType {
                                     1.0f, 1.0f,
                                     0.0f, 1.0f, 
                                     0.0f, 0.0f};
-        image = new QuadTex2d(coord, texCoords, tex);
+        image = new QuadTex2d(coord, texCoords, tex[0]);
         
         //force is immovable
         immovable = true;
@@ -76,16 +78,19 @@ public class Force extends CollisionType {
     @Override
     public void update() {
         
-        //increase the scale of the image
-        scale += 0.05f;
-        //decrease the fade
-        fade -= 0.04f;
-        if (fade <= 0.0f) {
+        //animate the texture
+        if (currentTex < tex.length-1) {
+            
+            ++currentTex;
+            image.setTex(tex[currentTex]);
+        }
+        else {
             
             remove = true;
         }
         
-        //image.setColour(new Vector4d(0.7f, 0.8f, 0.9f, fade));
+        //increase the scale of the image
+        scale += 0.025f;
         
         //scale the bounding box
         boundingBox.scale(scale);
@@ -97,7 +102,7 @@ public class Force extends CollisionType {
         //shift into visible range and move
         Matrix.setIdentityM(tMatrix, 0);
         Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);        
-        Matrix.scaleM(tMatrix, 0, scale, scale, 1.0f);
+        //Matrix.scaleM(tMatrix, 0, scale, scale, 1.0f);
         
         //Multiply matrix
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);

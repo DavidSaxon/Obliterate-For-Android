@@ -72,7 +72,7 @@ public class Logo extends Entity {
         //fade the logo in
         if (fade > 0.0f) {
             
-            fade -= 0.02f;
+            fade -= 0.05f;
         }
         
         //fade the fade block

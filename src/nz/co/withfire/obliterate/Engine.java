@@ -26,6 +26,7 @@ import nz.co.withfire.obliterate.physics.Physics;
 import nz.co.withfire.obliterate.utilities.CoordUtil;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 import android.content.Context;
+import android.content.Intent;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -117,9 +118,9 @@ public class Engine implements GLSurfaceView.Renderer {
     private int[] explosionButtonTex = new int[2];
     private int[] setPosButtonTex = new int[2];
     private int[] addObButtonTex = new int[2];
-    private int[] exitButtonTex = new int[2];
+    private int[] backButtonTex = new int[2];
     //the shock wave texture
-    private int shockwaveTex; //TODO: make into an array and rename to shock wave
+    private int[] shockwaveTex = new int[38];
     
     //Entities
     //keep a reference to the loading bar
@@ -162,7 +163,7 @@ public class Engine implements GLSurfaceView.Renderer {
     //the add obstacle button
     private Button obstacleButton;
     //the exit button
-    private Button exitButton;
+    private Button backButton;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -464,6 +465,11 @@ public class Engine implements GLSurfaceView.Renderer {
                         shockwaveButton.depress();
                         explosionButton.press();
                     }
+                    //check if there is a collision with the back button
+                    else if (physics.collision(backButton, touchPoint)) {
+                        
+                        //TODO: exit the menu
+                    }
                 }
                 else {
                     
@@ -483,7 +489,7 @@ public class Engine implements GLSurfaceView.Renderer {
                         Force f = new Force(touchPos, shockwaveTex);
                         
                         //TODO: add to layer 0
-                        entities.get(2).add(f);
+                        entities.get(4).add(f);
                         physics.addEntity(f);
                     }
                 }
@@ -563,7 +569,7 @@ public class Engine implements GLSurfaceView.Renderer {
                     physics.addEntity(d);
                     
                     //add to entities
-                    entities.get(4).add(d);
+                    entities.get(3).add(d);
                 }
             }
         }
@@ -641,10 +647,10 @@ public class Engine implements GLSurfaceView.Renderer {
                 new Vector2d((screenDimGL.getX() / 2.0f), (screenDimGL.getY() / 1.6f)),
                 addObButtonTex);
         menuEntities.add(obstacleButton);
-        exitButton = new Button(screenDimGL, pMBG.getPos(),
+        backButton = new Button(screenDimGL, pMBG.getPos(),
                 new Vector2d((screenDimGL.getX() / 1.2f), (screenDimGL.getY() / 1.6f)),
-                exitButtonTex);
-        menuEntities.add(exitButton);
+                backButtonTex);
+        menuEntities.add(backButton);
         
     }
     
@@ -740,10 +746,10 @@ public class Engine implements GLSurfaceView.Renderer {
                     R.drawable.add_obstacle_button_unpressed);
             addObButtonTex[1] = TextureLoader.loadTexture(activityContext,
                     R.drawable.add_obstacle_button_pressed);
-            exitButtonTex[0] = TextureLoader.loadTexture(activityContext,
-                    R.drawable.exit_button_unpressed);
-            exitButtonTex[1] = TextureLoader.loadTexture(activityContext,
-                    R.drawable.exit_button_pressed);
+            backButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.back_button_unpressed);
+            backButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.back_button_pressed);
         }
         else if (Math.abs(loadProgress - 0.10f) < 0.001f) {
             
@@ -757,11 +763,97 @@ public class Engine implements GLSurfaceView.Renderer {
             setSizeTex = TextureLoader.loadTexture(
                 activityContext, R.drawable.size_menu_title);
         }
-        else if (Math.abs(loadProgress - 0.15f) < 0.001f) {
+        else if (Math.abs(loadProgress - 0.80f) < 0.001f) {
             
-            //load the shockwave
-            shockwaveTex = TextureLoader.loadTexture(
-                activityContext, R.drawable.force);
+            //load the shockwave part 1
+            shockwaveTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave1);
+            shockwaveTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave2);
+            shockwaveTex[2] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave3);
+            shockwaveTex[3] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave4);
+            shockwaveTex[4] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave5);
+            shockwaveTex[5] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave6);
+            shockwaveTex[6] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave7);
+            shockwaveTex[7] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave8);
+            shockwaveTex[8] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave9);
+            shockwaveTex[9] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave10);
+        }
+        else if (Math.abs(loadProgress - 0.85f) < 0.001f) {
+            
+            //load shockwave part 2
+            shockwaveTex[10] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave11);
+            shockwaveTex[11] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave12);
+            shockwaveTex[12] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave13);
+            shockwaveTex[13] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave14);
+            shockwaveTex[14] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave15);
+            shockwaveTex[15] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave16);
+            shockwaveTex[16] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave17);
+            shockwaveTex[17] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave18);
+            shockwaveTex[18] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave19);
+            shockwaveTex[19] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave20);
+        }
+        else if (Math.abs(loadProgress - 0.90f) < 0.001f) {
+            
+            //load shockwave part 3
+            shockwaveTex[20] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave21);
+            shockwaveTex[21] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave22);
+            shockwaveTex[22] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave23);
+            shockwaveTex[23] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave24);
+            shockwaveTex[24] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave25);
+            shockwaveTex[25] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave26);
+            shockwaveTex[26] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave27);
+            shockwaveTex[27] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave28);
+            shockwaveTex[28] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave29);
+            shockwaveTex[29] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave30);
+        }
+        else if (Math.abs(loadProgress - 0.95f) < 0.001f) {
+            
+            //load shockwave part 4
+            shockwaveTex[30] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave31);
+            shockwaveTex[31] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave32);
+            shockwaveTex[32] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave33);
+            shockwaveTex[33] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave34);
+            shockwaveTex[34] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave35);
+            shockwaveTex[35] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave36);
+            shockwaveTex[36] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave37);
+            shockwaveTex[37] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.shockwave38);
         }
         
         //update the progress if the loading bar
@@ -777,5 +869,5 @@ public class Engine implements GLSurfaceView.Renderer {
             state = State.MAIN;
             stateChanged = true;
         }
-    }    
+    }
 }
