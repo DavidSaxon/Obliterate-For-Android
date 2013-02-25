@@ -2,12 +2,13 @@ package nz.co.withfire.obliterate.entities.menu;
 
 import android.opengl.Matrix;
 import android.util.Log;
+import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.QuadTex2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
-public class Button extends CollisionType {
+public class MenuTitle extends Entity{
 
     //VARIABLES
     //the position of the button
@@ -18,9 +19,6 @@ public class Button extends CollisionType {
     private Vector2d backPos;
     //the offset from the back position
     private Vector2d offset = new Vector2d();
-    
-    //the array of textures for the button
-    private int[] texs = new int[2];
     
     //the current texture of the button
     private int tex;
@@ -35,16 +33,14 @@ public class Button extends CollisionType {
     private float[] tMatrix = new float[16];
     
     //CONSTRUCTOR
-    public Button(Vector2d GLdim, Vector2d backPos,
-            Vector2d offset, int[] texs) {
+    public MenuTitle(Vector2d GLdim, Vector2d backPos,
+            Vector2d offset, int tex) {
         
         //copy the background pos
         this.backPos = backPos;
         this.pos.copy(offset);
         
-        //set the tex
-        this.texs = texs;
-        this.tex = texs[0];
+        this.tex = tex;
         
         //find the dimensions of the button
         float width = GLdim.getX() / 8.0f;
@@ -60,9 +56,6 @@ public class Button extends CollisionType {
                                     0.0f, 1.0f, 
                                     0.0f, 0.0f};
         image = new QuadTex2d(quadCoord, texCoords, tex);
-        
-        //set the bounding box
-        boundingBox = new BoundingRect(pos, dim);
     }
     
     //METHODS
@@ -79,19 +72,5 @@ public class Button extends CollisionType {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         image.draw(mvpMatrix);
-    }
-    
-    //press the button
-    public void press() {
-        
-        tex = texs[1];
-        image.setTex(tex);
-    }
-    
-    //depress the button
-    public void depress() {
-        
-        tex = texs[0];
-        image.setTex(tex);
     }
 }

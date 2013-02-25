@@ -13,6 +13,7 @@ import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.menu.Button;
+import nz.co.withfire.obliterate.entities.menu.MenuTitle;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
 import nz.co.withfire.obliterate.entities.menu.PauseMenuBackground;
 import nz.co.withfire.obliterate.entities.menu.ResetSceneButton;
@@ -99,6 +100,11 @@ public class Engine implements GLSurfaceView.Renderer {
     private int openMenuTex;
     //the rest scene button texture
     private int resetSceneTex;
+    //menu titles Tex
+    private int particleTypeTex;
+    private int forceAppTex;
+    private int gravityDirTex;
+    private int setSizeTex;
     //menu button textures
     private int[] debrisButtonTex = new int[2];
     private int[] smokeButtonTex = new int[2];
@@ -125,6 +131,14 @@ public class Engine implements GLSurfaceView.Renderer {
     private ResetSceneButton resetSceneButton;
     //the pause menu background
     private PauseMenuBackground pMBG;
+    //the particle type title
+    private MenuTitle particleTypeTitle;
+    //the force appearance title
+    private MenuTitle forceAppTitle;
+    //the gravity direction title
+    private MenuTitle gravityDirTitle;
+    //the set size title
+    private MenuTitle setSizeTitle;
     //the debris button
     private Button debrisButton;
     //the smoke button
@@ -535,6 +549,25 @@ public class Engine implements GLSurfaceView.Renderer {
         pMBG = new PauseMenuBackground(screenDimGL);
         menuEntities.add(pMBG);
         
+        //add titles
+        particleTypeTitle = new MenuTitle(screenDimGL, pMBG.getPos(),
+                new Vector2d(-(screenDimGL.getX() / 1.2f), -(screenDimGL.getY() / 1.6f)),
+                particleTypeTex);
+        menuEntities.add(particleTypeTitle);
+        forceAppTitle = new MenuTitle(screenDimGL, pMBG.getPos(),
+                new Vector2d(-(screenDimGL.getX() / 1.2f), 0.0f),
+                forceAppTex);
+        menuEntities.add(forceAppTitle);
+        gravityDirTitle = new MenuTitle(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 2.0f), 0.0f),
+                gravityDirTex);
+        menuEntities.add(gravityDirTitle);
+        setSizeTitle = new MenuTitle(screenDimGL, pMBG.getPos(),
+                new Vector2d(-(screenDimGL.getX() / 1.2f), (screenDimGL.getY() / 1.6f)),
+                setSizeTex);
+        menuEntities.add(setSizeTitle);
+        
+        //add buttons
         debrisButton = new Button(screenDimGL, pMBG.getPos(),
             new Vector2d(-(screenDimGL.getX() / 2.0f), -(screenDimGL.getY() / 1.6f)),
             debrisButtonTex);
@@ -658,6 +691,14 @@ public class Engine implements GLSurfaceView.Renderer {
         else if (Math.abs(loadProgress - 0.10f) < 0.001f) {
             
             //load the titles
+            particleTypeTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.particle_menu_type);
+            forceAppTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.force_menu_title);
+            gravityDirTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.gravity_menu_title);
+            setSizeTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.size_menu_title);
         }
         else if (Math.abs(loadProgress - 0.15f) < 0.001f) {
             
