@@ -32,6 +32,9 @@ public class Physics {
     
     //a random number generator
     private Random rand = new Random();
+    
+    //Gravity
+    private Vector2d gravity = new Vector2d(0.0f, -0.05f);
 	
     
     //CONSTRUCTOR
@@ -106,11 +109,10 @@ public class Physics {
 		    
 			for (CollisionType c1 : a) {
 			    
-			    //the new speed of the entity
-			    Vector2d newSpeed = c1.getSpeed();
-			    
 				for (CollisionType c2 : a) {
 					    
+				    //TODO: optimise loop
+				    
 					if (c1 != c2 && collision(c1, c2)) {
 					    
 					    if (c1 instanceof Debris && c2 instanceof Force &&
@@ -124,7 +126,7 @@ public class Physics {
 			                direction += ((Math.PI / 3.0) *
 		                        rand.nextFloat()) - (Math.PI / 6.0);
 			                
-			                newSpeed.add(
+			                Vector2d speed = new Vector2d(
 		                        (float) -(c2.getSpeed().getX() *
                                 Math.cos(direction)),
 		                        (float) (c2.getSpeed().getX() *
@@ -132,26 +134,50 @@ public class Physics {
 			                
 			                //set that the fore has been applied
 			                ((Debris) c1).setForceApplied(true);
+			                ((Debris) c1).applyGravity();
+			                
+			                c1.setSpeed(speed);
+			                
+			                break;
+					    }
+					    else if (c1 instanceof Debris && c2 instanceof Debris) {
+					        
+					        if (((Debris) c2).getApplyGravity()) {
+					            
+					            ((Debris) c1).applyGravity();
+					            
+					            //set a little bit of noise
+					            c1.getSpeed().add(0.001f * (rand.nextFloat() - 0.5f),
+					                    0.001f * (rand.nextFloat() - 0.5f));
+					        }
 					    }
 					}
-//					if (c1 instanceof Debris && c2 instanceof Debris) {
-//					    
-////					    if (c1.getSpeed().getX() <= c2.getSpeed().getX()) {
-////					        
-////				            newSpeed.setX(newSpeed.getX() +
-////		                        (c2.getSpeed().getX() / 2.0f));
-////					    }
-////					    else {
-////					        
-//					        newSpeed.setX(newSpeed.getX() / 2.0f);
-////					    }
-//					    
-//					    //newSpeed = new Vector2d(-c2.getSpeed().getX(), -c2.getSpeed().getX()); 
-//					}
 				}
 				
-				//set the new speed of the entity
-				c1.setSpeed(newSpeed);
+				if (c1 instanceof Debris && ((Debris) c1).getApplyGravity()) {
+				    
+				    float speedX = c1.getSpeed().getX();
+				    float speedY = c1.getSpeed().getY();
+				    
+                    if (speedX > gravity.getX()) {
+                        
+                        speedX -= Math.abs(gravity.getX() / 110.0f);
+                    }
+                    else if (speedX < gravity.getX()) {
+                        
+                        speedX += Math.abs(gravity.getX() / 110.0f);
+                    }
+                    if (speedY > gravity.getY()) {
+                        
+                        speedY -= Math.abs(gravity.getY() / 110.0f);
+                    }
+                    else if (speedY < gravity.getY()) {
+                        
+                        speedY += Math.abs(gravity.getY() / 110.0f);
+                    }
+                    
+                    c1.getSpeed().set(speedX, speedY);
+				}
 			}
 		}
     }

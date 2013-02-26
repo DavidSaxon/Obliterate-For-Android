@@ -17,6 +17,8 @@ public class Debris extends CollisionType {
     
     //the debris is only affected by the force once
     private boolean forceApplied = false;
+    //is true if gravity should be applied
+    private boolean applyGravity = false;
     
     //the image of the debris
     private Quad2d image;
@@ -67,7 +69,6 @@ public class Debris extends CollisionType {
     @Override
     public void update() {
         
-        //TODO: vector addition!
 		//move the debris
         pos.add(speed);
         
@@ -113,11 +114,22 @@ public class Debris extends CollisionType {
         return forceApplied;
     }
     
+    public boolean getApplyGravity() {
+        
+        return applyGravity;
+    }
+    
     /**Sets if the force is applied
     @param forceApplied whether the force has been applied*/
     public void setForceApplied(boolean forceApplied) {
         
         this.forceApplied = forceApplied;
+    }
+    
+    /**Sets gravity to be applied*/
+    public void applyGravity() {
+        
+        applyGravity = true;
     }
 
 }

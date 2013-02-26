@@ -5,6 +5,7 @@
 \**********************************************/
 package nz.co.withfire.obliterate.physics;
 
+import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.physics.bounding.BoundingArea;
 import nz.co.withfire.obliterate.utilities.Vector2d;
@@ -44,7 +45,7 @@ public abstract class CollisionType extends Entity {
         
         if (!immovable) {
             
-            this.speed = new Vector2d(speed);
+            this.speed.copy(speed);
         }
     }
 }
