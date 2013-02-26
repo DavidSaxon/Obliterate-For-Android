@@ -52,6 +52,13 @@ public class Engine implements GLSurfaceView.Renderer {
         MAGNETIC
     }
     
+    //force appearance
+    enum ForceAppearance {
+        NONE,
+        SHOCKWAVE,
+        EXPLOSION
+    }
+    
     //activity context
     private final Context activityContext;
     
@@ -68,6 +75,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private boolean paused = false;
     //the current type of particle being used
     private ParticleType particleType = ParticleType.DEBRIS;
+    //the current appearance of force
+    private ForceAppearance forceApp = ForceAppearance.SHOCKWAVE;
     
     //the dimensions of the screen
     private Vector2d screenDim;
@@ -311,9 +320,14 @@ public class Engine implements GLSurfaceView.Renderer {
                 }
             }
         }
-        
-        //TODO: physics for menu entities if paused
-        //OR could do physics detection always?? riskay...
+        else {
+            
+            //check for unpause
+            if (pMBG.slideBackComplete()) {
+                
+                unpause();
+            }
+        }
         
         //update the menu entities
         for (Entity e : menuEntities) {
@@ -450,6 +464,8 @@ public class Engine implements GLSurfaceView.Renderer {
                         noneButton.press();
                         shockwaveButton.depress();
                         explosionButton.depress();
+                        
+                        forceApp = ForceAppearance.NONE;
                     }
                     //check if there is a collision with shockwave button
                     else if (physics.collision(shockwaveButton, touchPoint)) {
@@ -457,6 +473,8 @@ public class Engine implements GLSurfaceView.Renderer {
                         noneButton.depress();
                         shockwaveButton.press();
                         explosionButton.depress();
+                        
+                        forceApp = ForceAppearance.SHOCKWAVE;
                     }
                     //check if there is a collision with explosion button
                     else if (physics.collision(explosionButton, touchPoint)) {
@@ -464,11 +482,17 @@ public class Engine implements GLSurfaceView.Renderer {
                         noneButton.depress();
                         shockwaveButton.depress();
                         explosionButton.press();
+                        
+                        forceApp = ForceAppearance.EXPLOSION;
                     }
                     //check if there is a collision with the back button
                     else if (physics.collision(backButton, touchPoint)) {
                         
-                        //TODO: exit the menu
+                        //exit the menu
+                        backButton.press();
+                        pMBG.slideBack();
+                        openMenuButton.slideBack();
+                        resetSceneButton.slideBack();
                     }
                 }
                 else {
@@ -551,7 +575,8 @@ public class Engine implements GLSurfaceView.Renderer {
         menuEntities.add(openMenuButton);
         
         //add the reset scene button
-        resetSceneButton = new ResetSceneButton(screenDimGL, resetSceneTex);
+        resetSceneButton = new ResetSceneButton(screenDimGL,
+            resetSceneTex, true);
         menuEntities.add(resetSceneButton);
         
         //FIXME: remove speed?
@@ -652,6 +677,72 @@ public class Engine implements GLSurfaceView.Renderer {
                 backButtonTex);
         menuEntities.add(backButton);
         
+        //select the correct buttons
+        switch (particleType) {
+            
+            case DEBRIS: {
+                
+                debrisButton.press();
+                break;
+            }
+            case SMOKE: {
+                
+                smokeButton.press();
+                break;
+            }
+            case LIQUID: {
+                
+                liquidButton.press();
+                break;
+            }
+            case GLASS: {
+                
+                glassButton.press();
+                break;
+            }
+            case MAGNETIC: {
+                
+                magneticButton.press();
+                break;
+            }
+        }
+        
+        switch (forceApp) {
+        
+            case NONE: {
+                
+                noneButton.press();
+                break;
+            }
+            case SHOCKWAVE: {
+                
+                shockwaveButton.press();
+                break;
+            }
+            case EXPLOSION: {
+                
+                explosionButton.press();
+                break;
+            }
+        }
+    }
+    
+    private void unpause() {
+        
+        //remove the menu entities
+        menuEntities.clear();
+        
+        //add the buttons
+        //add the open menu button
+        openMenuButton = new OpenMenuButton(screenDimGL, openMenuTex);
+        menuEntities.add(openMenuButton);
+        
+        //add the reset scene button
+        resetSceneButton = new ResetSceneButton(screenDimGL,
+            resetSceneTex, false);
+        menuEntities.add(resetSceneButton);
+        
+        paused = false;
     }
     
     /**Clear all entities from the entities list*/

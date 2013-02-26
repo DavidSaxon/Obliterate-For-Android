@@ -15,6 +15,8 @@ import nz.co.withfire.obliterate.utilities.Vector2d;
 public class OpenMenuButton extends CollisionType {
     
     //VARIABLES
+    //the original position of the button
+    private Vector2d orgPos = new Vector2d();
     //the position of the button
     private Vector2d pos = new Vector2d();
     //the dimensions of the bounding box
@@ -24,6 +26,7 @@ public class OpenMenuButton extends CollisionType {
     
     //is true if the button should be sliding forwards
     private boolean slideForwards = false;
+    private boolean slideBack = false;
     
     //the rotation amount of the button
     private float rotation = 0.0f;
@@ -48,9 +51,9 @@ public class OpenMenuButton extends CollisionType {
         this.GLdim.copy(GLdim);
         this.tex = tex;
         
-        //find the position of the button
-        //TODO: relative position
-        pos.set(-1.6f, 0.85f);
+        orgPos.set(-(GLdim.getX() / 1.1f),
+                Math.abs(GLdim.getY() / 1.15f));
+        pos.copy(orgPos);
         
         //find the dimensions of the button
         dim.set(GLdim.getX() / 23.5f, GLdim.getX() / 23.5f);
@@ -81,10 +84,14 @@ public class OpenMenuButton extends CollisionType {
                 
                 //TODO: make sure it doesn't slide too far
                 
-                float shiftAmount = GLdim.getX() / 25.0f;
+                float shiftAmount = GLdim.getX() / 15.0f;
                 
                 pos.setX(pos.getX() + shiftAmount);
                 boundingBox.translate(new Vector2d(shiftAmount, 0.0f));
+            }
+            else {
+                
+                slideForwards = false;
             }
             
             //rotate
@@ -95,6 +102,36 @@ public class OpenMenuButton extends CollisionType {
             else {
                 
                 rotation = 180.0f;
+            }
+        }
+        
+        //slide back
+        if (slideBack) {
+            
+            //slide
+            if (pos.getX() > orgPos.getX()) {
+                
+                //TODO: make sure it doesn't slide too far
+                
+                float shiftAmount = GLdim.getX() / 15.0f;
+                
+                pos.setX(pos.getX() - shiftAmount);
+                boundingBox.translate(new Vector2d(-shiftAmount, 0.0f));
+            }
+            else {
+                
+                pos.copy(orgPos);
+                slideBack = false;
+            }
+            
+            //rotate
+            if (rotation > 0.0f) {
+                
+                rotation += 6.0f;
+            }
+            else {
+                
+                rotation = 0.0f;
             }
         }
     }
@@ -119,5 +156,10 @@ public class OpenMenuButton extends CollisionType {
     public void slideForwards() {
         
         slideForwards = true;
+    }
+    
+    public void slideBack() {
+        
+        slideBack = true;
     }
 }

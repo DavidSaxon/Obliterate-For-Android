@@ -6,6 +6,7 @@
 package nz.co.withfire.obliterate.entities.menu;
 
 import android.opengl.Matrix;
+import android.util.Log;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 import nz.co.withfire.obliterate.utilities.Vector2d;
@@ -22,6 +23,10 @@ public class PauseMenuBackground extends Entity {
     
     //is true once sliding has been completed
     private boolean slideComplete = false;
+    //is true when the menu should slide back
+    private boolean slideBack = false;
+    //is true when once the menu has slide back
+    private boolean slideBackComplete = false;
     
     //the image to be drawn
     private Quad2d quad;
@@ -61,10 +66,10 @@ public class PauseMenuBackground extends Entity {
     @Override
     public void update() {
         
-        if (pos.getX() < 0.0f) {
+        if (!slideComplete && pos.getX() < 0.0f) {
             
             //the new pos
-            float shiftAmount = pos.getX() + (GLdim.getX() / 25.0f);
+            float shiftAmount = pos.getX() + (GLdim.getX() / 15.0f);
             
             //make sure we don't overslide
             if (shiftAmount > 0.0f) {
@@ -79,6 +84,16 @@ public class PauseMenuBackground extends Entity {
         else if (!slideComplete) {
             
             slideComplete = true;
+        }
+        
+        if (slideBack) {
+            
+            pos.setX(pos.getX() - (GLdim.getX() / 15.0f));
+            
+            if (pos.getX() < -(GLdim.getX() * 2.0f)) {
+                
+                slideBackComplete = true;
+            }
         }
     }
     
@@ -102,9 +117,15 @@ public class PauseMenuBackground extends Entity {
         return pos;
     }
     
-    /**@return whether sliding has been completed or not*/
-    public boolean slideComplete() {
+    /**@return whether sliding back has been completed or not*/
+    public boolean slideBackComplete() {
         
-        return slideComplete;
+        return slideBackComplete;
+    }
+    
+    /**slides the menu back*/
+    public void slideBack() {
+        
+        slideBack = true;
     }
 }

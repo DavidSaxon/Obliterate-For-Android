@@ -90,7 +90,7 @@ public class Force extends CollisionType {
         }
         
         //increase the scale of the image
-        scale += 0.025f;
+        scale += 0.03f;
         
         //scale the bounding box
         boundingBox.scale(scale);
