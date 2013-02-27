@@ -35,7 +35,7 @@ public class ShapeButton extends CollisionType {
     private QuadTex2d image;
     
     //the texture of the image
-    private int tex;
+    private int[] tex = new int[2];
     
     //Matrix
     //the model view projection matrix
@@ -46,7 +46,7 @@ public class ShapeButton extends CollisionType {
     //CONSTRUCTOR
     /**Creates a new open menu button
     @param tex the texture of the button*/
-    public ShapeButton(Vector2d GLdim, Vector2d orgPos, int tex) {
+    public ShapeButton(Vector2d GLdim, Vector2d orgPos, int[] tex) {
         
         this.GLdim.copy(GLdim);
         this.tex = tex;
@@ -67,7 +67,7 @@ public class ShapeButton extends CollisionType {
                                     1.0f, 1.0f,
                                     0.0f, 1.0f, 
                                     0.0f, 0.0f};
-        image = new QuadTex2d(quadCoord, texCoords, tex);
+        image = new QuadTex2d(quadCoord, texCoords, tex[0]);
         
         //set the bounding box to be slightly bigger than the size
         boundingBox = new BoundingRect(pos, dim);
@@ -142,5 +142,15 @@ public class ShapeButton extends CollisionType {
     public void slideBack() {
         
         slideBack = true;
+    }
+    
+    public void press() {
+        
+        image.setTex(tex[1]);
+    }
+    
+    public void depress() {
+        
+        image.setTex(tex[0]);
     }
 }

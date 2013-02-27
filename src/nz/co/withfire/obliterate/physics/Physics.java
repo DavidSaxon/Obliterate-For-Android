@@ -10,6 +10,7 @@ import java.util.Random;
 
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
+import nz.co.withfire.obliterate.entities.main.Obstacle;
 import nz.co.withfire.obliterate.physics.bounding.BoundingArea;
 import nz.co.withfire.obliterate.physics.bounding.BoundingCircle;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
@@ -86,6 +87,14 @@ public class Physics {
                 + dim.getX()) * 5.0f),
                 (int) ((c.getPos().getY() + (c.getDim().getY() / 2.0f) +
                 dim.getY()) * 5.0f));
+            
+//            if (c instanceof Obstacle) {
+//                
+//                Log.v("Obliterate", "pos: " + c.getPos().getX() + " x " + c.getPos().getY());
+//                Log.v("Obliterate", "dim: " + c.getDim().getX() + " x " + c.getDim().getY());
+//                Log.v("Obliterate", "lower: " + lowerBound.getX() + " x " + lowerBound.getY());
+//                Log.v("Obliterate", "upper: " + upperBound.getX() + " x " + upperBound.getY());
+//            }
 			
 			//TODO: optimise
 			for (int y = (int) lowerBound.getY();
@@ -95,7 +104,7 @@ public class Physics {
 			        
 			        if (x >= 0 && x < dsmDim.getX() &&
 		                y >= 0 && y < dsmDim.getY()) {
-			        
+			            
 			            divisionSpaceMap.get(
 		                    (int) (x + (y * dsmDim.getX()))).add(c);
 			        }
@@ -115,7 +124,14 @@ public class Physics {
 				    
 					if (c1 != c2 && collision(c1, c2)) {
 					    
-					    if (c1 instanceof Debris && c2 instanceof Force &&
+                        if (c1 instanceof Debris && c2 instanceof Obstacle) {
+                            
+                            c1.getSpeed().set(-c1.getSpeed().getX() * 0.5f,
+                                    -c1.getSpeed().getY() * 0.5f);
+                            
+                            c1.getPos().add(c1.getSpeed());
+                        }
+                        else if (c1 instanceof Debris && c2 instanceof Force &&
 				            !((Debris) c1).getForceApplied()) {
 					        
 				            //calculate the direction

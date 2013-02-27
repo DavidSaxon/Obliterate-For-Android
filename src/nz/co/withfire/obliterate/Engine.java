@@ -12,6 +12,7 @@ import javax.microedition.khronos.opengles.GL10;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
+import nz.co.withfire.obliterate.entities.main.Obstacle;
 import nz.co.withfire.obliterate.entities.menu.Button;
 import nz.co.withfire.obliterate.entities.menu.MenuTitle;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
@@ -103,6 +104,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private ArrayList<ArrayList<Entity>> entities = new ArrayList<ArrayList<Entity>>();
     //a list of entities that are in the pause menu
     private ArrayList<Entity> menuEntities = new ArrayList<Entity>();
+    //list of obstacles
+    private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
     //the physics controller
     private Physics physics;
     
@@ -113,10 +116,6 @@ public class Engine implements GLSurfaceView.Renderer {
     private int openMenuTex;
     //the rest scene button texture
     private int resetSceneTex;
-    //rectangle button
-    private int rectButtonTex;
-    //circle button texture
-    private int circleButtonTex;
     //menu titles Tex
     private int particleTypeTex;
     private int forceAppTex;
@@ -148,10 +147,6 @@ public class Engine implements GLSurfaceView.Renderer {
     private OpenMenuButton openMenuButton;
     //the reset scene button
     private ResetSceneButton resetSceneButton;
-    //the rectangle shape button
-    private ShapeButton rectButton;
-    //the cicle shape button
-    private ShapeButton circleButton;
     //the pause menu background
     private PauseMenuBackground pMBG;
     //the particle type title
@@ -186,6 +181,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private Button obstacleButton;
     //the exit button
     private Button backButton;
+    //the current obstacle being transformed
+    private Obstacle currentOb;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -348,6 +345,14 @@ public class Engine implements GLSurfaceView.Renderer {
             e.update();
         }
         
+        //update the obstacles
+        for (Obstacle o : obstacles) {
+            
+            o.update();
+            
+            //TODO: remove obsatcles (from physics too)
+        }
+        
         //DRAW
         //redraw background colour
         GLES20.glClear(GLES20.GL_DEPTH_BUFFER_BIT | GLES20.GL_COLOR_BUFFER_BIT);
@@ -355,6 +360,12 @@ public class Engine implements GLSurfaceView.Renderer {
         //set the camera position
         Matrix.setLookAtM(viewMatrix, 0, 0, 0, -3, 0.0f,
                 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+        
+        //draw the obstacles
+        for (Obstacle o : obstacles) {
+            
+            o.draw(viewMatrix, projectionMatrix);
+        }
         
         //iterate over the entities and draw them
         for (int i = numLayers-1; i >= 0; --i) {
@@ -396,6 +407,23 @@ public class Engine implements GLSurfaceView.Renderer {
                 }
             }
         }
+        else if (e.getAction() == MotionEvent.ACTION_MOVE) {
+            
+            if (currentOb != null) {
+                
+                currentOb.setCorner(CoordUtil.screenPosToOpenGLPos(
+                        new Vector2d(e.getX(), e.getY()), screenDim,
+                        viewMatrix, projectionMatrix));
+            }
+        }
+        else if (e.getAction() == MotionEvent.ACTION_UP){
+            
+            if (currentOb != null) {
+                
+                currentOb.place();
+                currentOb = null;
+            }
+        } 
     }
     
     //PRIVATE METHODS
@@ -506,25 +534,6 @@ public class Engine implements GLSurfaceView.Renderer {
                         obstacleButton.press();
                         pMBG.slideBack();
                         openMenuButton.slideBack();
-                        
-                        if (rectButton == null) {
-                            
-                            //add the rectangle button
-                            rectButton = new ShapeButton(screenDimGL,
-                                new Vector2d(-(screenDimGL.getX() / 1.1f),
-                                Math.abs(screenDimGL.getY() / 1.6f)), rectButtonTex);
-                            menuEntities.add(rectButton);
-                            //add the circle button
-                            circleButton = new ShapeButton(screenDimGL,
-                                new Vector2d(-(screenDimGL.getX() / 1.1f),
-                                Math.abs(screenDimGL.getY() / 2.5f)), circleButtonTex);
-                            menuEntities.add(circleButton);
-                        }
-                        else {
-                            
-                            rectButton.slideBack();
-                            circleButton.slideBack();
-                        }
                     }
                     //check if there is a collision with the back button
                     else if (physics.collision(backButton, touchPoint)) {
@@ -536,14 +545,17 @@ public class Engine implements GLSurfaceView.Renderer {
                         resetSceneButton.slideBack();
                     }
                     //check if there is a collision with the open menu button
-                    if (addObMode && physics.collision(openMenuButton, touchPoint)) {
+                    else if (addObMode && physics.collision(openMenuButton, touchPoint)) {
                         
                         addObMode = false;
                         
-                        rectButton.slideForwards();
-                        circleButton.slideForwards();
-                        
                         initPause();
+                    }
+                    else if (addObMode) {
+                        
+                        currentOb = new Obstacle(touchPos);
+                        obstacles.add(currentOb);
+                        physics.addEntity(currentOb);
                     }
                 }
                 else {
@@ -609,7 +621,7 @@ public class Engine implements GLSurfaceView.Renderer {
                 break;
             }
             case MAIN: {
-                
+
                 initMain();
                 break;
             }
@@ -668,6 +680,12 @@ public class Engine implements GLSurfaceView.Renderer {
                     entities.get(3).add(d);
                 }
             }
+        }
+        
+        //add obsatcles to physics
+        for (Obstacle o : obstacles) {
+            
+            physics.addEntity(o);
         }
     }
     
@@ -813,9 +831,6 @@ public class Engine implements GLSurfaceView.Renderer {
             resetSceneTex, false);
         menuEntities.add(resetSceneButton);
         
-        rectButton = null;
-        circleButton = null;
-        
         paused = false;
     }
     
@@ -863,10 +878,6 @@ public class Engine implements GLSurfaceView.Renderer {
                 activityContext, R.drawable.open_menu);
             resetSceneTex = TextureLoader.loadTexture(
                 activityContext, R.drawable.reset_scene);
-            rectButtonTex = TextureLoader.loadTexture(
-                    activityContext, R.drawable.rect_button);
-            circleButtonTex = TextureLoader.loadTexture(
-                    activityContext, R.drawable.circle_button);
         }
         else if (Math.abs(loadProgress - 0.05f) < 0.001f) {
             

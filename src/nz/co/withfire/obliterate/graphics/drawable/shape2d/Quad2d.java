@@ -188,6 +188,14 @@ public class Quad2d implements Shape2d {
         vertexBuffer.put(coords);
         vertexBuffer.position(0);
     }
+    
+    public void setCoords(float[] coords) {
+        
+        this.coords = coords;
+        
+        vertexBuffer.put(this.coords);
+        vertexBuffer.position(0);
+    }
 
 
     @Override
