@@ -17,6 +17,7 @@ import nz.co.withfire.obliterate.entities.menu.MenuTitle;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
 import nz.co.withfire.obliterate.entities.menu.PauseMenuBackground;
 import nz.co.withfire.obliterate.entities.menu.ResetSceneButton;
+import nz.co.withfire.obliterate.entities.menu.ShapeButton;
 import nz.co.withfire.obliterate.entities.menu.TouchPoint;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
@@ -73,6 +74,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private boolean stateChanged = true;
     //is true when is paused
     private boolean paused = false;
+    //is true when obstacle adding mode
+    private boolean addObMode = false;
     //the current type of particle being used
     private ParticleType particleType = ParticleType.DEBRIS;
     //the current appearance of force
@@ -110,6 +113,10 @@ public class Engine implements GLSurfaceView.Renderer {
     private int openMenuTex;
     //the rest scene button texture
     private int resetSceneTex;
+    //rectangle button
+    private int rectButtonTex;
+    //circle button texture
+    private int circleButtonTex;
     //menu titles Tex
     private int particleTypeTex;
     private int forceAppTex;
@@ -141,6 +148,10 @@ public class Engine implements GLSurfaceView.Renderer {
     private OpenMenuButton openMenuButton;
     //the reset scene button
     private ResetSceneButton resetSceneButton;
+    //the rectangle shape button
+    private ShapeButton rectButton;
+    //the cicle shape button
+    private ShapeButton circleButton;
     //the pause menu background
     private PauseMenuBackground pMBG;
     //the particle type title
@@ -325,7 +336,7 @@ public class Engine implements GLSurfaceView.Renderer {
         else {
             
             //check for unpause
-            if (pMBG.slideBackComplete()) {
+            if (!addObMode && pMBG.slideBackComplete()) {
                 
                 unpause();
             }
@@ -487,6 +498,34 @@ public class Engine implements GLSurfaceView.Renderer {
                         
                         forceApp = ForceAppearance.EXPLOSION;
                     }
+                    //check if there is a collision with the add obstacle
+                    else if (physics.collision(obstacleButton, touchPoint)) {
+                        
+                        //enter obstacle adding mode
+                        addObMode = true;
+                        obstacleButton.press();
+                        pMBG.slideBack();
+                        openMenuButton.slideBack();
+                        
+                        if (rectButton == null) {
+                            
+                            //add the rectangle button
+                            rectButton = new ShapeButton(screenDimGL,
+                                new Vector2d(-(screenDimGL.getX() / 1.1f),
+                                Math.abs(screenDimGL.getY() / 1.6f)), rectButtonTex);
+                            menuEntities.add(rectButton);
+                            //add the circle button
+                            circleButton = new ShapeButton(screenDimGL,
+                                new Vector2d(-(screenDimGL.getX() / 1.1f),
+                                Math.abs(screenDimGL.getY() / 2.5f)), circleButtonTex);
+                            menuEntities.add(circleButton);
+                        }
+                        else {
+                            
+                            rectButton.slideBack();
+                            circleButton.slideBack();
+                        }
+                    }
                     //check if there is a collision with the back button
                     else if (physics.collision(backButton, touchPoint)) {
                         
@@ -495,6 +534,16 @@ public class Engine implements GLSurfaceView.Renderer {
                         pMBG.slideBack();
                         openMenuButton.slideBack();
                         resetSceneButton.slideBack();
+                    }
+                    //check if there is a collision with the open menu button
+                    if (addObMode && physics.collision(openMenuButton, touchPoint)) {
+                        
+                        addObMode = false;
+                        
+                        rectButton.slideForwards();
+                        circleButton.slideForwards();
+                        
+                        initPause();
                     }
                 }
                 else {
@@ -764,6 +813,9 @@ public class Engine implements GLSurfaceView.Renderer {
             resetSceneTex, false);
         menuEntities.add(resetSceneButton);
         
+        rectButton = null;
+        circleButton = null;
+        
         paused = false;
     }
     
@@ -811,6 +863,10 @@ public class Engine implements GLSurfaceView.Renderer {
                 activityContext, R.drawable.open_menu);
             resetSceneTex = TextureLoader.loadTexture(
                 activityContext, R.drawable.reset_scene);
+            rectButtonTex = TextureLoader.loadTexture(
+                    activityContext, R.drawable.rect_button);
+            circleButtonTex = TextureLoader.loadTexture(
+                    activityContext, R.drawable.circle_button);
         }
         else if (Math.abs(loadProgress - 0.05f) < 0.001f) {
             

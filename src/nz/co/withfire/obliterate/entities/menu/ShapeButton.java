@@ -12,7 +12,7 @@ import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
-public class OpenMenuButton extends CollisionType {
+public class ShapeButton extends CollisionType {
     
     //VARIABLES
     //the original position of the button
@@ -29,7 +29,7 @@ public class OpenMenuButton extends CollisionType {
     private boolean slideBack = false;
     
     //the rotation amount of the button
-    private float rotation = 180.0f;
+    private float rotation = 0.0f;
     
     //the image of the button
     private QuadTex2d image;
@@ -46,14 +46,15 @@ public class OpenMenuButton extends CollisionType {
     //CONSTRUCTOR
     /**Creates a new open menu button
     @param tex the texture of the button*/
-    public OpenMenuButton(Vector2d GLdim, int tex) {
+    public ShapeButton(Vector2d GLdim, Vector2d orgPos, int tex) {
         
         this.GLdim.copy(GLdim);
         this.tex = tex;
         
-        orgPos.set(-(GLdim.getX() / 1.1f),
-                Math.abs(GLdim.getY() / 1.15f));
-        pos.copy(orgPos);
+        this.orgPos.copy(orgPos);
+        pos.set(orgPos.getX() + (GLdim.getX() * 2.0f), orgPos.getY());
+        
+        slideBack = true;
         
         //find the dimensions of the button
         dim.set(GLdim.getX() / 23.5f, GLdim.getX() / 23.5f);
@@ -124,7 +125,7 @@ public class OpenMenuButton extends CollisionType {
         Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);
         Matrix.rotateM(tMatrix, 0, rotation, 0, 0, 1.0f);
         
-        //multiply the matrix
+        //multiply the matrixOpenMenuButton
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
