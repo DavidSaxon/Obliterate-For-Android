@@ -1,17 +1,36 @@
--set the position of the open menu button using relative coords
+-fix obstacle placing {
 
--open the menu
+	-being able to place on top of one another
+	
+	-don't create obstacles under a certain size
+}
 
--fix the intro objects to be translated by relative values
+-obstacles have a random colour? (from within a pallete)
 
--fix the main objects to use relative values
+-add place obstacle description and done button
 
--proper texture loading (load in the shockwave)
+-menu dividers
 
- -vector assignment, don't make a whole new object just take values!
- 
- -don't cap fps just use smooth interpolation
- 
- -clean up
+-override back and settings buttons
 
--menu
+-add texture to obliterate image
+
+-implement set position
+
+-implement set size
+
+-implement gravity direction
+
+-fix physics
+
+-implement other particle types
+
+-check for everything is ready for release {
+
+	-remove hello world
+	
+	-make sure requires openGL 2.0
+}
+
+-release!!!!!
+

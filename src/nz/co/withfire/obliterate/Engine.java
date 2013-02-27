@@ -345,12 +345,24 @@ public class Engine implements GLSurfaceView.Renderer {
             e.update();
         }
         
+        
+        ArrayList<Obstacle> removeList = new ArrayList<Obstacle>();
         //update the obstacles
         for (Obstacle o : obstacles) {
             
             o.update();
             
-            //TODO: remove obsatcles (from physics too)
+            if (o.shouldRemove()) {
+                
+                removeList.add(o);
+            }
+        }
+        
+        //remove obstacles
+        for (Obstacle o : removeList) {
+            
+            obstacles.remove(o);
+            physics.removeEntity(o);
         }
         
         //DRAW
@@ -407,7 +419,15 @@ public class Engine implements GLSurfaceView.Renderer {
                 }
             }
         }
-        else if (e.getAction() == MotionEvent.ACTION_MOVE) {
+        else if (e.getAction() == MotionEvent.ACTION_UP){
+            
+            if (currentOb != null) {
+                
+                currentOb.place();
+                currentOb = null;
+            }
+        }
+        else {
             
             if (currentOb != null) {
                 
@@ -416,14 +436,6 @@ public class Engine implements GLSurfaceView.Renderer {
                         viewMatrix, projectionMatrix));
             }
         }
-        else if (e.getAction() == MotionEvent.ACTION_UP){
-            
-            if (currentOb != null) {
-                
-                currentOb.place();
-                currentOb = null;
-            }
-        } 
     }
     
     //PRIVATE METHODS
@@ -550,6 +562,10 @@ public class Engine implements GLSurfaceView.Renderer {
                         addObMode = false;
                         
                         initPause();
+                    }
+                    else if (addObMode && checkObCollision(touchPoint)) {
+                        
+                        //do nothing
                     }
                     else if (addObMode) {
                         
@@ -832,6 +848,21 @@ public class Engine implements GLSurfaceView.Renderer {
         menuEntities.add(resetSceneButton);
         
         paused = false;
+    }
+    
+    private boolean checkObCollision(TouchPoint touchPoint) {
+        
+        for (Obstacle o : obstacles) {
+            
+            if (physics.collision(o, touchPoint)) {
+                
+                o.tap();
+                
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     /**Clear all entities from the entities list*/

@@ -19,6 +19,10 @@ public class Obstacle extends CollisionType {
     //the dimensions of the obstacle
     private Vector2d dim = new Vector2d();
     
+    //is true if been pressed once
+    private boolean tapped = false;
+    private int tapTimer = 0;
+    
     //the image
     private Quad2d image;
     
@@ -52,6 +56,19 @@ public class Obstacle extends CollisionType {
     }
     
     //METHODS
+    @Override
+    public void update() {
+        
+        if (tapTimer <= 0) {
+            
+            tapped = false;
+        }
+        else {
+            
+            --tapTimer;
+        }
+    }
+    
     @Override
     public void draw(float[] viewMatrix, float[] projectionMatrix) {
         
@@ -117,6 +134,20 @@ public class Obstacle extends CollisionType {
     
     public void place() {
         
-        boundingBox = new BoundingRect(pos, dim);
+        boundingBox = new BoundingRect(pos,
+            new Vector2d(dim.getX() * 2.0f, dim.getY() *2.0f));
+    }
+    
+    public void tap() {
+        
+        if (!tapped) {
+            
+            tapped = true;
+            tapTimer = 20;
+        }
+        else {
+            
+            remove = true;
+        }
     }
 }
