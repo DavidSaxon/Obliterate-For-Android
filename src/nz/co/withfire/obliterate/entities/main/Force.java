@@ -25,6 +25,8 @@ public class Force extends CollisionType {
     private Vector2d speed;
     //the scale of the force
     private float scale = 0.0f;
+    //is true if the force should no be drawn
+    private boolean dontDraw = false;
     
     //the image of the force
     private QuadTex2d image;
@@ -49,6 +51,13 @@ public class Force extends CollisionType {
         this.pos = new Vector2d(pos);
         //set the speed
         speed = new Vector2d(0.045f, 0.045f);
+        
+        if (tex == null) {
+            
+            Log.v("Obliterate", "here");
+            
+            dontDraw = true;
+        }
 
         //set the texture
         this.tex = tex;
@@ -64,7 +73,11 @@ public class Force extends CollisionType {
                                     1.0f, 1.0f,
                                     0.0f, 1.0f, 
                                     0.0f, 0.0f};
-        image = new QuadTex2d(coord, texCoords, tex[0]);
+        if (!dontDraw) {
+            
+            image = new QuadTex2d(coord, texCoords, tex[0]);
+        }
+        
         
         //force is immovable
         immovable = true;
@@ -79,10 +92,14 @@ public class Force extends CollisionType {
     public void update() {
         
         //animate the texture
-        if (currentTex < tex.length-1) {
+        if (currentTex < 37) {
             
             ++currentTex;
-            image.setTex(tex[currentTex]);
+            if (!dontDraw) {
+                
+                image.setTex(tex[currentTex]);
+            }
+                
         }
         else {
             
@@ -99,16 +116,19 @@ public class Force extends CollisionType {
     @Override
     public void draw(float[] viewMatrix, float[] projectionMatrix) {
         
-        //shift into visible range and move
-        Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);        
-        //Matrix.scaleM(tMatrix, 0, scale, scale, 1.0f);
-        
-        //Multiply matrix
-        Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
-        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
-        
-        image.draw(mvpMatrix);
+        if (!dontDraw) {
+            
+            //shift into visible range and move
+            Matrix.setIdentityM(tMatrix, 0);
+            Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);        
+            //Matrix.scaleM(tMatrix, 0, scale, scale, 1.0f);
+            
+            //Multiply matrix
+            Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
+            Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
+            
+            image.draw(mvpMatrix);
+        }
     }
     
     @Override

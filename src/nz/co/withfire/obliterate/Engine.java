@@ -130,6 +130,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private int[] backButtonTex = new int[2];
     //the shock wave texture
     private int[] shockwaveTex = new int[38];
+    //the explosion texture
+    private int[] explosionTex = new int[38];
     
     //Entities
     //keep a reference to the loading bar
@@ -510,9 +512,29 @@ public class Engine implements GLSurfaceView.Renderer {
                     else {
                         
                         //add a force point
-                        Force f = new Force(touchPos, shockwaveTex);
+                        Force f = null;
                         
-                        //TODO: add to layer 0
+                        //use the correct appearance
+                        switch (forceApp) {
+                        
+                            case NONE: {
+                                
+                                f = new Force(touchPos, null);
+                                break;
+                            }
+                            case SHOCKWAVE: {
+                                
+                                f = new Force(touchPos, shockwaveTex);
+                                break;
+                            }
+                            case EXPLOSION: {
+                                
+                                f = new Force(touchPos, explosionTex);
+                                break;
+                            }
+                        
+                        }
+                        
                         entities.get(4).add(f);
                         physics.addEntity(f);
                     }
@@ -853,6 +875,98 @@ public class Engine implements GLSurfaceView.Renderer {
                 activityContext, R.drawable.gravity_menu_title);
             setSizeTex = TextureLoader.loadTexture(
                 activityContext, R.drawable.size_menu_title);
+        }
+        else if (Math.abs(loadProgress - 0.60f) < 0.001f) {
+            
+            //load the explosion part 1
+            explosionTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion1);
+            explosionTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion2);
+            explosionTex[2] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion3);
+            explosionTex[3] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion4);
+            explosionTex[4] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion5);
+            explosionTex[5] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion6);
+            explosionTex[6] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion7);
+            explosionTex[7] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion8);
+            explosionTex[8] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion9);
+            explosionTex[9] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion10);
+        }
+        else if (Math.abs(loadProgress - 0.65f) < 0.001f) {
+            
+            //load explosion part 2
+            explosionTex[10] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion11);
+            explosionTex[11] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion12);
+            explosionTex[12] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion13);
+            explosionTex[13] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion14);
+            explosionTex[14] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion15);
+            explosionTex[15] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion16);
+            explosionTex[16] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion17);
+            explosionTex[17] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion18);
+            explosionTex[18] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion19);
+            explosionTex[19] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion20);
+        }
+        else if (Math.abs(loadProgress - 0.70f) < 0.001f) {
+            
+            //load explosion part 3
+            explosionTex[20] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion21);
+            explosionTex[21] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion22);
+            explosionTex[22] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion23);
+            explosionTex[23] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion24);
+            explosionTex[24] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion25);
+            explosionTex[25] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion26);
+            explosionTex[26] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion27);
+            explosionTex[27] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion28);
+            explosionTex[28] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion29);
+            explosionTex[29] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion30);
+        }
+        else if (Math.abs(loadProgress - 0.75f) < 0.001f) {
+            
+            //load explosion part 4
+            explosionTex[30] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion31);
+            explosionTex[31] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion32);
+            explosionTex[32] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion33);
+            explosionTex[33] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion34);
+            explosionTex[34] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion35);
+            explosionTex[35] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion36);
+            explosionTex[36] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion37);
+            explosionTex[37] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.explosion38);
         }
         else if (Math.abs(loadProgress - 0.80f) < 0.001f) {
             
