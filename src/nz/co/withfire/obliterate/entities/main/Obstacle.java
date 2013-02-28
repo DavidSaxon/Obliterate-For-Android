@@ -1,11 +1,15 @@
 package nz.co.withfire.obliterate.entities.main;
 
+import java.util.Random;
+
 import android.opengl.Matrix;
 import android.util.Log;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
+import nz.co.withfire.obliterate.utilities.Vector3d;
+import nz.co.withfire.obliterate.utilities.Vector4d;
 
 public class Obstacle extends CollisionType {
 
@@ -23,6 +27,9 @@ public class Obstacle extends CollisionType {
     private boolean tapped = false;
     private int tapTimer = 0;
     
+    //random number generator
+    private Random rand = new Random();
+    
     //the image
     private Quad2d image;
     
@@ -39,6 +46,10 @@ public class Obstacle extends CollisionType {
         firstCorner.copy(pos);
         secondCorner.copy(pos);
         
+        //create a random colour for the obstacle
+        Vector3d col = new Vector3d((rand.nextFloat() / 2.0f) + 0.5f,
+            (rand.nextFloat() / 2.0f) + 0.5f, (rand.nextFloat() / 2.0f) + 0.5f);
+        
         float[] coord = {
                 -dim.getX(),  dim.getY(), 0.0f,
                 -dim.getX(), -dim.getY(), 0.0f,
@@ -46,10 +57,10 @@ public class Obstacle extends CollisionType {
                  dim.getX(),  dim.getY(), 0.0f,
                         };
         float[] colour = {
-              0.0f, 0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 0.0f, 1.0f,
-              0.0f, 0.0f, 0.0f, 1.0f,
+              col.getX(), col.getY(), col.getZ(), 1.0f,
+              col.getX(), col.getY(), col.getZ(), 1.0f,
+              col.getX(), col.getY(), col.getZ(), 1.0f,
+              col.getX(), col.getY(), col.getZ(), 1.0f
                         };
             
             image = new Quad2d(coord, colour);
@@ -133,6 +144,12 @@ public class Obstacle extends CollisionType {
     }
     
     public void place() {
+        
+        //don't place the obstacle if it is too small
+        if (dim.getX() < 0.05f && dim.getY() < 0.05f) {
+            
+            remove = true;
+        }
         
         boundingBox = new BoundingRect(pos,
             new Vector2d(dim.getX() * 2.0f, dim.getY() *2.0f));

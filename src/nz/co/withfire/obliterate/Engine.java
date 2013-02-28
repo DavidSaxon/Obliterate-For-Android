@@ -415,6 +415,14 @@ public class Engine implements GLSurfaceView.Renderer {
                 case MAIN: {
                     
                     touchEvent = true;
+                    
+                    //check if colliding with an obstacle in place obstacle mode
+                    //if it is then tap the obstacle
+                    if (addObMode) {
+                        
+                        checkObCollision(new TouchPoint(screenDimGL, touchPos));
+                    }
+                    
                     break;
                 }
             }
@@ -562,10 +570,6 @@ public class Engine implements GLSurfaceView.Renderer {
                         addObMode = false;
                         
                         initPause();
-                    }
-                    else if (addObMode && checkObCollision(touchPoint)) {
-                        
-                        //do nothing
                     }
                     else if (addObMode) {
                         
@@ -852,7 +856,9 @@ public class Engine implements GLSurfaceView.Renderer {
     
     private boolean checkObCollision(TouchPoint touchPoint) {
         
-        for (Obstacle o : obstacles) {
+        for (int i = obstacles.size() - 1; i >= 0; --i) {
+            
+            Obstacle o = obstacles.get(i);
             
             if (physics.collision(o, touchPoint)) {
                 
