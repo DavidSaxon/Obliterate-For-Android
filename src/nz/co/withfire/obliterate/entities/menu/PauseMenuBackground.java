@@ -47,8 +47,8 @@ public class PauseMenuBackground extends Entity {
         //set the variables
         pos.set(-(2.0f * Math.abs(GLdim.getX())), 0.0f);
         
-        dim.set(Math.abs(GLdim.getX()) + (Math.abs(GLdim.getX()) / 20.0f),
-            Math.abs(GLdim.getY()) + (Math.abs(GLdim.getY()) / 20.0f));
+        dim.set(Math.abs(GLdim.getX()) + (Math.abs(GLdim.getX()) / 100.0f),
+            Math.abs(GLdim.getY()) + (Math.abs(GLdim.getY()) / 100.0f));
         
         float quadCoord[] = {   -dim.getX(),  dim.getY(), 0.0f,
                 -dim.getX(), -dim.getY(), 0.0f,

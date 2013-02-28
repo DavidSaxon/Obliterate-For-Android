@@ -14,11 +14,12 @@ import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.main.Obstacle;
 import nz.co.withfire.obliterate.entities.menu.Button;
+import nz.co.withfire.obliterate.entities.menu.HelpText;
 import nz.co.withfire.obliterate.entities.menu.MenuTitle;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
 import nz.co.withfire.obliterate.entities.menu.PauseMenuBackground;
 import nz.co.withfire.obliterate.entities.menu.ResetSceneButton;
-import nz.co.withfire.obliterate.entities.menu.ShapeButton;
+import nz.co.withfire.obliterate.entities.menu.DoneButton;
 import nz.co.withfire.obliterate.entities.menu.TouchPoint;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
 import nz.co.withfire.obliterate.entities.start_up.Logo;
@@ -116,6 +117,9 @@ public class Engine implements GLSurfaceView.Renderer {
     private int openMenuTex;
     //the rest scene button texture
     private int resetSceneTex;
+    //the done button texture
+    private int doneTex;
+    private int addObHelpTex;
     //menu titles Tex
     private int particleTypeTex;
     private int forceAppTex;
@@ -147,6 +151,10 @@ public class Engine implements GLSurfaceView.Renderer {
     private OpenMenuButton openMenuButton;
     //the reset scene button
     private ResetSceneButton resetSceneButton;
+    //the done button
+    private DoneButton doneButton;
+    //the add obstacle help text
+    private HelpText addObHelp;
     //the pause menu background
     private PauseMenuBackground pMBG;
     //the particle type title
@@ -553,7 +561,10 @@ public class Engine implements GLSurfaceView.Renderer {
                         addObMode = true;
                         obstacleButton.press();
                         pMBG.slideBack();
-                        openMenuButton.slideBack();
+                        doneButton = new DoneButton(screenDimGL, doneTex);
+                        menuEntities.add(doneButton);
+                        addObHelp = new HelpText(screenDimGL, addObHelpTex);
+                        menuEntities.add(addObHelp);
                     }
                     //check if there is a collision with the back button
                     else if (physics.collision(backButton, touchPoint)) {
@@ -565,9 +576,11 @@ public class Engine implements GLSurfaceView.Renderer {
                         resetSceneButton.slideBack();
                     }
                     //check if there is a collision with the open menu button
-                    else if (addObMode && physics.collision(openMenuButton, touchPoint)) {
+                    else if (addObMode && physics.collision(doneButton, touchPoint)) {
                         
                         addObMode = false;
+                        doneButton.slideForwards();
+                        addObHelp.slideForwards();
                         
                         initPause();
                     }
@@ -916,7 +929,15 @@ public class Engine implements GLSurfaceView.Renderer {
             resetSceneTex = TextureLoader.loadTexture(
                 activityContext, R.drawable.reset_scene);
         }
-        else if (Math.abs(loadProgress - 0.05f) < 0.001f) {
+        else if (Math.abs(loadProgress - 0.45f) < 0.001f) {
+            
+            //load secondary buttons and messages
+            doneTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.done_button);
+            addObHelpTex = TextureLoader.loadTexture(
+                    activityContext, R.drawable.add_ob_help);
+        }
+        else if (Math.abs(loadProgress - 0.50f) < 0.001f) {
             
             //load the menu buttons
             debrisButtonTex[0] = TextureLoader.loadTexture(activityContext,
@@ -968,7 +989,7 @@ public class Engine implements GLSurfaceView.Renderer {
             backButtonTex[1] = TextureLoader.loadTexture(activityContext,
                     R.drawable.back_button_pressed);
         }
-        else if (Math.abs(loadProgress - 0.10f) < 0.001f) {
+        else if (Math.abs(loadProgress - 0.55f) < 0.001f) {
             
             //load the titles
             particleTypeTex = TextureLoader.loadTexture(

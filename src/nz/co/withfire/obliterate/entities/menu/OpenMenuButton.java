@@ -68,7 +68,7 @@ public class OpenMenuButton extends CollisionType {
                                     0.0f, 0.0f};
         image = new QuadTex2d(quadCoord, texCoords, tex);
         
-        //set the bounding box to be slightly bigger than the size
+        //set the bounding box
         boundingBox = new BoundingRect(pos, dim);
     }
     

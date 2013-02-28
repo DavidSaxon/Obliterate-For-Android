@@ -7,12 +7,13 @@
 package nz.co.withfire.obliterate.entities.menu;
 
 import android.opengl.Matrix;
+import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.QuadTex2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 
-public class ShapeButton extends CollisionType {
+public class HelpText extends Entity {
     
     //VARIABLES
     //the original position of the button
@@ -28,14 +29,11 @@ public class ShapeButton extends CollisionType {
     private boolean slideForwards = false;
     private boolean slideBack = false;
     
-    //the rotation amount of the button
-    private float rotation = 0.0f;
-    
     //the image of the button
     private QuadTex2d image;
     
     //the texture of the image
-    private int[] tex = new int[2];
+    private int tex;
     
     //Matrix
     //the model view projection matrix
@@ -46,18 +44,18 @@ public class ShapeButton extends CollisionType {
     //CONSTRUCTOR
     /**Creates a new open menu button
     @param tex the texture of the button*/
-    public ShapeButton(Vector2d GLdim, Vector2d orgPos, int[] tex) {
+    public HelpText(Vector2d GLdim, int tex) {
         
         this.GLdim.copy(GLdim);
         this.tex = tex;
         
-        this.orgPos.copy(orgPos);
+        orgPos.set(0.0f, -Math.abs(GLdim.getY() / 1.15f));
         pos.set(orgPos.getX() + (GLdim.getX() * 2.0f), orgPos.getY());
         
         slideBack = true;
         
         //find the dimensions of the button
-        dim.set(GLdim.getX() / 23.5f, GLdim.getX() / 23.5f);
+        dim.set(GLdim.getX(), GLdim.getX() / 30.0f);
         
         float quadCoord[] = {   -dim.getX(),  dim.getY(), 0.0f,
                                 -dim.getX(), -dim.getY(), 0.0f,
@@ -67,10 +65,7 @@ public class ShapeButton extends CollisionType {
                                     1.0f, 1.0f,
                                     0.0f, 1.0f, 
                                     0.0f, 0.0f};
-        image = new QuadTex2d(quadCoord, texCoords, tex[0]);
-        
-        //set the bounding box to be slightly bigger than the size
-        boundingBox = new BoundingRect(pos, dim);
+        image = new QuadTex2d(quadCoord, texCoords, tex);
     }
     
     //METHODS
@@ -83,12 +78,9 @@ public class ShapeButton extends CollisionType {
             //slide
             if (pos.getX() < GLdim.getX() + (2.0f * dim.getX())) {
                 
-                //TODO: make sure it doesn't slide too far
-                
                 float shiftAmount = GLdim.getX() / 15.0f;
                 
                 pos.setX(pos.getX() + shiftAmount);
-                boundingBox.translate(new Vector2d(shiftAmount, 0.0f));
             }
             else {
                 
@@ -98,7 +90,7 @@ public class ShapeButton extends CollisionType {
         
         //slide back
         if (slideBack) {
-            
+            //
             //slide
             if (pos.getX() > orgPos.getX()) {
                 
@@ -107,7 +99,6 @@ public class ShapeButton extends CollisionType {
                 float shiftAmount = GLdim.getX() / 15.0f;
                 
                 pos.setX(pos.getX() - shiftAmount);
-                boundingBox.translate(new Vector2d(-shiftAmount, 0.0f));
             }
             else {
                 
@@ -123,7 +114,6 @@ public class ShapeButton extends CollisionType {
        //shift into visible range
         Matrix.setIdentityM(tMatrix, 0);
         Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);
-        Matrix.rotateM(tMatrix, 0, rotation, 0, 0, 1.0f);
         
         //multiply the matrixOpenMenuButton
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
@@ -142,15 +132,5 @@ public class ShapeButton extends CollisionType {
     public void slideBack() {
         
         slideBack = true;
-    }
-    
-    public void press() {
-        
-        image.setTex(tex[1]);
-    }
-    
-    public void depress() {
-        
-        image.setTex(tex[0]);
     }
 }
