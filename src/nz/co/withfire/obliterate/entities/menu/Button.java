@@ -67,6 +67,13 @@ public class Button extends CollisionType {
     
     //METHODS
     @Override
+    public void update() {
+        
+        boundingBox.setPos(new Vector2d(pos.getX() + backPos.getX(),
+            pos.getY() + backPos.getY()));
+    }
+    
+    @Override
     public void draw(float[] viewMatrix, float[] projectionMatrix) {
         
        //shift into visible range
