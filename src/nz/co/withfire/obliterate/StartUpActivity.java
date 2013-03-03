@@ -24,7 +24,7 @@ public class StartUpActivity extends Activity implements KeyListener {
 
     //VARIABLES
     //the gl surface to render onto (for displaying the title)
-    private GLSurfaceView display;
+    private extGLSurfaceView display;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,19 +69,19 @@ public class StartUpActivity extends Activity implements KeyListener {
     public boolean onKeyDown(View view, Editable text, int keyCode,
             KeyEvent event) {
 
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            
-            Log.v("Obliterate", "onKeyDown Called");
-            onBackPressed();
-            return true;
-        }
-
         return super.onKeyDown(keyCode, event);
     }
     
     @Override
     public void onBackPressed() {
         
+        if (display.engine.isPaused()) {
+            
+            display.engine.back = true;
+            return;
+        }
+        
+        super.onBackPressed();
         return;
     }
 
@@ -104,7 +104,7 @@ class extGLSurfaceView extends GLSurfaceView {
     
     //VARIABLES
     //the engine
-    private Engine engine;
+    public Engine engine;
     
     //CONSTRUCTOR
     public extGLSurfaceView(Context context) {

@@ -84,6 +84,8 @@ public class Engine implements GLSurfaceView.Renderer {
     //the current appearance of force
     private ForceAppearance forceApp = ForceAppearance.SHOCKWAVE;
     
+    public boolean back = false;
+    
     //the dimensions of the screen
     private Vector2d screenDim;
     //the dimensions of the screen in openGL coords
@@ -293,6 +295,12 @@ public class Engine implements GLSurfaceView.Renderer {
             }
         }
         
+        if (back) {
+            
+            back();
+            back = false;
+        }
+        
         //check for touch event
         if (touchEvent) {
             
@@ -455,6 +463,24 @@ public class Engine implements GLSurfaceView.Renderer {
         }
     }
     
+    public void back() {
+        
+        if (addObMode) {
+            
+            addObMode = false;
+            doneButton.slideForwards();
+            addObHelp.slideForwards();
+            
+            initPause();
+        }
+        else if (paused) {
+            
+            pMBG.slideBack();
+            openMenuButton.slideBack();
+            resetSceneButton.slideBack();
+        }
+    }
+    
     //PRIVATE METHODS
     /**Processes any touch events*/
     private void processTouchEvent() {
@@ -583,7 +609,7 @@ public class Engine implements GLSurfaceView.Renderer {
                         doneButton.slideForwards();
                         addObHelp.slideForwards();
                         
-                        initPause();
+                        unpause();
                     }
                     else if (addObMode) {
                         
@@ -924,6 +950,11 @@ public class Engine implements GLSurfaceView.Renderer {
         //enable transparency
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFunc (GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA);
+    }
+    
+    public boolean isPaused() {
+        
+        return paused;
     }
     
     /**Display the frame rate in the log*/
