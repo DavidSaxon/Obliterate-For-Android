@@ -54,10 +54,10 @@ public class PauseMenuBackground extends Entity {
                 -dim.getX(), -dim.getY(), 0.0f,
                  dim.getX(), -dim.getY(), 0.0f,
                  dim.getX(),  dim.getY(), 0.0f };
-        float colour[] = {  0.0f, 0.0f, 0.0f, 0.75f,
-                            0.0f, 0.0f, 0.0f, 0.75f,
-                            0.0f, 0.0f, 0.0f, 0.75f,
-                            0.0f, 0.0f, 0.0f, 0.75f };
+        float colour[] = {  0.0f, 0.0f, 0.0f, 0.85f,
+                            0.0f, 0.0f, 0.0f, 0.85f,
+                            0.0f, 0.0f, 0.0f, 0.85f,
+                            0.0f, 0.0f, 0.0f, 0.85f };
         
         quad = new Quad2d(quadCoord, colour);
     }

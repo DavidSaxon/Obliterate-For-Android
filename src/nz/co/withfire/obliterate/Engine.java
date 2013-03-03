@@ -14,6 +14,7 @@ import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.main.Obstacle;
 import nz.co.withfire.obliterate.entities.menu.Button;
+import nz.co.withfire.obliterate.entities.menu.Divider;
 import nz.co.withfire.obliterate.entities.menu.HelpText;
 import nz.co.withfire.obliterate.entities.menu.MenuTitle;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
@@ -734,6 +735,23 @@ public class Engine implements GLSurfaceView.Renderer {
         //add background
         pMBG = new PauseMenuBackground(screenDimGL);
         menuEntities.add(pMBG);
+        
+        //add dividers
+        menuEntities.add(new Divider(new Vector2d(0.0f, screenDimGL.getY() / 3.0f),
+            new Vector2d(screenDimGL.getX(), screenDimGL.getY() / 100.0f),
+            pMBG.getPos()));
+        
+        menuEntities.add(new Divider(new Vector2d(0.0f,  - (screenDimGL.getY() / 3.0f)),
+                new Vector2d(screenDimGL.getX(), screenDimGL.getY() / 100.0f),
+                pMBG.getPos()));
+        
+        menuEntities.add(new Divider(new Vector2d(0.0f,  (screenDimGL.getY() / 1.5f)),
+                new Vector2d(screenDimGL.getY() / 100.0f, screenDimGL.getY() / 3.0f),
+                pMBG.getPos()));
+        
+        menuEntities.add(new Divider(new Vector2d((screenDimGL.getX() / 3.0f),  0.0f),
+                new Vector2d(screenDimGL.getY() / 100.0f, screenDimGL.getY() / 3.0f),
+                pMBG.getPos()));
         
         //add titles
         particleTypeTitle = new MenuTitle(screenDimGL, pMBG.getPos(),

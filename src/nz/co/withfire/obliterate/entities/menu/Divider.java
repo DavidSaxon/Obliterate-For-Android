@@ -36,10 +36,10 @@ public class Divider extends Entity {
                 -dim.getX(), -dim.getY(), 0.0f,
                  dim.getX(), -dim.getY(), 0.0f,
                  dim.getX(),  dim.getY(), 0.0f};
-        float colour[] = {  0.4f, 0.4f, 0.4f, 1.0f,
-                            0.4f, 0.4f, 0.4f, 1.0f,
-                            0.4f, 0.4f, 0.4f, 1.0f,
-                            0.4f, 0.4f, 0.4f, 1.0f };
+        float colour[] = {  0.2f, 0.2f, 0.2f, 1.0f,
+                            0.2f, 0.2f, 0.2f, 1.0f,
+                            0.2f, 0.2f, 0.2f, 1.0f,
+                            0.2f, 0.2f, 0.2f, 1.0f };
         
         image = new Quad2d(quadCoord, colour);
     }
@@ -50,7 +50,8 @@ public class Divider extends Entity {
         
        //shift into visible range
         Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);
+        Matrix.translateM(tMatrix, 0, bgPos.getX() + pos.getX(),
+            bgPos.getY() + pos.getY(), -0.01f);
         
         //multiply the matrix
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
