@@ -15,12 +15,14 @@ import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
 
-public class StartUpActivity extends Activity implements KeyListener {
+public class StartUpActivity extends Activity {
 
     //VARIABLES
     //the gl surface to render onto (for displaying the title)
@@ -54,25 +56,6 @@ public class StartUpActivity extends Activity implements KeyListener {
     }
 
     @Override
-    public void clearMetaKeyState(View view, Editable content, int states) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public int getInputType() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public boolean onKeyDown(View view, Editable text, int keyCode,
-            KeyEvent event) {
-
-        return super.onKeyDown(keyCode, event);
-    }
-    
-    @Override
     public void onBackPressed() {
         
         if (display.engine.isPaused()) {
@@ -86,14 +69,26 @@ public class StartUpActivity extends Activity implements KeyListener {
     }
 
     @Override
-    public boolean onKeyOther(View view, Editable text, KeyEvent event) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-    @Override
-    public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            
+            if (display.engine.isPaused()) {
+                
+                display.engine.back = true;
+                return true;
+            }
+        }
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            
+            if (display.engine.isPaused()) {
+                
+                display.engine.back = true;
+                return true;
+            }
+        }
+        
+        
         return false;
     }
 }
