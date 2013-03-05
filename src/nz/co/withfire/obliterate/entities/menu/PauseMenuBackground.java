@@ -123,6 +123,11 @@ public class PauseMenuBackground extends Entity {
         return slideBackComplete;
     }
     
+    public boolean slideComplete() {
+        
+        return slideComplete;
+    }
+    
     /**slides the menu back*/
     public void slideBack() {
         

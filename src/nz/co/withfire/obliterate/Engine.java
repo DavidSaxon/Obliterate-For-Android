@@ -296,13 +296,21 @@ public class Engine implements GLSurfaceView.Renderer {
         
         if (back) {
             
-            back();
+            if(pMBG == null ||
+                pMBG.slideComplete()) {
+                
+                back();
+            }
             back = false;
         }
         
         if (settings) {
             
-            settings();
+            if(pMBG == null ||
+                pMBG.slideComplete()) {
+                
+                settings();
+            }
             settings = false;
         }
         

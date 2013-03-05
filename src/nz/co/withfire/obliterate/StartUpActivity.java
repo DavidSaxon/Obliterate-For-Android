@@ -56,6 +56,11 @@ public class StartUpActivity extends Activity {
                 display.engine.settings = true;
                 return true;
             }
+            else {
+                
+                display.engine.back = true;
+                return true;
+            }
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             
@@ -67,6 +72,7 @@ public class StartUpActivity extends Activity {
             else {
                 
                 super.onBackPressed();
+                return true;
             }
         }
         
