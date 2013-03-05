@@ -143,7 +143,7 @@ public class Engine implements GLSurfaceView.Renderer {
     private int[] explosionButtonTex = new int[2];
     private int[] setPosButtonTex = new int[2];
     private int[] addObButtonTex = new int[2];
-    private int[] backButtonTex = new int[2];
+    private int[] resumeButtonTex = new int[2];
     //the shock wave texture
     private int[] shockwaveTex = new int[38];
     //the explosion texture
@@ -194,7 +194,7 @@ public class Engine implements GLSurfaceView.Renderer {
     //the add obstacle button
     private Button obstacleButton;
     //the exit button
-    private Button backButton;
+    private Button resumeButton;
     //the current obstacle being transformed
     private Obstacle currentOb;
     
@@ -612,10 +612,10 @@ public class Engine implements GLSurfaceView.Renderer {
                         menuEntities.add(addObHelp);
                     }
                     //check if there is a collision with the back button
-                    else if (physics.collision(backButton, touchPoint)) {
+                    else if (physics.collision(resumeButton, touchPoint)) {
                         
                         //exit the menu
-                        backButton.press();
+                        resumeButton.press();
                         pMBG.slideBack();
                         openMenuButton.slideBack();
                         resetSceneButton.slideBack();
@@ -869,10 +869,10 @@ public class Engine implements GLSurfaceView.Renderer {
                 new Vector2d((screenDimGL.getX() / 2.0f), (screenDimGL.getY() / 1.6f)),
                 addObButtonTex);
         menuEntities.add(obstacleButton);
-        backButton = new Button(screenDimGL, pMBG.getPos(),
+        resumeButton = new Button(screenDimGL, pMBG.getPos(),
                 new Vector2d((screenDimGL.getX() / 1.2f), (screenDimGL.getY() / 1.6f)),
-                backButtonTex);
-        menuEntities.add(backButton);
+                resumeButtonTex);
+        menuEntities.add(resumeButton);
         
         //select the correct buttons
         switch (particleType) {
@@ -1070,10 +1070,10 @@ public class Engine implements GLSurfaceView.Renderer {
                     R.drawable.add_obstacle_button_unpressed);
             addObButtonTex[1] = TextureLoader.loadTexture(activityContext,
                     R.drawable.add_obstacle_button_pressed);
-            backButtonTex[0] = TextureLoader.loadTexture(activityContext,
-                    R.drawable.back_button_unpressed);
-            backButtonTex[1] = TextureLoader.loadTexture(activityContext,
-                    R.drawable.back_button_pressed);
+            resumeButtonTex[0] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.resume_button_unpressed);
+            resumeButtonTex[1] = TextureLoader.loadTexture(activityContext,
+                    R.drawable.resume_button_pressed);
         }
         else if (Math.abs(loadProgress - 0.55f) < 0.001f) {
             
