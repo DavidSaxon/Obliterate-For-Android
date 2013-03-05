@@ -47,44 +47,26 @@ public class StartUpActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        
-        //TODO:
-        //inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.activity_start_up, menu);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        
-        if (display.engine.isPaused()) {
-            
-            display.engine.back = true;
-            return;
-        }
-        
-        super.onBackPressed();
-        return;
-    }
-
-    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
 
         if (keyCode == KeyEvent.KEYCODE_MENU) {
+            
+            if (!display.engine.isPaused()) {
+                
+                display.engine.settings = true;
+                return true;
+            }
+        }
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             
             if (display.engine.isPaused()) {
                 
                 display.engine.back = true;
                 return true;
             }
-        }
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            
-            if (display.engine.isPaused()) {
+            else {
                 
-                display.engine.back = true;
-                return true;
+                super.onBackPressed();
             }
         }
         

@@ -1,14 +1,12 @@
--override the settings button
-
 -change the menu back button to resume button
-
--add texture to obliterate image
 
 -implement set position
 
 -implement set size
 
 -implement gravity direction
+
+-fix drawable dpi types
 
 -fix physics
 

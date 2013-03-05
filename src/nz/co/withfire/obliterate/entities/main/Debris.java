@@ -3,6 +3,7 @@ package nz.co.withfire.obliterate.entities.main;
 import android.opengl.Matrix;
 import android.util.Log;
 import nz.co.withfire.obliterate.graphics.drawable.shape2d.Quad2d;
+import nz.co.withfire.obliterate.graphics.drawable.shape2d.QuadTex2d;
 import nz.co.withfire.obliterate.physics.CollisionType;
 import nz.co.withfire.obliterate.physics.bounding.BoundingRect;
 import nz.co.withfire.obliterate.utilities.*;
@@ -20,8 +21,11 @@ public class Debris extends CollisionType {
     //is true if gravity should be applied
     private boolean applyGravity = false;
     
+    //the texture
+    private int tex;
+    
     //the image of the debris
-    private Quad2d image;
+    private QuadTex2d image;
     
     //Matrix
     //the model view projection matrix
@@ -35,12 +39,14 @@ public class Debris extends CollisionType {
     @param pos the position of the debris
 	@param sideLength the the length of a side of the debris
 	@param speed the x and y speed of the the debris*/
-    public Debris(Vector2d pos, float sideLength, Vector2d speed) {
+    public Debris(Vector2d pos, float sideLength, Vector2d speed,
+        float[] texCoords, int tex) {
         
         //initialise the variables
         this.pos = new Vector2d(pos);
 		this.sideLength = sideLength;
 		this.speed = new Vector2d(speed);
+		this.tex = tex;
         
 		//Create the debris image
         float d = sideLength/2.0f;
@@ -51,14 +57,8 @@ public class Debris extends CollisionType {
              d, -d, 0.0f,
              d,  d, 0.0f,
         };
-        float[] colour = {
-          0.6f, 0.05f, 0.15f, 1.0f,
-          0.6f, 0.05f, 0.15f, 1.0f,
-          0.6f, 0.05f, 0.15f, 1.0f,
-          0.6f, 0.05f, 0.15f, 1.0f
-        };
         
-        image = new Quad2d(coord, colour);
+        image = new QuadTex2d(coord, texCoords, tex);
         
         //set the bounding box
         boundingBox = new BoundingRect(pos,

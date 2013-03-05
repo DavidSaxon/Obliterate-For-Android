@@ -122,6 +122,7 @@ public final class R {
         public static final int size_menu_title=0x7f02006c;
         public static final int smoke_button_pressed=0x7f02006d;
         public static final int smoke_button_unpressed=0x7f02006e;
+        public static final int square=0x7f02006f;
     }
     public static final class id {
         public static final int menu_settings=0x7f070000;

@@ -84,7 +84,8 @@ public class Engine implements GLSurfaceView.Renderer {
     //the current appearance of force
     private ForceAppearance forceApp = ForceAppearance.SHOCKWAVE;
     
-    public boolean back = false;
+    public volatile boolean back = false;
+    public volatile boolean settings = false;
     
     //the dimensions of the screen
     private Vector2d screenDim;
@@ -128,6 +129,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private int forceAppTex;
     private int gravityDirTex;
     private int setSizeTex;
+    //the obliterate image texture
+    private int obliterateTex;
     //menu button textures
     private int[] debrisButtonTex = new int[2];
     private int[] smokeButtonTex = new int[2];
@@ -236,8 +239,6 @@ public class Engine implements GLSurfaceView.Renderer {
         //store the screen dimensions
         screenDim = new Vector2d(width, height);
         
-        Log.v("Obliterate", width + " x " + height);
-        
         //set the view port
         GLES20.glViewport(0, 0, width, height);
 
@@ -252,8 +253,6 @@ public class Engine implements GLSurfaceView.Renderer {
         //store the openGL dimensions
         screenDimGL = new Vector2d(CoordUtil.screenPosToOpenGLPos(
                 screenDim, screenDim, viewMatrix, projectionMatrix));
-        
-        Log.v("Obliterate", screenDimGL.getX() + " x " + screenDimGL.getY());
         
         //create a new physics controller        
         physics = new Physics(screenDimGL);
@@ -299,6 +298,12 @@ public class Engine implements GLSurfaceView.Renderer {
             
             back();
             back = false;
+        }
+        
+        if (settings) {
+            
+            settings();
+            settings = false;
         }
         
         //check for touch event
@@ -479,6 +484,11 @@ public class Engine implements GLSurfaceView.Renderer {
             openMenuButton.slideBack();
             resetSceneButton.slideBack();
         }
+    }
+    
+    public void settings() {
+        
+        initPause();
     }
     
     //PRIVATE METHODS
@@ -725,13 +735,26 @@ public class Engine implements GLSurfaceView.Renderer {
         //FIXME: remove speed?
         Vector2d speed = new Vector2d(0.0f, 0.0f);
         
-        for (float y = -0.5f; y < 0.5f; y += 0.1f) {
-            for (float x = -0.5f; x < 0.5f; x += 0.1f) {
+        for (float y = -0.5f; y < 0.41f; y += 0.1f) {
+            for (float x = -0.5f; x < 0.41f; x += 0.1f) {
              
                 if (particleType == ParticleType.DEBRIS) {
                     
+                    float tx1 = x + 0.5f;
+                    float tx2 = tx1 + 0.1f;
+                    float ty1 = y + 0.5f;
+                    float ty2 = ty1 + 0.1f;
+                    
+                    Log.v("Obliterate", tx1 + " -> " + tx2);
+                    
+                    float[] texCoords = {   tx2, ty2,
+                                            tx2, ty1,
+                                            tx1, ty1, 
+                                            tx1, ty2};
+                    
                     //create the debris
-                    Debris d = new Debris(new Vector2d(x, y), 0.1f, speed);
+                    Debris d = new Debris(new Vector2d(x, y), 0.1f, speed,
+                        texCoords, obliterateTex);
                     
                     //add to physics
                     physics.addEntity(d);
@@ -970,7 +993,13 @@ public class Engine implements GLSurfaceView.Renderer {
     private void load() {
         
         //load images
-        if (Math.abs(loadProgress - 0.0f) < 0.001f) {
+        if (Math.abs(loadProgress - 0.35f) < 0.001f) {
+            
+            //load obliterate
+            obliterateTex = TextureLoader.loadTexture(
+                activityContext, R.drawable.square);
+        }
+        if (Math.abs(loadProgress - 0.40f) < 0.001f) {
             
             //load main buttons
             openMenuTex = TextureLoader.loadTexture(
