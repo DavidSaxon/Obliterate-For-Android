@@ -19,6 +19,7 @@ import nz.co.withfire.obliterate.entities.menu.HelpText;
 import nz.co.withfire.obliterate.entities.menu.MenuTitle;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
 import nz.co.withfire.obliterate.entities.menu.PauseMenuBackground;
+import nz.co.withfire.obliterate.entities.menu.PosMark;
 import nz.co.withfire.obliterate.entities.menu.ResetSceneButton;
 import nz.co.withfire.obliterate.entities.menu.DoneButton;
 import nz.co.withfire.obliterate.entities.menu.TouchPoint;
@@ -95,7 +96,7 @@ public class Engine implements GLSurfaceView.Renderer {
     private Vector2d screenDimGL;
     
     //the position of the obliterate obstacle
-    private Vector2d objPos = new Vector2d(1.0f, 0.0f);
+    private Vector2d objPos = new Vector2d(0.0f, 0.0f);
     
     //fps management
     //the current time
@@ -129,6 +130,7 @@ public class Engine implements GLSurfaceView.Renderer {
     //the done button texture
     private int doneTex;
     private int addObHelpTex;
+    private int posMarkTex;
     //menu titles Tex
     private int particleTypeTex;
     private int forceAppTex;
@@ -202,6 +204,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private Button resumeButton;
     //the current obstacle being transformed
     private Obstacle currentOb;
+    //the position mark
+    private PosMark posMark;
     
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
@@ -620,6 +624,8 @@ public class Engine implements GLSurfaceView.Renderer {
                         pMBG.slideBack();
                         doneButton = new DoneButton(screenDimGL, doneTex);
                         menuEntities.add(doneButton);
+                        posMark = new PosMark(screenDimGL, objPos, posMarkTex);
+                        menuEntities.add(posMark);
                     }
                     //check if there is a collision with the add obstacle
                     else if (physics.collision(obstacleButton, touchPoint)) {
@@ -658,6 +664,11 @@ public class Engine implements GLSurfaceView.Renderer {
                         addObHelp.slideForwards();
                         
                         unpause();
+                    }
+                    else if (setPosMode) {
+                        
+                        objPos.copy(touchPos);
+                        posMark.setPos(objPos);
                     }
                     else if (addObMode) {
                         
@@ -773,16 +784,16 @@ public class Engine implements GLSurfaceView.Renderer {
         //FIXME: remove speed?
         Vector2d speed = new Vector2d(0.0f, 0.0f);
         
-        for (float y = -0.5f; y < 0.41f; y += 0.1f) {
-            for (float x = -0.5f; x < 0.41f; x += 0.1f) {
+        for (float y = -0.45f; y < 0.46f; y += 0.1f) {
+            for (float x = -0.45f; x < 0.46f; x += 0.1f) {
              
                 if (particleType == ParticleType.DEBRIS) {
                     
-                    float tx1 = x + 0.5f;
+                    float tx1 = x + 0.45f;
                     float tx2 = tx1 + 0.1f;
-                    float ty1 = y + 0.5f;
+                    float ty1 = y + 0.45f;
                     float ty2 = ty1 + 0.1f;
-                    
+
                     Log.v("Obliterate", tx1 + " -> " + tx2);
                     
                     float[] texCoords = {   tx2, ty2,
@@ -1053,6 +1064,8 @@ public class Engine implements GLSurfaceView.Renderer {
                 activityContext, R.drawable.done_button);
             addObHelpTex = TextureLoader.loadTexture(
                     activityContext, R.drawable.add_ob_help);
+            posMarkTex = TextureLoader.loadTexture(
+                    activityContext, R.drawable.place);
         }
         else if (Math.abs(loadProgress - 0.50f) < 0.001f) {
             
