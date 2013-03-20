@@ -79,6 +79,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private boolean paused = false;
     //is true when obstacle adding mode
     private boolean addObMode = false;
+    //is true when in set position mode
+    private boolean setPosMode = false;
     //the current type of particle being used
     private ParticleType particleType = ParticleType.DEBRIS;
     //the current appearance of force
@@ -91,6 +93,9 @@ public class Engine implements GLSurfaceView.Renderer {
     private Vector2d screenDim;
     //the dimensions of the screen in openGL coords
     private Vector2d screenDimGL;
+    
+    //the position of the obliterate obstacle
+    private Vector2d objPos = new Vector2d(1.0f, 0.0f);
     
     //fps management
     //the current time
@@ -363,7 +368,7 @@ public class Engine implements GLSurfaceView.Renderer {
         else {
             
             //check for unpause
-            if (!addObMode && pMBG.slideBackComplete()) {
+            if (!addObMode && !setPosMode && pMBG.slideBackComplete()) {
                 
                 unpause();
             }
@@ -478,7 +483,14 @@ public class Engine implements GLSurfaceView.Renderer {
     
     public void back() {
         
-        if (addObMode) {
+        if (setPosMode) {
+            
+            setPosMode = false;
+            doneButton.slideForwards();
+            
+            initPause();
+        }
+        else if (addObMode) {
             
             addObMode = false;
             doneButton.slideForwards();
@@ -599,6 +611,16 @@ public class Engine implements GLSurfaceView.Renderer {
                         
                         forceApp = ForceAppearance.EXPLOSION;
                     }
+                    //check if there is a collision with the set position button
+                    else if (physics.collision(posButton, touchPoint)) {
+                        
+                        //enter set position mode
+                        setPosMode = true;
+                        posButton.press();
+                        pMBG.slideBack();
+                        doneButton = new DoneButton(screenDimGL, doneTex);
+                        menuEntities.add(doneButton);
+                    }
                     //check if there is a collision with the add obstacle
                     else if (physics.collision(obstacleButton, touchPoint)) {
                         
@@ -619,6 +641,14 @@ public class Engine implements GLSurfaceView.Renderer {
                         pMBG.slideBack();
                         openMenuButton.slideBack();
                         resetSceneButton.slideBack();
+                    }
+                    //check if there is a collision with the open menu button
+                    else if (setPosMode && physics.collision(doneButton, touchPoint)) {
+                        
+                        setPosMode = false;
+                        doneButton.slideForwards();
+                        
+                        unpause();
                     }
                     //check if there is a collision with the open menu button
                     else if (addObMode && physics.collision(doneButton, touchPoint)) {
@@ -761,7 +791,8 @@ public class Engine implements GLSurfaceView.Renderer {
                                             tx1, ty2};
                     
                     //create the debris
-                    Debris d = new Debris(new Vector2d(x, y), 0.1f, speed,
+                    Debris d = new Debris(new Vector2d(x + objPos.getX(),
+                        y + objPos.getY()), 0.1f, speed,
                         texCoords, obliterateTex);
                     
                     //add to physics
