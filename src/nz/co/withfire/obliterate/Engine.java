@@ -15,6 +15,7 @@ import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.main.Obstacle;
 import nz.co.withfire.obliterate.entities.menu.Button;
 import nz.co.withfire.obliterate.entities.menu.Divider;
+import nz.co.withfire.obliterate.entities.menu.GravityArrow;
 import nz.co.withfire.obliterate.entities.menu.HelpText;
 import nz.co.withfire.obliterate.entities.menu.MenuTitle;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
@@ -136,6 +137,7 @@ public class Engine implements GLSurfaceView.Renderer {
     private int forceAppTex;
     private int gravityDirTex;
     private int setSizeTex;
+    private int gravityArrowTex;
     //the obliterate image texture
     private int obliterateTex;
     //menu button textures
@@ -196,6 +198,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private Button shockwaveButton;
     //the explosion button
     private Button explosionButton;
+    //the gravity Arrow
+    private GravityArrow gravityArrow;
     //the set pos button
     private Button posButton;
     //the add obstacle button
@@ -793,8 +797,6 @@ public class Engine implements GLSurfaceView.Renderer {
                     float tx2 = tx1 + 0.1f;
                     float ty1 = y + 0.45f;
                     float ty2 = ty1 + 0.1f;
-
-                    Log.v("Obliterate", tx1 + " -> " + tx2);
                     
                     float[] texCoords = {   tx2, ty2,
                                             tx2, ty1,
@@ -903,6 +905,10 @@ public class Engine implements GLSurfaceView.Renderer {
                 new Vector2d((screenDimGL.getX() / 6.0f), 0.0f),
                 explosionButtonTex);
         menuEntities.add(explosionButton);
+        gravityArrow = new GravityArrow(screenDimGL, pMBG.getPos(),
+                new Vector2d((screenDimGL.getX() / 1.3f), 0.0f),
+                gravityArrowTex);
+        menuEntities.add(gravityArrow);
         posButton = new Button(screenDimGL, pMBG.getPos(),
                 new Vector2d((screenDimGL.getX() / 6.0f), (screenDimGL.getY() / 1.6f)),
                 setPosButtonTex);
@@ -1066,6 +1072,8 @@ public class Engine implements GLSurfaceView.Renderer {
                     activityContext, R.drawable.add_ob_help);
             posMarkTex = TextureLoader.loadTexture(
                     activityContext, R.drawable.place);
+            gravityArrowTex = TextureLoader.loadTexture(
+                    activityContext, R.drawable.gravity_arrow);
         }
         else if (Math.abs(loadProgress - 0.50f) < 0.001f) {
             

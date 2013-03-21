@@ -1,10 +1,8 @@
--change the menu back button to resume button
-
--implement set position
-
--implement set size
+-show help for set position (changes will not be displayed until scene is refreshed)
 
 -implement gravity direction
+
+-implement set size
 
 -fix drawable dpi types`
 
