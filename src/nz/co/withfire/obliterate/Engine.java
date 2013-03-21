@@ -79,6 +79,8 @@ public class Engine implements GLSurfaceView.Renderer {
     private boolean stateChanged = true;
     //is true when is paused
     private boolean paused = false;
+    //is true when setting gravity direction
+    private boolean changeGravMode = false;
     //is true when obstacle adding mode
     private boolean addObMode = false;
     //is true when in set position mode
@@ -375,6 +377,11 @@ public class Engine implements GLSurfaceView.Renderer {
         }
         else {
             
+            //rotate the gravity arrow
+            if (changeGravMode) {
+                
+                gravityArrow.setRotation(gravityArrow.getRotation() + 0.5f);
+            }
             //check for unpause
             if (!addObMode && !setPosMode && pMBG.slideBackComplete()) {
                 
@@ -618,6 +625,11 @@ public class Engine implements GLSurfaceView.Renderer {
                         explosionButton.press();
                         
                         forceApp = ForceAppearance.EXPLOSION;
+                    }
+                    //check if there is a collision with the gravity arrow
+                    else if (physics.collision(gravityArrow, touchPoint)) {
+                        
+                        changeGravMode = true;
                     }
                     //check if there is a collision with the set position button
                     else if (physics.collision(posButton, touchPoint)) {
@@ -987,6 +999,7 @@ public class Engine implements GLSurfaceView.Renderer {
             resetSceneTex, false);
         menuEntities.add(resetSceneButton);
         
+        changeGravMode = false;
         paused = false;
     }
     
