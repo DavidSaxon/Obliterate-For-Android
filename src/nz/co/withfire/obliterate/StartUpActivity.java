@@ -5,6 +5,11 @@
 \************************************************/
 package nz.co.withfire.obliterate;
 
+import com.revmob.RevMob;
+import com.revmob.RevMobAdsListener;
+import com.revmob.RevMobTestingMode;
+import com.revmob.ads.link.RevMobLink;
+
 import nz.co.withfire.obliterate.R;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
@@ -22,11 +27,19 @@ import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager;
 
+
 public class StartUpActivity extends Activity {
 
     //VARIABLES
     //the gl surface to render onto (for displaying the title)
     private extGLSurfaceView display;
+    
+    //revmob
+    private static final String REVMOB_APP_ID =
+        "518904a3100c778cb5000006";
+    private RevMob revmob;
+    
+    public static boolean ad = true;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +52,24 @@ public class StartUpActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
+        //set up revmob
+        RevMob revmob = RevMob.start(this, REVMOB_APP_ID);
+        RevMobAdsListener listener = new RevMobAdsListener() {
+            public void onRevMobAdReceived() {}
+            public void onRevMobAdNotReceived(String message) {Log.v("Obliterate", "here");StartUpActivity.ad = false;}
+            public void onRevMobAdDisplayed() {}
+            public void onRevMobAdDismiss() {}
+            public void onRevMobAdClicked() {}
+        };
+        RevMobLink link = null;
+        if (ad) {
+        
+            link = revmob.createAdLink(this, listener);
+        }
+                Log.v("Obliterate", ad + "");
+        
         //set the display
-        display = new extGLSurfaceView(this);
+        display = new extGLSurfaceView(this, link);
         
         //set the content view to the display
         setContentView(display);
@@ -51,31 +80,12 @@ public class StartUpActivity extends Activity {
 
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             
-            if (!display.engine.isPaused()) {
-                
-                display.engine.settings = true;
-                return true;
-            }
-            else {
-                
-                display.engine.back = true;
-                return true;
-            }
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            
-            if (display.engine.isPaused()) {
-                
-                display.engine.back = true;
-                return true;
-            }
-            else {
-                
-                super.onBackPressed();
-                return true;
-            }
+             
+            super.onBackPressed();
+            return true;
         }
-        
         
         return false;
     }
@@ -88,9 +98,10 @@ class extGLSurfaceView extends GLSurfaceView {
     //VARIABLES
     //the engine
     public Engine engine;
+
     
     //CONSTRUCTOR
-    public extGLSurfaceView(Context context) {
+    public extGLSurfaceView(Context context, RevMobLink link) {
         
         //super call
         super(context);
@@ -99,7 +110,7 @@ class extGLSurfaceView extends GLSurfaceView {
         setEGLContextClientVersion(2);
         
         //create the engine
-        engine = new Engine(context);
+        engine = new Engine(context, link);
         
         setEGLConfigChooser(false);
         

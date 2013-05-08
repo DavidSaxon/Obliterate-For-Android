@@ -1,7 +1,7 @@
 /************************\
 | A 4 dimensional vector |
 |                        |
-| @david Saxon           |
+| @DavidSaxon           |
 \************************/
 package nz.co.withfire.obliterate.utilities;
 

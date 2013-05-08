@@ -51,12 +51,12 @@ public class OpenMenuButton extends CollisionType {
         this.GLdim.copy(GLdim);
         this.tex = tex;
         
-        orgPos.set(-(GLdim.getX() / 1.1f),
+        orgPos.set(-(GLdim.getX() / 1.35f),
                 Math.abs(GLdim.getY() / 1.15f));
         pos.copy(orgPos);
         
         //find the dimensions of the button
-        dim.set(GLdim.getX() / 23.5f, GLdim.getX() / 23.5f);
+        dim.set(GLdim.getX() / 5f, GLdim.getX() / 23.5f);
         
         float quadCoord[] = {   -dim.getX(),  dim.getY(), 0.0f,
                                 -dim.getX(), -dim.getY(), 0.0f,
@@ -122,7 +122,6 @@ public class OpenMenuButton extends CollisionType {
        //shift into visible range
         Matrix.setIdentityM(tMatrix, 0);
         Matrix.translateM(tMatrix, 0, pos.getX(), pos.getY(), -0.01f);
-        Matrix.rotateM(tMatrix, 0, rotation, 0, 0, 1.0f);
         
         //multiply the matrix
         Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);

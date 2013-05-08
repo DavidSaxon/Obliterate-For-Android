@@ -7,6 +7,7 @@
 package nz.co.withfire.obliterate.graphics;
 
 import android.opengl.GLES20;
+import android.util.Log;
 
 public class ShaderLoader {
 
