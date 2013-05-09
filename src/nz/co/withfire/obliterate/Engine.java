@@ -13,6 +13,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import com.revmob.ads.link.RevMobLink;
 
+import nz.co.withfire.obliterate.fps_manager.FpsManager;
 import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
@@ -73,10 +74,7 @@ public class Engine implements GLSurfaceView.Renderer {
     private Vector2d objPos = new Vector2d(0.0f, 0.0f);
     
     //fps management
-    //the current time
-    private long currentTime;
-    //the length of a frame
-    private final int frameLength = 33;
+    private FpsManager fps = new FpsManager();
     
     //input
     //is true if there has been a touch event
@@ -146,11 +144,10 @@ public class Engine implements GLSurfaceView.Renderer {
             entities.add(i, new ArrayList<Entity>());
         }
         
-        //get the current time
-        currentTime = SystemClock.uptimeMillis();
-        
         //we have to load the logo texture before we start
         logoTex = TextureLoader.loadTexture(activityContext, R.drawable.logo);
+        
+        fps.zero();
     }
 
     @Override
@@ -177,84 +174,76 @@ public class Engine implements GLSurfaceView.Renderer {
         //create a new physics controller        
         physics = new Physics(screenDimGL);
         
-        //get the current time
-        currentTime = SystemClock.uptimeMillis();
+        fps.zero();
     }
     
     @Override
     public void onDrawFrame(GL10 unused) {
         
-        //FPS Management
-        //get the time
-        long newTime = SystemClock.uptimeMillis();
-        //find the the amount of time passed since the last frame
-        int frameTime = (int) (newTime - currentTime);
-        //set the new current time
-        currentTime = newTime;
+        //the amount of times we need to update
+        int updateAmount = fps.update();
         
-        //show the fps
-        if (showFps) {
-            
-            showFps();
-        }
+        //update as many times as we need to
+        for (int u = 0; u < updateAmount; ++u) {
         
-        //check if the state has changed
-        if (stateChanged) {
-            
-            initState();
-        }
-        
-        //apply state specific updates
-        switch (state) {
-        
-            case START_UP: {
-            
-                load();
-                break;
-            }
-        }
-        
-        //check for touch event
-        if (touchEvent) {
-            
-            processTouchEvent();
-        }
-        
-        
-        //COLLISON CHECK
-        physics.collisionCheck();
-        
-        //UPDATE
-        //iterate over the entities and update them
-        for (int i = 0; i < numLayers; ++i) {
-            
-            //TODO: OPTIMISE REMOVE LISTS?
-            //list of entities to be removed
-            ArrayList<Entity> removeList = new ArrayList<Entity>();
-            
-            for (Entity e: entities.get(i)) {
+            //check if the state has changed
+            if (stateChanged) {
                 
-                //check if the entity should be removed
-                if (e.shouldRemove()) {
-                    
-                    removeList.add(e);
-                }
-                //else update the entity
-                else {
-                    
-                   e.update();
+                initState();
+            }
+            
+            //apply state specific updates
+            switch (state) {
+            
+                case START_UP: {
+                
+                    load();
+                    break;
                 }
             }
             
-            //remove the entities
-            for (Entity r : removeList) {
+            //check for touch event
+            if (touchEvent) {
                 
-                entities.get(i).remove(r);
+                processTouchEvent();
+            }
+            
+            
+            //COLLISON CHECK
+            physics.collisionCheck();
+            
+            //UPDATE
+            //iterate over the entities and update them
+            for (int i = 0; i < numLayers; ++i) {
                 
-                //remove from physics if collision type
-                if (r instanceof CollisionType) {
+                //TODO: OPTIMISE REMOVE LISTS?
+                //list of entities to be removed
+                ArrayList<Entity> removeList = new ArrayList<Entity>();
+                
+                for (Entity e: entities.get(i)) {
                     
-                    physics.removeEntity((CollisionType) r);
+                    //check if the entity should be removed
+                    if (e.shouldRemove()) {
+                        
+                        removeList.add(e);
+                    }
+                    //else update the entity
+                    else {
+                        
+                       e.update();
+                    }
+                }
+                
+                //remove the entities
+                for (Entity r : removeList) {
+                    
+                    entities.get(i).remove(r);
+                    
+                    //remove from physics if collision type
+                    if (r instanceof CollisionType) {
+                        
+                        physics.removeEntity((CollisionType) r);
+                    }
                 }
             }
         }
