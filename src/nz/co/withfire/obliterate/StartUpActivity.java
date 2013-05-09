@@ -52,42 +52,27 @@ public class StartUpActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
+        
         //set up revmob
         RevMob revmob = RevMob.start(this, REVMOB_APP_ID);
         RevMobAdsListener listener = new RevMobAdsListener() {
             public void onRevMobAdReceived() {}
-            public void onRevMobAdNotReceived(String message) {Log.v("Obliterate", "here");StartUpActivity.ad = false;}
-            public void onRevMobAdDisplayed() {}
+            public void onRevMobAdNotReceived(String message) {Log.v("Obliterate", "here");Engine.ad = false;}
+            public void onRevMobAdDisplayed() {Engine.waitDone = true;}
             public void onRevMobAdDismiss() {}
-            public void onRevMobAdClicked() {}
+            public void onRevMobAdClicked() {Engine.wait = true;}
         };
         RevMobLink link = null;
         if (ad) {
         
             link = revmob.createAdLink(this, listener);
         }
-                Log.v("Obliterate", ad + "");
         
         //set the display
         display = new extGLSurfaceView(this, link);
         
         //set the content view to the display
         setContentView(display);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            
-        }
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-             
-            super.onBackPressed();
-            return true;
-        }
-        
-        return false;
     }
 }
 

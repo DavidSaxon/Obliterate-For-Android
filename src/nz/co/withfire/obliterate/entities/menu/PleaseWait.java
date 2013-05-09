@@ -3,8 +3,7 @@
 |                                                      |
 | @author David Saxon                                  |
 \******************************************************/
-package nz.co.withfire.obliterate.entities.start_up;
-
+package nz.co.withfire.obliterate.entities.menu;
 
 import android.opengl.GLES20;
 import android.opengl.Matrix;
@@ -15,7 +14,7 @@ import nz.co.withfire.obliterate.graphics.drawable.shape2d.QuadTex2d;
 import nz.co.withfire.obliterate.utilities.Vector2d;
 import nz.co.withfire.obliterate.utilities.Vector4d;
 
-public class Logo extends Entity {
+public class PleaseWait extends Entity {
     
     //VARIABLES
     //the gl dimensions
@@ -26,8 +25,6 @@ public class Logo extends Entity {
     
     //the quad displaying the logo
     private QuadTex2d logo;
-    //a white quad obstructing the logo
-    private Quad2d fadeBlock;
     
     //the texture of the logo
     private int tex;
@@ -39,7 +36,7 @@ public class Logo extends Entity {
     private float[] tMatrix = new float[16];
     
     //CONSTRUCTOR
-    public Logo(Vector2d GLdim, int tex) {
+    public PleaseWait(Vector2d GLdim, int tex) {
         
         this.GLdim = GLdim;
         this.tex = tex;
@@ -48,36 +45,21 @@ public class Logo extends Entity {
         float height = width / 5.1f;
         
         
-        float quadCoord[] = {   -width,  height, 0.0f,
-                                -width, -height, 0.0f,
-                                 width, -height, 0.0f,
-                                 width,  height, 0.0f};
+        float quadCoord[] = {   -2.0f,  2.0f, 0.0f,
+                                -2.0f, -2.0f, 0.0f,
+                                 2.0f, -2.0f, 0.0f,
+                                 2.0f,  2.0f, 0.0f};
         final float[] texCoords = { 1.0f, 0.0f,
                                     1.0f, 1.0f,
                                     0.0f, 1.0f, 
                                     0.0f, 0.0f};
         logo = new QuadTex2d(quadCoord, texCoords, tex);
-        
-        float[] fadeBlockCol = {    1.0f, 1.0f, 1.0f, 1.0f,
-                                    1.0f, 1.0f, 1.0f, 1.0f,
-                                    1.0f, 1.0f, 1.0f, 1.0f,
-                                    1.0f, 1.0f, 1.0f, 1.0f};
-        
-        fadeBlock = new Quad2d(quadCoord, fadeBlockCol);
     }
     
     //METHODS
     @Override
     public void update() {
-        
-        //fade the logo in
-        if (fade > 0.0f) {
-            
-            fade -= 0.05f;
-        }
-        
-        //fade the fade block
-        fadeBlock.setColour(new Vector4d(1.0f, 1.0f, 1.0f, fade));
+
     }
     
     @Override
@@ -92,16 +74,5 @@ public class Logo extends Entity {
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
         
         logo.draw(mvpMatrix);
-        
-        //fade block
-        //shift into visible range
-        Matrix.setIdentityM(tMatrix, 0);
-        Matrix.translateM(tMatrix, 0, 0, 0, -0.02f);
-        
-        //multiply the matrix
-        Matrix.multiplyMM(mvpMatrix, 0, tMatrix, 0, viewMatrix, 0);
-        Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
-        
-        fadeBlock.draw(mvpMatrix);
     }
 }

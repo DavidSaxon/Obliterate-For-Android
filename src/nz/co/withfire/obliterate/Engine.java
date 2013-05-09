@@ -18,6 +18,7 @@ import nz.co.withfire.obliterate.entities.Entity;
 import nz.co.withfire.obliterate.entities.main.Debris;
 import nz.co.withfire.obliterate.entities.main.Force;
 import nz.co.withfire.obliterate.entities.menu.OpenMenuButton;
+import nz.co.withfire.obliterate.entities.menu.PleaseWait;
 import nz.co.withfire.obliterate.entities.menu.ResetSceneButton;
 import nz.co.withfire.obliterate.entities.menu.TouchPoint;
 import nz.co.withfire.obliterate.entities.start_up.LoadingBar;
@@ -102,6 +103,7 @@ public class Engine implements GLSurfaceView.Renderer {
     private int obliterateTex4;
     //the explosion texture
     private int[] explosionTex = new int[38];
+    private int pleaseWaitTex;
     
     //Entities
     //keep a reference to the loading bar
@@ -112,10 +114,17 @@ public class Engine implements GLSurfaceView.Renderer {
     //the reset scene button
     private ResetSceneButton resetSceneButton;
     
+    private PleaseWait pleaseWait;
+    
     //progress out of 1.0 loading
     private float loadProgress = 0.0f;
     
     private RevMobLink link;
+    
+    public static boolean wait = false;
+    public static boolean waitDone = false;
+    private boolean waiting = false;
+    public static boolean ad = true;
     
     //Matrix
     //the projection matrix
@@ -206,6 +215,27 @@ public class Engine implements GLSurfaceView.Renderer {
             if (touchEvent) {
                 
                 processTouchEvent();
+            }
+            
+            if (!ad) {
+                
+                entities.get(0).remove(openMenuButton);
+            }
+            
+            if (wait) {
+                
+                entities.get(0).add(pleaseWait);
+                wait = false;
+                waiting = true;
+            }
+            else if (waitDone && waiting) {
+                
+                entities.get(0).remove(pleaseWait);
+                waitDone = false;
+            }
+            else {
+                
+                waitDone = false;
             }
             
             
@@ -380,12 +410,9 @@ public class Engine implements GLSurfaceView.Renderer {
         
         //TODO: work out the size of the image and the texture and pass it to debris\
         
-        if (link != null) {
-            
-            //add the open menu button
-            openMenuButton = new OpenMenuButton(screenDimGL, openMenuTex);
-            entities.get(0).add(openMenuButton);
-        }
+        //add the open menu button
+        openMenuButton = new OpenMenuButton(screenDimGL, openMenuTex);
+        entities.get(0).add(openMenuButton);
         
         //add the reset scene button
         resetSceneButton = new ResetSceneButton(screenDimGL,
@@ -452,6 +479,8 @@ public class Engine implements GLSurfaceView.Renderer {
                 entities.get(3).add(d);
             }
         }
+        
+        pleaseWait = new PleaseWait(screenDimGL, pleaseWaitTex);
     }
     
     /**Clear all entities from the entities list*/
@@ -518,6 +547,8 @@ public class Engine implements GLSurfaceView.Renderer {
         }
         else if (Math.abs(loadProgress - 0.55f) < 0.001f) {
             
+            pleaseWaitTex = TextureLoader.loadTexture(activityContext,
+                    R.drawable.please_wait);
         }
         else if (Math.abs(loadProgress - 0.60f) < 0.001f) {
             
