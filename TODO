@@ -1,21 +1,5 @@
--show help for set position (changes will not be displayed until scene is refreshed)
+-pause behind please wait screen
 
--implement gravity direction
-
--implement set size
-
--fix drawable dpi types`
+-music / sounds
 
 -fix physics
-
--implement other particle types
-
--check for everything is ready for release {
-
-	-remove hello world
-	
-	-make sure requires openGL 2.0
-}
-
--release!!!!!
-
