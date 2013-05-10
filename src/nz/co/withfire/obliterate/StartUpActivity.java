@@ -74,6 +74,15 @@ public class StartUpActivity extends Activity {
         //set the content view to the display
         setContentView(display);
     }
+    
+    @Override
+    protected void onResume() {
+        
+        //super call
+        super.onResume();
+        
+        Engine.waitDone = true;
+    }
 }
 
 //TODO: turn this into a class

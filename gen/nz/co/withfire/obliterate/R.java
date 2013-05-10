@@ -52,11 +52,12 @@ public final class R {
         public static final int free_games=0x7f020026;
         public static final int ic_launcher=0x7f020027;
         public static final int logo=0x7f020028;
-        public static final int reset_scene=0x7f020029;
-        public static final int square_1=0x7f02002a;
-        public static final int square_2=0x7f02002b;
-        public static final int square_3=0x7f02002c;
-        public static final int square_4=0x7f02002d;
+        public static final int please_wait=0x7f020029;
+        public static final int reset_scene=0x7f02002a;
+        public static final int square_1=0x7f02002b;
+        public static final int square_2=0x7f02002c;
+        public static final int square_3=0x7f02002d;
+        public static final int square_4=0x7f02002e;
     }
     public static final class id {
         public static final int menu_settings=0x7f070000;

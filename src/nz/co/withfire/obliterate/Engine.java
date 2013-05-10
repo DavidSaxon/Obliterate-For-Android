@@ -230,13 +230,11 @@ public class Engine implements GLSurfaceView.Renderer {
             }
             else if (waitDone && waiting) {
                 
-                entities.get(0).remove(pleaseWait);
                 waitDone = false;
+                initMain();
             }
-            else {
-                
-                waitDone = false;
-            }
+
+            waitDone = false;
             
             
             //COLLISON CHECK
